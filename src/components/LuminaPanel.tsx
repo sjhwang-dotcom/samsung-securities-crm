@@ -15,7 +15,7 @@ interface LuminaPanelProps {
 
 export default function LuminaPanel({ onClose }: LuminaPanelProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'insights' | 'reports'>('chat')
-  const [panelWidth, setPanelWidth] = useState(380)
+  const [panelWidth, setPanelWidth] = useState(() => Math.max(Math.round(window.innerWidth * 0.3), 420))
   const [isResizing, setIsResizing] = useState(false)
 
   const tabs = [
@@ -31,7 +31,7 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
     const onMove = (e: MouseEvent) => {
       if (!isResizing) return
       const w = window.innerWidth - e.clientX
-      if (w >= 320 && w <= Math.min(window.innerWidth * 0.6, 800)) setPanelWidth(w)
+      if (w >= 380 && w <= window.innerWidth * 0.65) setPanelWidth(w)
     }
     const onUp = () => {
       setIsResizing(false)
