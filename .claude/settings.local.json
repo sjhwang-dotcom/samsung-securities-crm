@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__Claude_Preview__preview_start",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5174)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}\" http://localhost:5173)",
+      "Bash(npx tsc:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$PATH\")",
+      "Bash(npx vite:*)",
+      "Bash(cd /Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/Downloads)",
+      "Bash(unzip -l \"mrc portfolio financials.zip\")",
+      "Bash(find /Users/sungju/Library -type d -iname *mrc*)",
+      "Bash(echo $SHELL)",
+      "Bash(command -v ls)",
+      "Bash(/bin/ls -1 \"/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/Harlow/\")",
+      "Bash(pip3 install:*)",
+      "Bash(python3 -m markitdown '/Users/sungju/Downloads/DeepAuto X Harlow Payments.pptx')",
+      "Bash(python3 -c \":*)",
+      "Bash(grep -o \"\"text\"\":\"\"[^\"\"]*\"\" /Users/sungju/.claude/projects/-Users-sungju-Library-Mobile-Documents-com-apple-CloudDocs-Harlow/1c512bd8-4e6a-4bbb-bd22-0268b2606e2f/tool-results/b3qh39l3i.txt)",
+      "WebSearch",
+      "WebFetch(domain:www.harlowpayments.com)"
+    ]
+  }
+}
