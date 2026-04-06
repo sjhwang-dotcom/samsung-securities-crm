@@ -1,4 +1,4 @@
-import { HelpCircle, Phone, Mail, MessageSquare, FileText, ChevronRight } from 'lucide-react'
+import { Phone, Mail, MessageSquare, FileText, ChevronRight } from 'lucide-react'
 import { Card, CardHeader, StatusBadge } from '../../components/ui'
 
 export default function Support() {

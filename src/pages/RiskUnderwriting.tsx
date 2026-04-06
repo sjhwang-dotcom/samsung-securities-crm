@@ -1,5 +1,5 @@
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
-import { Users, TrendingUp, AlertTriangle, Clock, ShieldCheck } from 'lucide-react'
+import { Users, AlertTriangle, Clock, ShieldCheck } from 'lucide-react'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import { riskDistribution, riskByMCC } from '../data/mockData'
@@ -46,7 +46,7 @@ export default function RiskUnderwriting() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="range" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} />
-                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: any) => `${v}%`} />
                 <Bar dataKey="pct" radius={[4, 4, 0, 0]} name="Merchants">
                   {riskDistribution.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Bar>

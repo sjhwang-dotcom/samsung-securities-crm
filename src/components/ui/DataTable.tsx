@@ -19,7 +19,7 @@ interface DataTableProps<T> {
 }
 
 /** Reusable data table matching PPTX table style — gray header, clean rows, proper alignment */
-export default function DataTable<T extends Record<string, unknown>>({
+export default function DataTable<T>({
   columns,
   data,
   compact,
@@ -52,7 +52,7 @@ export default function DataTable<T extends Record<string, unknown>>({
             >
               {columns.map(col => (
                 <td key={col.key} style={{ textAlign: col.align || 'left' }}>
-                  {col.render ? col.render(row, i) : String(row[col.key] ?? '')}
+                  {col.render ? col.render(row, i) : String((row as Record<string, unknown>)[col.key] ?? '')}
                 </td>
               ))}
             </tr>

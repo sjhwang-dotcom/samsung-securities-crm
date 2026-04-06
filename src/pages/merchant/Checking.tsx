@@ -76,7 +76,7 @@ export default function Checking() {
       {/* Recent Transactions */}
       <Card noPadding>
         <CardHeader title="Recent Transactions" subtitle="All account activity" />
-        <DataTable columns={cols} data={transactions as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={cols} data={transactions} hoverable />
       </Card>
 
       {/* Connected Products */}

@@ -1,6 +1,6 @@
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, LineChart, Line } from 'recharts'
 import { volumeData, processorDistribution, productPenetration, chargebackTrendData } from '../data/mockData'
-import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
+import { Card, CardHeader, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 
 export default function PortfolioAnalytics() {
@@ -68,7 +68,7 @@ export default function PortfolioAnalytics() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
                 <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}%`} domain={[0, 1.8]} />
-                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={{ borderRadius: 8, fontSize: 12 }} formatter={(v: any) => `${v}%`} />
                 <Line type="monotone" dataKey="visa" stroke="#F43F5E" strokeWidth={1} strokeDasharray="5 5" name="Visa Threshold" dot={false} />
                 <Line type="monotone" dataKey="mc" stroke="#F59E0B" strokeWidth={1} strokeDasharray="5 5" name="MC Threshold" dot={false} />
                 <Line type="monotone" dataKey="portfolio" stroke="#0891B2" strokeWidth={2} name="Portfolio Avg" dot={{ r: 3, fill: '#0891B2' }} />

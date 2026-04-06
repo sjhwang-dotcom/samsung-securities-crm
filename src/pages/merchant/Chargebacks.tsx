@@ -64,7 +64,7 @@ export default function Chargebacks() {
 
       <Card noPadding>
         <CardHeader title="Chargeback History" />
-        <DataTable columns={cols} data={chargebacks as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={cols} data={chargebacks} hoverable />
       </Card>
     </div>
   )

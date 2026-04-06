@@ -89,7 +89,7 @@ export default function Funding() {
       {/* Payback History */}
       <Card noPadding>
         <CardHeader title="Payback History" subtitle="Daily automatic deductions" />
-        <DataTable columns={cols} data={paybacks as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={cols} data={paybacks} hoverable />
       </Card>
 
       {/* Apply for Additional Funding */}

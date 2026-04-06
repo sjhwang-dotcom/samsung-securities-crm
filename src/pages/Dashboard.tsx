@@ -179,7 +179,7 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" horizontal={false} />
                 <XAxis type="number" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} />
                 <YAxis type="category" dataKey="name" tick={{ fontSize: 11, fill: '#475569', fontWeight: 600 }} axisLine={false} tickLine={false} width={90} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `$${v}M`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${v}M`} />
                 <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={22}>
                   {isoVolumeData.map((_, i) => (
                     <Cell key={i} fill={['#1578F7', '#3B82F6', '#8B5CF6'][i]} />
@@ -199,7 +199,7 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} domain={[0, 'auto']} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `$${Math.abs(v)}M`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${Math.abs(v)}M`} />
                 <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={28}>
                   {waterfallData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                 </Bar>
@@ -217,7 +217,7 @@ export default function Dashboard() {
                 <Pie data={categoryMixData} innerRadius={50} outerRadius={72} paddingAngle={3} dataKey="value" strokeWidth={0}>
                   {categoryMixData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
                 <Legend iconType="circle" iconSize={6} wrapperStyle={{ fontSize: 10, fontWeight: 500 }} />
                 <text x="50%" y="42%" textAnchor="middle" style={{ fontSize: 20, fontWeight: 800, fontFamily: "'Inter', sans-serif", fill: '#0F172A' }}>4,612</text>
                 <text x="50%" y="56%" textAnchor="middle" style={{ fontSize: 9, fontWeight: 500, fill: '#94a3b8' }}>merchants</text>
@@ -256,7 +256,7 @@ export default function Dashboard() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} width={45} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number, name: string) => [`$${v}M`, name]} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => [`$${v}M`, name]} />
                 <Area type="monotone" dataKey="volume" stroke="#1578F7" fill="url(#vgd)" strokeWidth={2.5} name="Volume" dot={false} />
                 <Area type="monotone" dataKey="residuals" stroke="#10B981" fill="url(#rgd)" strokeWidth={2} name="Residuals" dot={false} />
               </AreaChart>

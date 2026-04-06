@@ -84,13 +84,13 @@ export default function Accounting() {
       {/* Profit & Loss Summary */}
       <Card noPadding>
         <CardHeader title="Profit & Loss Summary" subtitle="March 2026 (month to date)" />
-        <DataTable columns={plCols} data={plData as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={plCols} data={plData} hoverable />
       </Card>
 
       {/* Monthly Trend */}
       <Card noPadding>
         <CardHeader title="Monthly Trend" subtitle="Last 6 months" />
-        <DataTable columns={trendCols} data={monthlyTrend as unknown as Record<string, unknown>[]} hoverable striped />
+        <DataTable columns={trendCols} data={monthlyTrend} hoverable striped />
       </Card>
     </div>
   )

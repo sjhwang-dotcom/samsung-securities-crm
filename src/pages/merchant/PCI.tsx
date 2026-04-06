@@ -1,4 +1,4 @@
-import { ShieldCheck, CheckCircle, AlertTriangle } from 'lucide-react'
+import { ShieldCheck, CheckCircle } from 'lucide-react'
 import { Card, CardHeader, StatusBadge } from '../../components/ui'
 
 export default function PCI() {

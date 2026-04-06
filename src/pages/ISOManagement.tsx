@@ -291,7 +291,7 @@ export default function ISOManagement() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                     <XAxis dataKey="m" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} width={45} />
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `$${v}M`} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${v}M`} />
                     <Area type="monotone" dataKey="v" stroke="#1578F7" fill="url(#isoGrad)" strokeWidth={2} dot={false} name="Volume" />
                   </AreaChart>
                 </ResponsiveContainer>
@@ -306,7 +306,7 @@ export default function ISOManagement() {
                     <Pie data={selected.topMCC} innerRadius={40} outerRadius={60} paddingAngle={3} dataKey="pct" strokeWidth={0}>
                       {selected.topMCC.map((e, i) => <Cell key={i} fill={e.color} />)}
                     </Pie>
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
                   </PieChart>
                 </ResponsiveContainer>
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -402,5 +402,5 @@ function MerchantTable({ isoName }: { isoName: string }) {
     { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={statusVariant(r.status)}>{r.status}</StatusBadge> },
   ]
 
-  return <DataTable columns={columns} data={data as unknown as Record<string, unknown>[]} hoverable compact />
+  return <DataTable columns={columns} data={data} hoverable compact />
 }

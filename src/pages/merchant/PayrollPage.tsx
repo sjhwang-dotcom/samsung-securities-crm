@@ -75,7 +75,7 @@ export default function PayrollPage() {
       {/* Employee Breakdown */}
       <Card noPadding>
         <CardHeader title="Employee Breakdown" subtitle="Current pay period: Mar 14 - Mar 27" />
-        <DataTable columns={empCols} data={employees as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={empCols} data={employees} hoverable />
         <div style={{ padding: '12px 20px', borderTop: '1px solid #F1F5F9', display: 'flex', justifyContent: 'flex-end', gap: 24 }}>
           <div style={{ textAlign: 'right' }}>
             <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600 }}>TOTAL GROSS</div>
@@ -95,7 +95,7 @@ export default function PayrollPage() {
       {/* Payroll History */}
       <Card noPadding>
         <CardHeader title="Payroll History" subtitle="Last 3 pay runs" />
-        <DataTable columns={historyCols} data={history as unknown as Record<string, unknown>[]} hoverable striped />
+        <DataTable columns={historyCols} data={history} hoverable striped />
       </Card>
     </div>
   )

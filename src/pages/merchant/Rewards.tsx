@@ -122,13 +122,13 @@ export default function Rewards() {
       {/* Earning Rules */}
       <Card noPadding>
         <CardHeader title="How to Earn Points" subtitle="Points are automatically added to your balance" />
-        <DataTable columns={earningCols} data={earningRules as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={earningCols} data={earningRules} hoverable />
       </Card>
 
       {/* Recent Activity */}
       <Card noPadding>
         <CardHeader title="Recent Activity" subtitle="Points earned and redeemed" />
-        <DataTable columns={activityCols} data={recentActivity as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={activityCols} data={recentActivity} hoverable />
       </Card>
     </div>
   )

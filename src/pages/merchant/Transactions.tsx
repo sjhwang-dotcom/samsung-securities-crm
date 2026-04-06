@@ -74,7 +74,7 @@ export default function Transactions() {
 
       <Card noPadding>
         <CardHeader title="Transaction History" subtitle="March 14, 2026" />
-        <DataTable columns={cols} data={filtered as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={cols} data={filtered} hoverable />
       </Card>
     </div>
   )

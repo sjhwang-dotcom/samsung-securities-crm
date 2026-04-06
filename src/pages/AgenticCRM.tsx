@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Plus, Search, ChevronRight } from 'lucide-react'
+import { Plus, Search } from 'lucide-react'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import { leadPipeline, merchants } from '../data/mockData'

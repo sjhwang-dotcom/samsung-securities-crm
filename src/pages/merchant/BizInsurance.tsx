@@ -1,5 +1,5 @@
 import { Card, CardHeader, StatusBadge } from '../../components/ui'
-import { Shield, Building2, HardHat, FileText, Phone, CheckCircle } from 'lucide-react'
+import { Shield, Building2, HardHat, Phone } from 'lucide-react'
 
 const coverageTypes = [
   {

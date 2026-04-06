@@ -4,7 +4,7 @@ import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, ClipboardList, Phone,
   Rocket, Store, TrendingUp, Shield, CheckCircle,
-  Sparkles, Database,
+  Sparkles,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 

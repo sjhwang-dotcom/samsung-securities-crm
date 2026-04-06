@@ -1,4 +1,4 @@
-import { Monitor, Wifi, CheckCircle, AlertTriangle } from 'lucide-react'
+import { Monitor, Wifi, CheckCircle } from 'lucide-react'
 import { Card, CardHeader, StatusBadge } from '../../components/ui'
 
 export default function Equipment() {

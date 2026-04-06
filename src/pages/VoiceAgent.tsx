@@ -1,5 +1,5 @@
-import { Zap, Phone, TrendingUp, Users, DollarSign, Clock } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Line, ComposedChart } from 'recharts'
+import { Phone, TrendingUp, Users, DollarSign, Clock } from 'lucide-react'
+import { Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Line, ComposedChart } from 'recharts'
 import { KpiCard, Card, CardHeader, ActivityFeed } from '../components/ui'
 import { voiceCalls, voiceHourlyData, callOutcomeData } from '../data/mockData'
 
@@ -107,7 +107,7 @@ export default function VoiceAgent() {
                 <Pie data={callOutcomeData} innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" strokeWidth={0}>
                   {callOutcomeData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, fontWeight: 500 }} />
               </PieChart>
             </ResponsiveContainer>

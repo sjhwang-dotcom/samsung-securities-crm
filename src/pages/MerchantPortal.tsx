@@ -136,7 +136,7 @@ export default function MerchantPortal() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis dataKey="day" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${(v / 1000).toFixed(1)}K`} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `$${v.toLocaleString()}`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${v.toLocaleString()}`} />
                 <Bar dataKey="sales" fill="#1578F7" radius={[4, 4, 0, 0]} barSize={28} name="Sales" />
               </BarChart>
             </ResponsiveContainer>
@@ -150,7 +150,7 @@ export default function MerchantPortal() {
                 <Pie data={cardBrandData} innerRadius={35} outerRadius={52} paddingAngle={3} dataKey="value" strokeWidth={0}>
                   {cardBrandData.map((e, i) => <Cell key={i} fill={e.color} />)}
                 </Pie>
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: number) => `${v}%`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
               </PieChart>
             </ResponsiveContainer>
             <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', justifyContent: 'center' }}>
@@ -168,7 +168,7 @@ export default function MerchantPortal() {
       <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
         <Card noPadding>
           <CardHeader title="Recent Deposits" action={<button className="card-view-all">See all <ChevronRight size={12} style={{ verticalAlign: 'middle' }} /></button>} />
-          <DataTable columns={depCols} data={deposits as unknown as Record<string, unknown>[]} hoverable compact />
+          <DataTable columns={depCols} data={deposits} hoverable compact />
         </Card>
         <Card noPadding>
           <CardHeader title="Statements" />

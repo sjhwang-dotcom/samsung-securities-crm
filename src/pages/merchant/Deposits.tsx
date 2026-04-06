@@ -55,7 +55,7 @@ export default function Deposits() {
 
       <Card noPadding>
         <CardHeader title="Deposit History" subtitle="All deposits to Chase ****8834" />
-        <DataTable columns={cols} data={deposits as unknown as Record<string, unknown>[]} hoverable />
+        <DataTable columns={cols} data={deposits} hoverable />
       </Card>
     </div>
   )
