@@ -5,7 +5,6 @@ import Dashboard from './pages/Dashboard'
 import ISOManagement from './pages/ISOManagement'
 import AgenticCRM from './pages/AgenticCRM'
 import VoiceAgent from './pages/VoiceAgent'
-import MerchantOnboarding from './pages/MerchantOnboarding'
 import MerchantPortal from './pages/MerchantPortal'
 import PortfolioAnalytics from './pages/PortfolioAnalytics'
 import RiskUnderwriting from './pages/RiskUnderwriting'
@@ -41,7 +40,6 @@ export default function App() {
           <Route path="/iso" element={<ISOManagement />} />
           <Route path="/crm" element={<AgenticCRM />} />
           <Route path="/voice" element={<VoiceAgent />} />
-          <Route path="/onboarding" element={<MerchantOnboarding />} />
           <Route path="/analytics" element={<PortfolioAnalytics />} />
           <Route path="/risk" element={<RiskUnderwriting />} />
           <Route path="/compliance" element={<ComplianceCenter />} />

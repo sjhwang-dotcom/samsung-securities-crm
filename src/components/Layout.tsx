@@ -3,14 +3,13 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, ClipboardList, Phone,
-  Rocket, Store, TrendingUp, Shield, CheckCircle,
+  Store, TrendingUp, Shield, CheckCircle,
   Sparkles,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
-  { to: '/onboarding', icon: Rocket, title: 'Onboarding' },
   { to: '/crm', icon: ClipboardList, title: 'Agentic CRM' },
   { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
   { to: '/risk', icon: Shield, title: 'Risk & UW' },
@@ -22,9 +21,8 @@ const navItems = [
 
 const pageTitles: Record<string, { title: string; sub: string }> = {
   '/': { title: 'Portfolio Command Center', sub: 'Real-time overview across all portfolio companies' },
-  '/crm': { title: 'Agentic CRM', sub: 'AI-powered lead and merchant management' },
+  '/crm': { title: 'Agentic CRM', sub: 'Full merchant lifecycle — lead to go-live' },
   '/voice': { title: 'Voice Agent Command Center', sub: 'Real-time AI calling operations' },
-  '/onboarding': { title: 'Merchant Onboarding', sub: 'Automated KYB/KYC and document processing' },
   '/risk': { title: 'Agentic Risk Intelligence', sub: 'Transaction-based risk scoring and monitoring' },
   '/compliance': { title: 'Compliance Intelligence', sub: 'Automated regulatory monitoring' },
   '/analytics': { title: 'Agentic Portfolio Intelligence', sub: 'Cross-ISO performance analytics' },

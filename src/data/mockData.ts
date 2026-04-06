@@ -55,27 +55,36 @@ export const recentActivity: ActivityItem[] = [
 ]
 
 export const leadPipeline: Record<string, Lead[]> = {
-  'New': [
+  'Lead': [
     { name: 'Queens Auto Repair', location: 'Jamaica, NY', mcc: '7538', estVolume: '$15K/mo', aiScore: 78 },
     { name: 'Fresh Bake Cafe', location: 'Astoria, NY', mcc: '5462', estVolume: '$8K/mo', aiScore: 65 },
     { name: 'Downtown Barber', location: 'Manhattan, NY', mcc: '7241', estVolume: '$5K/mo', aiScore: 52 },
   ],
-  'Contacted': [
-    { name: 'Park Slope Yoga', location: 'Brooklyn, NY', mcc: '7941', estVolume: '$12K/mo', aiScore: 71, detail: 'Follow up Wed' },
-    { name: 'Liberty Tax', location: 'Staten Island, NY', mcc: '7216', estVolume: '$9K/mo', aiScore: 68, detail: 'Proposal sent Mar 10' },
-    { name: 'Prestige Auto Wash', location: 'Bronx, NY', mcc: '7542', estVolume: '$18K/mo', aiScore: 74, detail: 'Meeting Mar 18' },
-  ],
   'Proposal': [
+    { name: 'Park Slope Yoga', location: 'Brooklyn, NY', mcc: '7941', estVolume: '$12K/mo', aiScore: 71, detail: 'Savings: $280/mo' },
+    { name: 'Liberty Tax', location: 'Staten Island, NY', mcc: '7216', estVolume: '$9K/mo', aiScore: 68, detail: 'Rate comparison sent' },
     { name: 'Chez Antoine', location: 'Manhattan, NY', mcc: '5812', estVolume: '$22K/mo', aiScore: 82, detail: 'Savings: $340/mo' },
-    { name: 'GreenLeaf Market', location: 'Williamsburg, NY', mcc: '5411', estVolume: '$35K/mo', aiScore: 88, detail: 'Savings: $520/mo' },
   ],
-  'E-Sign Sent': [
-    { name: 'Brooklyn Dry Cleaners #2', location: 'Bay Ridge, NY', mcc: '7216', estVolume: '$11K/mo', aiScore: 76, detail: 'Opened, not signed' },
-    { name: 'Sunrise Pharmacy', location: 'Jackson Heights, NY', mcc: '5912', estVolume: '$28K/mo', aiScore: 81, detail: 'Sent Mar 14' },
+  'Application': [
+    { name: 'GreenLeaf Market', location: 'Williamsburg, NY', mcc: '5411', estVolume: '$35K/mo', aiScore: 88, detail: 'MPA received' },
+    { name: 'Brooklyn Dry Cleaners #2', location: 'Bay Ridge, NY', mcc: '7216', estVolume: '$11K/mo', aiScore: 76, detail: 'E-Sign pending' },
+    { name: 'Sunrise Pharmacy', location: 'Jackson Heights, NY', mcc: '5912', estVolume: '$28K/mo', aiScore: 81, detail: 'Docs uploading' },
   ],
   'Underwriting': [
-    { name: 'Harlem Grocery #2', location: 'Harlem, NY', mcc: '5411', estVolume: '$19K/mo', aiScore: 70, detail: 'Risk Score: Pending' },
+    { name: 'Harlem Grocery #2', location: 'Harlem, NY', mcc: '5411', estVolume: '$19K/mo', aiScore: 70, detail: 'KYB/KYC in progress' },
     { name: "King's Crown Jewelry", location: 'Manhattan, NY', mcc: '5944', estVolume: '$45K/mo', aiScore: 67, detail: 'High risk review' },
+  ],
+  'Approval': [
+    { name: "Bella's Bistro LLC", location: 'Midtown, NY', mcc: '5812', estVolume: '$32K/mo', aiScore: 72, detail: 'Auto-approved Tier 2' },
+  ],
+  'Boarding': [
+    { name: 'Prestige Auto Wash', location: 'Bronx, NY', mcc: '7542', estVolume: '$18K/mo', aiScore: 74, detail: 'MID assigned' },
+  ],
+  'Equipment': [
+    { name: 'Metro Grill', location: 'Queens, NY', mcc: '5812', estVolume: '$24K/mo', aiScore: 79, detail: 'PAX A920 shipping' },
+  ],
+  'Go-Live': [
+    { name: 'Jade Spa', location: 'Manhattan, NY', mcc: '7230', estVolume: '$16K/mo', aiScore: 83, detail: 'First batch processed' },
   ],
 }
 
