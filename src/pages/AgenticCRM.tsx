@@ -47,14 +47,14 @@ export default function AgenticCRM() {
       </div>
 
       {/* Sub-Navigation */}
-      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E5E7EB' }}>
+      <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E5E7EB', overflowX: 'auto', flexShrink: 0 }}>
         {subNavItems.map(item => (
           <button
             key={item.id}
             onClick={() => setActiveNav(item.id)}
             style={{
-              display: 'flex', alignItems: 'center', gap: 6,
-              padding: '10px 18px', fontSize: 13,
+              display: 'flex', alignItems: 'center', gap: 5, whiteSpace: 'nowrap',
+              padding: '10px 14px', fontSize: 12,
               fontWeight: activeNav === item.id ? 700 : 500,
               color: activeNav === item.id ? '#1578F7' : '#64748B',
               background: 'none', border: 'none',
