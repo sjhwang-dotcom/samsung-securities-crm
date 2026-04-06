@@ -25,7 +25,7 @@ export default function Login() {
           <p style={s.formSub}>Select your portal to continue</p>
 
           {/* Harlow Platform */}
-          <button style={s.portalCard} onClick={() => navigate('/')}
+          <button style={s.portalCard} onClick={() => navigate('/dashboard')}
             onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1578F7'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(21,120,247,0.12)' }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
           >

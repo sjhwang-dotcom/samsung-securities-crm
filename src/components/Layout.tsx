@@ -9,7 +9,7 @@ import {
 import LuminaPanel from './LuminaPanel'
 
 const navItems = [
-  { to: '/', icon: LayoutDashboard, title: 'Dashboard' },
+  { to: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
   { to: '/onboarding', icon: Rocket, title: 'Onboarding' },
   { to: '/crm', icon: ClipboardList, title: 'Agentic CRM' },
   { to: '/compliance', icon: CheckCircle, title: 'Compliance' },

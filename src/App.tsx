@@ -32,11 +32,12 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         {/* Login / Portal Selector */}
+        <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
 
         {/* Harlow Platform */}
         <Route element={<Layout />}>
-          <Route path="/" element={<Dashboard />} />
+          <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/iso" element={<ISOManagement />} />
           <Route path="/crm" element={<AgenticCRM />} />
           <Route path="/voice" element={<VoiceAgent />} />
