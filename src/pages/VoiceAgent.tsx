@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import {
-  Phone, TrendingUp, Users, DollarSign, Clock, Activity,
+  Phone, TrendingUp, Users, DollarSign, Clock,
   Radio, BarChart3, FileText, ScrollText, Settings,
   Mic, Shield, Timer, PhoneForwarded, Search,
-  ChevronDown, ChevronRight, Sparkles,
+  ChevronDown, ChevronRight, Sparkles, Brain,
+  Target, ArrowUpRight, Award,
 } from 'lucide-react'
 import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -24,19 +25,12 @@ const subNavItems: { id: SubNav; label: string; icon: typeof Radio }[] = [
   { id: 'settings', label: 'Settings', icon: Settings },
 ]
 
-const statusDot: Record<string, string> = {
-  'In Progress': '#10B981',
-  'Ringing': '#3B82F6',
-  'Transferred': '#1578F7',
-  'Completed': '#CBD5E1',
-  'No Answer': '#E2E8F0',
-}
-const statusTextColor: Record<string, string> = {
-  'In Progress': '#10B981',
-  'Ringing': '#3B82F6',
-  'Transferred': '#1578F7',
-  'Completed': '#94A3B8',
-  'No Answer': '#CBD5E1',
+const statusColor: Record<string, { bg: string; text: string; border: string }> = {
+  'In Progress': { bg: '#ECFDF5', text: '#059669', border: '#A7F3D0' },
+  'Ringing': { bg: '#EFF6FF', text: '#2563EB', border: '#BFDBFE' },
+  'Transferred': { bg: '#EFF6FF', text: '#1578F7', border: '#93C5FD' },
+  'Completed': { bg: '#F8FAFC', text: '#64748B', border: '#E2E8F0' },
+  'No Answer': { bg: '#F8FAFC', text: '#94A3B8', border: '#E2E8F0' },
 }
 const sentimentStyle: Record<string, { color: string; bg: string }> = {
   'Positive': { color: '#059669', bg: '#D1FAE5' },
@@ -46,6 +40,14 @@ const sentimentStyle: Record<string, { color: string; bg: string }> = {
 
 const tooltipStyle = { borderRadius: 10, fontSize: 11, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }
 
+/* ── call stage helpers ── */
+const STAGES = ['Greeting', 'Pitch', 'Objection', 'Close', 'Transfer'] as const
+function stageProgress(stage: string): number {
+  const idx = STAGES.indexOf(stage as typeof STAGES[number])
+  return idx < 0 ? 0 : ((idx + 1) / STAGES.length) * 100
+}
+const stageColor = (pct: number) => pct >= 80 ? '#10B981' : pct >= 60 ? '#1578F7' : pct >= 40 ? '#F59E0B' : '#94A3B8'
+
 /* ── mock data for Performance tab ── */
 const dailyVolumeData = Array.from({ length: 30 }, (_, i) => ({
   day: `Mar ${i + 1}`,
@@ -53,21 +55,25 @@ const dailyVolumeData = Array.from({ length: 30 }, (_, i) => ({
   transfers: Math.round(80 + Math.random() * 60 + (i > 15 ? 20 : 0)),
 }))
 
-const transferTrendData = Array.from({ length: 30 }, (_, i) => ({
-  day: `Mar ${i + 1}`,
-  rate: +(12 + Math.random() * 6 + i * 0.1).toFixed(1),
-}))
-
-const outcomeOverTimeData = [
-  { week: 'W1', transferred: 28, callback: 18, voicemail: 22, noAnswer: 20, declined: 12 },
-  { week: 'W2', transferred: 31, callback: 16, voicemail: 20, noAnswer: 19, declined: 14 },
-  { week: 'W3', transferred: 34, callback: 17, voicemail: 19, noAnswer: 18, declined: 12 },
-  { week: 'W4', transferred: 37, callback: 19, voicemail: 17, noAnswer: 16, declined: 11 },
-]
-
 const costComparisonData = [
   { label: 'Human Team', monthly: 500000, perTransfer: 16.67 },
   { label: 'AI Voice Agent', monthly: 1270, perTransfer: 0.33 },
+]
+
+const mccPerformanceData = [
+  { mcc: '5812 - Restaurants', calls: 8420, transferRate: 17.2, winRate: 41.2 },
+  { mcc: '5999 - Gen. Retail', calls: 5890, transferRate: 14.8, winRate: 38.7 },
+  { mcc: '5411 - Grocery', calls: 3850, transferRate: 13.1, winRate: 35.4 },
+  { mcc: '7542 - Car Wash', calls: 2640, transferRate: 11.9, winRate: 31.8 },
+  { mcc: '5541 - Gas Stations', calls: 2420, transferRate: 10.6, winRate: 27.3 },
+]
+
+const transferFunnelData = [
+  { stage: 'Dialed', value: 24812, pct: 100, color: '#94A3B8' },
+  { stage: 'Connected', value: 18240, pct: 73.5, color: '#1578F7' },
+  { stage: 'Engaged', value: 9860, pct: 39.7, color: '#0891B2' },
+  { stage: 'Qualified', value: 5420, pct: 21.8, color: '#F59E0B' },
+  { stage: 'Transferred', value: 3747, pct: 15.1, color: '#10B981' },
 ]
 
 /* ── mock data for Scripts tab ── */
@@ -86,6 +92,13 @@ const scriptsData: ScriptEntry[] = [
   { name: 'Seasonal Rate Lock', industry: '5813 - Bars/Nightclubs', winRate: 24.1, callsUsed: 580, avgDuration: '2m 15s', lastUpdated: 'Mar 22', recommended: false, script: 'With the busy season coming up, we\'re offering a rate lock guarantee so your processing costs stay flat even as volume increases. Most processors raise rates with volume. Interested?' },
 ]
 
+/* ── Script win rate bar chart data ── */
+const scriptBarData = scriptsData.map(s => ({
+  name: s.name.length > 20 ? s.name.slice(0, 18) + '...' : s.name,
+  winRate: s.winRate,
+  fill: s.winRate >= 35 ? '#10B981' : s.winRate >= 28 ? '#F59E0B' : '#94A3B8',
+})).sort((a, b) => b.winRate - a.winRate)
+
 /* ── mock data for Call Log tab ── */
 interface CallLogEntry {
   date: string; business: string; phone: string; duration: string; stage: string; outcome: string; sentiment: string; cost: string
@@ -101,7 +114,6 @@ const callLogData: CallLogEntry[] = voiceCalls.map((c, i) => ({
   cost: `$${(0.02 + Math.random() * 0.08).toFixed(2)}`,
 }))
 
-// pad call log to have enough for pagination demo
 const extendedCallLog: CallLogEntry[] = [
   ...callLogData,
   ...Array.from({ length: 40 }, (_, i) => ({
@@ -125,12 +137,27 @@ const settingsConfig = {
   compliance: { tcpa: true, dncList: true, dncLastSync: 'Apr 6, 2026', callRecording: true, consentMessage: 'Enabled', stateRestrictions: 'Auto-enforced (47 states)' },
 }
 
+/* ── pulsing dot keyframe (injected once) ── */
+const pulseCSS = `
+@keyframes harlowPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.4); }
+}
+@keyframes harlowWave {
+  0% { transform: scaleY(0.4); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.4); }
+}
+`
+
 /* ── main component ── */
 export default function VoiceAgent() {
   const [activeNav, setActiveNav] = useState<SubNav>('live')
 
   return (
     <div className="dashboard-grid">
+      <style>{pulseCSS}</style>
+
       {/* Sub-Navigation */}
       <div style={{ display: 'flex', gap: 0, borderBottom: '1px solid #E5E7EB', overflowX: 'auto', flexShrink: 0 }}>
         {subNavItems.map(item => (
@@ -168,39 +195,111 @@ export default function VoiceAgent() {
 function LiveCallsView() {
   return (
     <>
-      {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 12 }}>
-        <KpiCard icon={Users} label="Active Calls" value="47" color="teal" />
-        <KpiCard icon={Phone} label="Calls Today" value="847" color="indigo" trend="12%" trendDirection="up" trendPositive />
-        <KpiCard icon={PhoneForwarded} label="Transfer Rate" value="15.1%" color="emerald" trend="0.3%" trendDirection="up" trendPositive />
-        <KpiCard icon={Clock} label="Avg Duration" value="2m 34s" color="amber" />
-        <KpiCard icon={DollarSign} label="Cost Today" value="$42.35" color="teal" />
-        <KpiCard icon={Activity} label="AI Sentiment" value="74.2" color="indigo" trend="2.1" trendDirection="up" trendPositive />
+      {/* Hero Banner */}
+      <div style={{
+        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 60%, #0F172A 100%)',
+        borderRadius: 14, padding: '22px 28px',
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        boxShadow: '0 4px 24px rgba(0,0,0,0.12)',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+          <div style={{
+            width: 12, height: 12, borderRadius: '50%', background: '#10B981',
+            animation: 'harlowPulse 2s ease-in-out infinite',
+            boxShadow: '0 0 8px rgba(16,185,129,0.6)',
+          }} />
+          <div>
+            <div style={{ fontSize: 18, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+              Voice Agent Command Center
+            </div>
+            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.5)', fontWeight: 500, marginTop: 2 }}>
+              Real-time AI dialer operations
+            </div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 32 }}>
+          {[
+            { label: 'Active Calls', val: '47', color: '#10B981' },
+            { label: 'Today', val: '847', color: '#1578F7' },
+            { label: 'Transfer Rate', val: '15.1%', color: '#F59E0B' },
+          ].map(m => (
+            <div key={m.label} style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 24, fontWeight: 800, color: m.color, letterSpacing: '-0.03em' }}>{m.val}</div>
+              <div style={{ fontSize: 10, color: 'rgba(255,255,255,0.45)', fontWeight: 600, textTransform: 'uppercase', letterSpacing: '0.08em' }}>{m.label}</div>
+            </div>
+          ))}
+        </div>
       </div>
 
-      {/* Live Feed + Hourly Performance */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      {/* KPI Row - 4 cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
+        <KpiCard icon={Users} label="Active Now" value="47" color="emerald" sub="of 50 max" />
+        <KpiCard icon={Phone} label="Calls Today" value="847" color="indigo" trend="12%" trendDirection="up" trendPositive />
+        <KpiCard icon={PhoneForwarded} label="Transfers" value="128" color="blue" trend="15.1% rate" trendDirection="up" trendPositive />
+        <KpiCard icon={DollarSign} label="Cost / Transfer" value="$0.33" color="teal" trend="$0.02" trendDirection="down" trendPositive />
+      </div>
+
+      {/* Live Feed + Hourly Performance (1fr vs 2fr) */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: 16 }}>
         <Card noPadding>
-          <CardHeader title="Live Call Feed" />
-          <div style={{ padding: '0 18px 18px', maxHeight: 360, overflowY: 'auto' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {voiceCalls.map((call, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 14, borderRadius: 10, border: '1px solid #F1F5F9' }}>
-                  <div style={{ width: 10, height: 10, borderRadius: '50%', flexShrink: 0, background: statusDot[call.status] || '#CBD5E1' }} />
-                  <div style={{ flex: 1, minWidth: 0 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{call.merchant}</span>
-                      <span style={{ fontSize: 10, color: '#CBD5E1', fontFamily: 'monospace' }}>{call.phone}</span>
+          <CardHeader title="Live Call Feed" badge={
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 4, fontSize: 10, fontWeight: 700, color: '#10B981', background: '#ECFDF5', padding: '2px 8px', borderRadius: 6 }}>
+              <span style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981', animation: 'harlowPulse 2s ease-in-out infinite' }} />
+              LIVE
+            </span>
+          } />
+          <div style={{ padding: '0 18px 18px', maxHeight: 400, overflowY: 'auto' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+              {voiceCalls.map((call, i) => {
+                const sc = statusColor[call.status] || statusColor['Completed']
+                const pct = stageProgress(call.stage)
+                return (
+                  <div key={i} style={{ padding: '10px 12px', borderRadius: 10, border: '1px solid #F1F5F9', transition: 'border-color 0.15s', position: 'relative' }}>
+                    {/* Waveform hint for active calls */}
+                    {call.status === 'In Progress' && (
+                      <div style={{ position: 'absolute', top: 10, right: 12, display: 'flex', gap: 2, alignItems: 'flex-end', height: 14 }}>
+                        {[0, 0.15, 0.3, 0.45, 0.6].map((d, j) => (
+                          <div key={j} style={{
+                            width: 2, borderRadius: 1, background: '#10B981', opacity: 0.5,
+                            animation: `harlowWave 0.8s ease-in-out ${d}s infinite`,
+                            height: [6, 10, 14, 10, 6][j],
+                          }} />
+                        ))}
+                      </div>
+                    )}
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>{call.merchant}</span>
+                      <span style={{ fontSize: 9, color: '#CBD5E1', fontFamily: 'monospace' }}>{call.phone}</span>
                     </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, fontSize: 12, marginTop: 4, fontWeight: 500 }}>
-                      <span style={{ color: statusTextColor[call.status] || '#94A3B8' }}>{call.status}</span>
-                      <span style={{ color: '#CBD5E1' }}>{call.duration}</span>
-                      <span style={{ color: '#94A3B8' }}>{call.stage}</span>
+
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                      {/* Status pill badge */}
+                      <span style={{
+                        fontSize: 9, fontWeight: 700, padding: '2px 7px', borderRadius: 6,
+                        background: sc.bg, color: sc.text, border: `1px solid ${sc.border}`,
+                      }}>
+                        {call.status}
+                      </span>
+                      <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500 }}>{call.duration}</span>
+                      <span style={{
+                        fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4,
+                        ...(sentimentStyle[call.sentiment] || sentimentStyle.Neutral),
+                      }}>
+                        {call.sentiment}
+                      </span>
+                    </div>
+
+                    {/* Stage progress bar */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                      <div style={{ flex: 1, height: 4, borderRadius: 2, background: '#F1F5F9', overflow: 'hidden' }}>
+                        <div style={{ height: '100%', borderRadius: 2, background: stageColor(pct), width: `${pct}%`, transition: 'width 0.3s ease' }} />
+                      </div>
+                      <span style={{ fontSize: 9, color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>{call.stage}</span>
                     </div>
                   </div>
-                  <span style={{ fontSize: 9, fontWeight: 700, padding: '2px 6px', borderRadius: 4, ...(sentimentStyle[call.sentiment] || sentimentStyle.Neutral), background: (sentimentStyle[call.sentiment] || sentimentStyle.Neutral).bg, color: (sentimentStyle[call.sentiment] || sentimentStyle.Neutral).color }}>{call.sentiment}</span>
-                </div>
-              ))}
+                )
+              })}
             </div>
           </div>
         </Card>
@@ -208,7 +307,7 @@ function LiveCallsView() {
         <Card noPadding>
           <CardHeader title="Hourly Performance" />
           <div style={{ padding: '0 18px 18px' }}>
-            <ResponsiveContainer width="100%" height={360}>
+            <ResponsiveContainer width="100%" height={400}>
               <ComposedChart data={voiceHourlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis dataKey="hour" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
@@ -223,17 +322,22 @@ function LiveCallsView() {
         </Card>
       </div>
 
-      {/* Self-Improvement + Outcome */}
+      {/* AI Learning Feed + Call Outcome */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
         <Card noPadding>
-          <CardHeader title="Self-Improvement Log" />
+          <CardHeader title="AI Learning Feed" badge={
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 9, fontWeight: 700, color: '#7C3AED', background: '#EDE9FE', padding: '2px 7px', borderRadius: 5 }}>
+              <Brain size={10} /> Auto-Evolving
+            </span>
+          } />
           <div style={{ padding: '0 18px 18px' }}>
             <ActivityFeed
               items={[
-                { text: 'Opener v12 deployed -- added empathy phrase for restaurant owners', time: 'Today', dot: 'amber' },
-                { text: 'Pricing objection handler refined -- success rate 34% -> 41%', time: 'Yesterday', dot: 'amber' },
-                { text: "Gatekeeper bypass: 'calling about your account' outperforming by 12%", time: 'Mar 12', dot: 'amber' },
-                { text: 'Morning calls to restaurants shifted to 2-3pm -- owner availability +28%', time: 'Mar 10', dot: 'amber' },
+                { text: <span><strong>Opener v12</strong> deployed: empathy phrase added for restaurants. Transfer rate <span style={{ color: '#10B981', fontWeight: 700 }}>+3.2%</span></span>, time: 'Today', dot: 'purple' },
+                { text: <span><strong>Objection handler</strong> refined: pricing rebuttals improved. Win rate <span style={{ color: '#10B981', fontWeight: 700 }}>34% to 41%</span></span>, time: 'Yesterday', dot: 'green' },
+                { text: <span><strong>Gatekeeper bypass</strong>: new phrase outperforming control by <span style={{ color: '#10B981', fontWeight: 700 }}>12%</span>. Deployed to all scripts.</span>, time: 'Mar 12', dot: 'blue' },
+                { text: <span><strong>Time optimization</strong>: restaurant calls shifted to 2-3 PM. Owner pickup rate <span style={{ color: '#10B981', fontWeight: 700 }}>+28%</span></span>, time: 'Mar 10', dot: 'amber' },
+                { text: <span><strong>Sentiment model</strong> retrained on 12K calls. Detection accuracy <span style={{ color: '#10B981', fontWeight: 700 }}>89.4%</span></span>, time: 'Mar 8', dot: 'purple' },
               ]}
             />
           </div>
@@ -242,13 +346,20 @@ function LiveCallsView() {
         <Card noPadding>
           <CardHeader title="Call Outcome Analysis" />
           <div style={{ padding: '0 18px 18px' }}>
-            <ResponsiveContainer width="100%" height={240}>
+            <ResponsiveContainer width="100%" height={260}>
               <PieChart>
-                <Pie data={callOutcomeData} innerRadius={55} outerRadius={85} paddingAngle={3} dataKey="value" strokeWidth={0}>
+                <Pie data={callOutcomeData} innerRadius={60} outerRadius={90} paddingAngle={3} dataKey="value" strokeWidth={0}>
                   {callOutcomeData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                 </Pie>
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, fontWeight: 500 }} />
+                {/* Center label */}
+                <text x="50%" y="46%" textAnchor="middle" dominantBaseline="central" style={{ fontSize: 22, fontWeight: 800, fill: '#0F172A' }}>
+                  847
+                </text>
+                <text x="50%" y="56%" textAnchor="middle" dominantBaseline="central" style={{ fontSize: 10, fontWeight: 600, fill: '#94A3B8' }}>
+                  total calls
+                </text>
               </PieChart>
             </ResponsiveContainer>
           </div>
@@ -270,74 +381,72 @@ function PerformanceView() {
         <KpiCard icon={PhoneForwarded} label="Transfer Success" value="15.1%" color="emerald" trend="1.2%" trendDirection="up" trendPositive />
         <KpiCard icon={Phone} label="Callback Rate" value="8.3%" color="amber" trend="0.5%" trendDirection="up" trendPositive />
         <KpiCard icon={DollarSign} label="Avg Cost/Transfer" value="$0.33" color="teal" trend="$0.02" trendDirection="down" trendPositive />
-        <KpiCard icon={Clock} label="Best Hour" value="2-3 PM" color="indigo" />
+        <KpiCard icon={Clock} label="Best Hour" value="2-3 PM" color="indigo" sub="17.2% xfer rate" />
         <KpiCard icon={TrendingUp} label="Total Savings" value="$498K" color="emerald" trend="vs Human" trendDirection="up" trendPositive />
       </div>
 
-      {/* Daily Volume + Transfer Rate Trend */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+      {/* Full-width daily volume */}
+      <Card noPadding>
+        <CardHeader title="Daily Call Volume (30 Days)" subtitle="Calls and transfers overlaid" />
+        <div style={{ padding: '0 18px 18px' }}>
+          <ResponsiveContainer width="100%" height={280}>
+            <AreaChart data={dailyVolumeData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
+              <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={4} />
+              <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} />
+              <Area type="monotone" dataKey="calls" stroke="#1578F7" fill="#1578F7" fillOpacity={0.1} strokeWidth={2} name="Calls" />
+              <Area type="monotone" dataKey="transfers" stroke="#10B981" fill="#10B981" fillOpacity={0.08} strokeWidth={2} name="Transfers" />
+            </AreaChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* 3-column: Transfer Funnel | Cost Savings | MCC Performance */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1.5fr', gap: 16 }}>
+        {/* Transfer Funnel (vertical) */}
         <Card noPadding>
-          <CardHeader title="Daily Call Volume (30 Days)" />
+          <CardHeader title="Transfer Funnel" />
           <div style={{ padding: '0 18px 18px' }}>
-            <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={dailyVolumeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Area type="monotone" dataKey="calls" stroke="#1578F7" fill="#1578F7" fillOpacity={0.1} strokeWidth={2} name="Calls" />
-                <Area type="monotone" dataKey="transfers" stroke="#10B981" fill="#10B981" fillOpacity={0.08} strokeWidth={2} name="Transfers" />
-              </AreaChart>
-            </ResponsiveContainer>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {transferFunnelData.map((step, i) => (
+                <div key={step.stage}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '8px 0' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <div style={{ width: 8, height: 8, borderRadius: '50%', background: step.color }} />
+                      <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>{step.stage}</span>
+                    </div>
+                    <div style={{ textAlign: 'right' }}>
+                      <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{step.value.toLocaleString()}</span>
+                      <span style={{ fontSize: 10, color: '#94A3B8', marginLeft: 4, fontWeight: 500 }}>{step.pct}%</span>
+                    </div>
+                  </div>
+                  {/* Funnel bar */}
+                  <div style={{ height: 6, borderRadius: 3, background: '#F1F5F9', overflow: 'hidden', marginBottom: i < transferFunnelData.length - 1 ? 0 : 0 }}>
+                    <div style={{ height: '100%', borderRadius: 3, background: step.color, width: `${step.pct}%`, transition: 'width 0.5s ease' }} />
+                  </div>
+                  {/* Connector line */}
+                  {i < transferFunnelData.length - 1 && (
+                    <div style={{ display: 'flex', justifyContent: 'center', padding: '2px 0' }}>
+                      <div style={{ width: 1, height: 10, background: '#E2E8F0' }} />
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         </Card>
 
+        {/* Cost Savings Gauge */}
         <Card noPadding>
-          <CardHeader title="Transfer Rate Trend" />
+          <CardHeader title="Cost Savings" />
           <div style={{ padding: '0 18px 18px' }}>
-            <ResponsiveContainer width="100%" height={280}>
-              <AreaChart data={transferTrendData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="day" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} interval={4} />
-                <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
-                <Area type="monotone" dataKey="rate" stroke="#10B981" fill="#10B981" fillOpacity={0.1} strokeWidth={2.5} name="Transfer Rate" />
-              </AreaChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-      </div>
-
-      {/* Outcome Over Time + Cost Comparison */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
-        <Card noPadding>
-          <CardHeader title="Outcome Distribution Over Time" />
-          <div style={{ padding: '0 18px 18px' }}>
-            <ResponsiveContainer width="100%" height={280}>
-              <BarChart data={outcomeOverTimeData}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="week" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} />
-                <Tooltip contentStyle={tooltipStyle} />
-                <Bar dataKey="transferred" stackId="a" fill="#10B981" name="Transferred" radius={[0, 0, 0, 0]} />
-                <Bar dataKey="callback" stackId="a" fill="#1578F7" name="Callback" />
-                <Bar dataKey="voicemail" stackId="a" fill="#F59E0B" name="Voicemail" />
-                <Bar dataKey="noAnswer" stackId="a" fill="#CBD5E1" name="No Answer" />
-                <Bar dataKey="declined" stackId="a" fill="#F43F5E" name="Declined" radius={[4, 4, 0, 0]} />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </Card>
-
-        <Card noPadding>
-          <CardHeader title="Agent vs Human Cost Comparison" />
-          <div style={{ padding: '0 18px 18px' }}>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 16, marginTop: 8 }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {costComparisonData.map(item => (
-                <div key={item.label} style={{ padding: 16, borderRadius: 10, border: '1px solid #F1F5F9' }}>
+                <div key={item.label} style={{ padding: 14, borderRadius: 10, border: '1px solid #F1F5F9' }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{item.label}</span>
-                    <span style={{ fontSize: 11, fontWeight: 600, color: item.label === 'AI Voice Agent' ? '#10B981' : '#F43F5E' }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{item.label}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: item.label === 'AI Voice Agent' ? '#10B981' : '#F43F5E' }}>
                       ${item.monthly.toLocaleString()}/mo
                     </span>
                   </div>
@@ -349,19 +458,61 @@ function PerformanceView() {
                       minWidth: 4,
                     }} />
                   </div>
-                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 6, fontWeight: 500 }}>
+                  <div style={{ fontSize: 10, color: '#94A3B8', marginTop: 4, fontWeight: 500 }}>
                     ${item.perTransfer}/transfer
                   </div>
                 </div>
               ))}
+
+              {/* Large savings callout */}
               <div style={{
-                background: 'linear-gradient(135deg, #609FFF, #1578F7)', borderRadius: 10,
-                padding: 20, textAlign: 'center', color: 'white',
+                background: 'linear-gradient(135deg, #059669 0%, #10B981 100%)', borderRadius: 12,
+                padding: '20px 16px', textAlign: 'center', color: 'white',
+                boxShadow: '0 4px 16px rgba(16,185,129,0.25)',
               }}>
-                <div style={{ fontSize: 10, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.7)', marginBottom: 6 }}>Annual Savings</div>
-                <div style={{ fontSize: 32, fontWeight: 800, letterSpacing: '-0.03em' }}>$5.98M</div>
-                <div style={{ fontSize: 12, marginTop: 2, color: 'rgba(255,255,255,0.7)', fontWeight: 500 }}>$498,730/month saved</div>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, marginBottom: 6 }}>
+                  <ArrowUpRight size={14} strokeWidth={3} />
+                  <span style={{ fontSize: 9, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.15em', color: 'rgba(255,255,255,0.8)' }}>Annual Savings</span>
+                </div>
+                <div style={{ fontSize: 36, fontWeight: 900, letterSpacing: '-0.04em', lineHeight: 1 }}>$5.98M</div>
+                <div style={{ fontSize: 11, marginTop: 6, color: 'rgba(255,255,255,0.7)', fontWeight: 600 }}>
+                  99.7% cost reduction vs. human team
+                </div>
               </div>
+            </div>
+          </div>
+        </Card>
+
+        {/* MCC Performance Table */}
+        <Card noPadding>
+          <CardHeader title="MCC Performance" />
+          <div style={{ padding: '0 18px 18px' }}>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {/* Table header */}
+              <div style={{
+                display: 'grid', gridTemplateColumns: '1.5fr 0.7fr 0.8fr 0.8fr',
+                gap: 8, padding: '8px 10px', borderBottom: '1px solid #E5E7EB',
+                fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.04em',
+              }}>
+                <span>MCC</span>
+                <span style={{ textAlign: 'right' }}>Calls</span>
+                <span style={{ textAlign: 'right' }}>Xfer Rate</span>
+                <span style={{ textAlign: 'right' }}>Win Rate</span>
+              </div>
+              {mccPerformanceData.map(row => (
+                <div key={row.mcc} style={{
+                  display: 'grid', gridTemplateColumns: '1.5fr 0.7fr 0.8fr 0.8fr',
+                  gap: 8, padding: '10px 10px', borderBottom: '1px solid #F8FAFC',
+                  alignItems: 'center',
+                }}>
+                  <span style={{ fontSize: 12, fontWeight: 600, color: '#334155' }}>{row.mcc}</span>
+                  <span style={{ fontSize: 12, color: '#64748B', textAlign: 'right', fontWeight: 500 }}>{row.calls.toLocaleString()}</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: '#1578F7', textAlign: 'right' }}>{row.transferRate}%</span>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: row.winRate >= 35 ? '#10B981' : row.winRate >= 28 ? '#F59E0B' : '#94A3B8', textAlign: 'right' }}>
+                    {row.winRate}%
+                  </span>
+                </div>
+              ))}
             </div>
           </div>
         </Card>
@@ -376,8 +527,38 @@ function PerformanceView() {
 function ScriptsView() {
   const [expandedScript, setExpandedScript] = useState<string | null>(null)
 
+  const totalScripts = scriptsData.length
+  const avgWinRate = (scriptsData.reduce((s, x) => s + x.winRate, 0) / totalScripts).toFixed(1)
+  const bestScript = scriptsData.reduce((best, x) => x.winRate > best.winRate ? x : best, scriptsData[0])
+
   return (
     <>
+      {/* Script KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <KpiCard icon={FileText} label="Total Scripts" value={String(totalScripts)} color="indigo" />
+        <KpiCard icon={Target} label="Avg Win Rate" value={`${avgWinRate}%`} color="amber" />
+        <KpiCard icon={Award} label="Best Performer" value={bestScript.name.split(' ').slice(0, 2).join(' ')} color="emerald" sub={`${bestScript.winRate}% win rate`} />
+      </div>
+
+      {/* Win Rate Bar Chart */}
+      <Card noPadding>
+        <CardHeader title="Win Rate by Script" />
+        <div style={{ padding: '0 18px 18px' }}>
+          <ResponsiveContainer width="100%" height={220}>
+            <BarChart data={scriptBarData} layout="vertical" margin={{ left: 10, right: 20 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" horizontal={false} />
+              <XAxis type="number" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} domain={[0, 50]} />
+              <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#64748B', fontWeight: 500 }} axisLine={false} tickLine={false} width={130} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `${v}%`} />
+              <Bar dataKey="winRate" radius={[0, 4, 4, 0]} name="Win Rate" barSize={14}>
+                {scriptBarData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+      </Card>
+
+      {/* Scripts Table */}
       <Card noPadding>
         <CardHeader title="Opening Scripts Library" />
         <div style={{ padding: '0 18px 18px' }}>
@@ -419,7 +600,7 @@ function ScriptsView() {
                           fontSize: 9, fontWeight: 700, color: '#1578F7', background: '#EFF6FF',
                           padding: '2px 6px', borderRadius: 4,
                         }}>
-                          <Sparkles size={10} /> AI Recommended
+                          <Sparkles size={10} /> Top
                         </span>
                       )}
                     </span>
@@ -473,6 +654,15 @@ function CallLogView() {
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageData = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
+  // Summary stats
+  const totalLogged = extendedCallLog.length
+  const avgDurationMins = extendedCallLog.reduce((sum, r) => {
+    const parts = r.duration.split(':')
+    return sum + (parseInt(parts[0] || '0') * 60 + parseInt(parts[1] || '0'))
+  }, 0) / totalLogged
+  const avgDurationStr = `${Math.floor(avgDurationMins / 60)}:${String(Math.round(avgDurationMins % 60)).padStart(2, '0')}`
+  const avgCost = (extendedCallLog.reduce((sum, r) => sum + parseFloat(r.cost.replace('$', '')), 0) / totalLogged).toFixed(2)
+
   const columns: Column<CallLogEntry>[] = [
     { key: 'date', header: 'Date/Time', width: '140px' },
     { key: 'business', header: 'Business', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.business}</span> },
@@ -498,6 +688,13 @@ function CallLogView() {
 
   return (
     <>
+      {/* Summary KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+        <KpiCard icon={ScrollText} label="Total Logged" value={String(totalLogged)} color="indigo" />
+        <KpiCard icon={Clock} label="Avg Duration" value={avgDurationStr} color="amber" />
+        <KpiCard icon={DollarSign} label="Avg Cost" value={`$${avgCost}`} color="teal" />
+      </div>
+
       {/* Filters */}
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <div style={{ position: 'relative' }}>
