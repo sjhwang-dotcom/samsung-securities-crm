@@ -397,9 +397,15 @@ function PipelineView() {
   )
 }
 
-/* ═══ Applications (from MerchantOnboarding list) ═══ */
+/* ═══ Applications ═══ */
 function ApplicationsView({ onSelectApp }: { onSelectApp: (merchant: string) => void }) {
   type AppRow = { merchant: string; bank: string; submitted: string; stage: string; riskScore: number | null; riskLabel: string; status: string; assigned: string }
+  const apps = onboardingApps as unknown as AppRow[]
+
+  const inProgress = apps.filter(a => a.status === 'In Progress').length
+  const inReview = apps.filter(a => a.status === 'In Review').length
+  const needsDocs = apps.filter(a => a.status.includes('Needs') || a.status.includes('Awaiting')).length
+  const avgRisk = Math.round(apps.filter(a => a.riskScore).reduce((s, a) => s + (a.riskScore ?? 0), 0) / Math.max(apps.filter(a => a.riskScore).length, 1))
 
   const riskVariant = (label: string) => label === 'Low Risk' ? 'emerald' as const : label === 'Medium' ? 'amber' as const : label === 'High Risk' ? 'rose' as const : 'gray' as const
   const statusVariant = (s: string) => s === 'In Progress' ? 'blue' as const : s === 'In Review' ? 'indigo' as const : s.includes('Needs') ? 'rose' as const : 'amber' as const
@@ -417,19 +423,80 @@ function ApplicationsView({ onSelectApp }: { onSelectApp: (merchant: string) => 
     { key: '', header: '', render: () => <ChevronRight size={14} style={{ color: '#94A3B8' }} /> },
   ]
 
+  // Stage breakdown for mini bar
+  const stageBreakdown = [
+    { stage: 'E-Sign', count: apps.filter(a => a.stage.includes('Sign')).length, color: '#3B82F6' },
+    { stage: 'KYB/KYC', count: apps.filter(a => a.stage.includes('KYB') || a.stage.includes('KYC')).length, color: '#8B5CF6' },
+    { stage: 'UW Review', count: apps.filter(a => a.stage.includes('Underwriting') || a.stage.includes('Review')).length, color: '#F59E0B' },
+    { stage: 'High Risk', count: apps.filter(a => a.stage.includes('High')).length, color: '#F43F5E' },
+  ]
+
   return (
     <div className="dashboard-grid">
-      <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
-        <button style={{
-          display: 'flex', alignItems: 'center', gap: 6, fontSize: 13,
-          background: 'linear-gradient(to right, #609FFF, #1578F7)',
-          color: 'white', borderRadius: 8, padding: '8px 16px', fontWeight: 600, border: 'none', cursor: 'pointer',
-        }}>
-          <Plus size={16} /> New Application
-        </button>
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+        {[
+          { label: 'Total Applications', value: apps.length, color: '#1578F7' },
+          { label: 'In Progress', value: inProgress, color: '#3B82F6' },
+          { label: 'In Review', value: inReview, color: '#4F46E5' },
+          { label: 'Needs Action', value: needsDocs, color: '#F43F5E' },
+          { label: 'Avg Risk Score', value: avgRisk, color: avgRisk >= 60 ? '#10B981' : '#F59E0B' },
+        ].map(kpi => (
+          <div key={kpi.label} className="kpi-card">
+            <div className="kpi-label">{kpi.label}</div>
+            <div className="kpi-value" style={{ fontSize: 22, color: kpi.color }}>{kpi.value}</div>
+          </div>
+        ))}
       </div>
+
+      {/* Stage breakdown + SLA */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <Card noPadding>
+          <CardHeader title="Applications by Stage" />
+          <div style={{ padding: '0 16px 16px' }}>
+            {stageBreakdown.map(s => (
+              <div key={s.stage} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
+                <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, width: 80 }}>{s.stage}</span>
+                <div style={{ flex: 1, height: 8, background: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
+                  <div style={{ width: `${(s.count / Math.max(apps.length, 1)) * 100}%`, height: '100%', background: s.color, borderRadius: 4, minWidth: s.count > 0 ? 8 : 0 }} />
+                </div>
+                <span style={{ fontSize: 12, fontWeight: 700, color: '#334155', width: 20, textAlign: 'right' }}>{s.count}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card noPadding>
+          <CardHeader title="Processing SLA" />
+          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              { label: 'Avg Processing Time', value: '3.2 hours', target: '4h SLA', ok: true },
+              { label: 'Auto-Approval Rate', value: '42%', target: 'AI-qualified', ok: true },
+              { label: 'Docs Pending', value: `${needsDocs}`, target: 'needs upload', ok: needsDocs === 0 },
+              { label: 'Oldest Open App', value: '6 days', target: '< 7d target', ok: true },
+            ].map(item => (
+              <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{item.label}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{item.value}</span>
+                  <span style={{ fontSize: 10, color: item.ok ? '#059669' : '#EF4444', fontWeight: 500 }}>{item.target}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Application table */}
       <Card noPadding>
-        <DataTable columns={columns} data={onboardingApps as unknown as AppRow[]} hoverable onRowClick={(row) => onSelectApp(row.merchant)} />
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>All Applications</span>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6, fontSize: 12,
+            background: 'linear-gradient(to right, #609FFF, #1578F7)',
+            color: 'white', borderRadius: 8, padding: '7px 14px', fontWeight: 600, border: 'none', cursor: 'pointer',
+          }}><Plus size={14} /> New Application</button>
+        </div>
+        <DataTable columns={columns} data={apps} hoverable onRowClick={(row) => onSelectApp(row.merchant)} />
       </Card>
     </div>
   )
@@ -584,6 +651,12 @@ function UnderwritingView({ selectedApp, onBack }: { selectedApp: string | null;
 function MerchantsView() {
   type MerchantRow = { name: string; mid: string; processor: string; equipment: string; monthlyVol: string; pciStatus: string; status: string }
 
+  const active = merchants.filter(m => m.status === 'Active').length
+  const boarding = merchants.filter(m => m.status === 'Boarding').length
+  const inactive = merchants.filter(m => m.status === 'Inactive').length
+  const compliant = merchants.filter(m => m.pciStatus === 'Compliant').length
+  const totalVol = merchants.reduce((s, m) => s + parseFloat(m.monthlyVol.replace(/[$,K]/g, '') || '0') * (m.monthlyVol.includes('K') ? 1000 : 1), 0)
+
   const pciVariant = (s: string) => s === 'Compliant' ? 'emerald' as const : s === 'Non-Compliant' ? 'rose' as const : 'gray' as const
   const statusVariant = (s: string) => s === 'Active' ? 'emerald' as const : s === 'Boarding' ? 'blue' as const : 'gray' as const
 
@@ -593,26 +666,99 @@ function MerchantsView() {
     { key: 'processor', header: 'Processor' },
     { key: 'equipment', header: 'Equipment' },
     { key: 'monthlyVol', header: 'Monthly Vol', render: (r) => <span style={{ fontWeight: 700, color: '#1E293B' }}>{r.monthlyVol}</span> },
-    { key: 'pciStatus', header: 'PCI Status', render: (r) => <StatusBadge variant={pciVariant(r.pciStatus)}>{r.pciStatus}</StatusBadge> },
+    { key: 'pciStatus', header: 'PCI', render: (r) => <StatusBadge variant={pciVariant(r.pciStatus)}>{r.pciStatus}</StatusBadge> },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={statusVariant(r.status)}>{r.status}</StatusBadge> },
   ]
 
+  // Processor breakdown
+  const procBreakdown: Record<string, number> = {}
+  merchants.forEach(m => { procBreakdown[m.processor] = (procBreakdown[m.processor] || 0) + 1 })
+
   return (
-    <Card noPadding>
-      <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid #F1F5F9' }}>
-        <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '8px 12px', fontWeight: 600, color: '#475569', outline: 'none' }}>
-          <option>All Statuses</option><option>Active</option><option>Boarding</option><option>Inactive</option>
-        </select>
-        <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '8px 12px', fontWeight: 600, color: '#475569', outline: 'none' }}>
-          <option>All Processors</option><option>Harlow Payments</option><option>EPSG</option><option>Repay TSYS FEO</option>
-        </select>
+    <div className="dashboard-grid">
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+        {[
+          { label: 'Total Merchants', value: merchants.length, color: '#1578F7' },
+          { label: 'Active', value: active, color: '#10B981' },
+          { label: 'Boarding', value: boarding, color: '#3B82F6' },
+          { label: 'PCI Compliant', value: `${Math.round(compliant / Math.max(merchants.length, 1) * 100)}%`, color: compliant / merchants.length > 0.85 ? '#10B981' : '#F59E0B' },
+          { label: 'Monthly Volume', value: `$${(totalVol / 1000).toFixed(0)}K`, color: '#4F46E5' },
+        ].map(kpi => (
+          <div key={kpi.label} className="kpi-card">
+            <div className="kpi-label">{kpi.label}</div>
+            <div className="kpi-value" style={{ fontSize: 22, color: kpi.color }}>{kpi.value}</div>
+          </div>
+        ))}
       </div>
-      <DataTable columns={columns} data={merchants as unknown as MerchantRow[]} hoverable />
-    </Card>
+
+      {/* Processor + Status breakdown */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <Card noPadding>
+          <CardHeader title="By Processor" />
+          <div style={{ padding: '0 16px 16px' }}>
+            {Object.entries(procBreakdown).sort((a, b) => b[1] - a[1]).map(([proc, count]) => (
+              <div key={proc} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{proc}</span>
+                <div style={{ width: 100, height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ width: `${(count / merchants.length) * 100}%`, height: '100%', background: '#1578F7', borderRadius: 3 }} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', width: 24, textAlign: 'right' }}>{count}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card noPadding>
+          <CardHeader title="Status Breakdown" />
+          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[
+              { label: 'Active', count: active, pct: Math.round(active / merchants.length * 100), color: '#10B981' },
+              { label: 'Boarding', count: boarding, pct: Math.round(boarding / merchants.length * 100), color: '#3B82F6' },
+              { label: 'Inactive', count: inactive, pct: Math.round(inactive / merchants.length * 100), color: '#94A3B8' },
+            ].map(s => (
+              <div key={s.label}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+                  <span style={{ fontWeight: 500, color: '#334155' }}>{s.label}</span>
+                  <span style={{ fontWeight: 700, color: s.color }}>{s.count} ({s.pct}%)</span>
+                </div>
+                <div style={{ height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ width: `${s.pct}%`, height: '100%', background: s.color, borderRadius: 3 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Table */}
+      <Card noPadding>
+        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid #F1F5F9' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>Merchant Portfolio</span>
+          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
+            <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '6px 10px', fontWeight: 600, color: '#475569', outline: 'none' }}>
+              <option>All Statuses</option><option>Active</option><option>Boarding</option><option>Inactive</option>
+            </select>
+            <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '6px 10px', fontWeight: 600, color: '#475569', outline: 'none' }}>
+              <option>All Processors</option><option>Harlow Payments</option><option>EPSG</option><option>Repay TSYS FEO</option>
+            </select>
+          </div>
+        </div>
+        <DataTable columns={columns} data={merchants as unknown as MerchantRow[]} hoverable />
+      </Card>
+    </div>
   )
 }
 
 /* ═══ Residuals ═══ */
+const residualTrend = [
+  { month: 'Oct', residual: 2890, volume: 25100 },
+  { month: 'Nov', residual: 3050, volume: 26300 },
+  { month: 'Dec', residual: 3180, volume: 27800 },
+  { month: 'Jan', residual: 3320, volume: 29200 },
+  { month: 'Feb', residual: 3635, volume: 30500 },
+  { month: 'Mar', residual: 3847, volume: 31100 },
+]
+
 function ResidualsView() {
   type ResidualRow = { merchant: string; processor: string; volume: string; gross: string; split: string; payout: string }
 
@@ -621,6 +767,8 @@ function ResidualsView() {
     { merchant: 'Harlem Grocery', processor: 'Repay TSYS FEO', volume: '$38,410', gross: '$384.10', split: '60%', payout: '$230.46' },
     { merchant: 'Jade Garden', processor: 'Harlow Payments', volume: '$31,560', gross: '$315.60', split: '60%', payout: '$189.36' },
     { merchant: 'Brooklyn Dry Cleaners', processor: 'EPSG', volume: '$22,890', gross: '$228.90', split: '60%', payout: '$137.34' },
+    { merchant: 'Sunrise Deli', processor: 'Harlow Payments', volume: '$18,770', gross: '$187.70', split: '60%', payout: '$112.62' },
+    { merchant: 'Lucky Nail Salon', processor: 'EPSG Wells Fargo', volume: '$12,440', gross: '$124.40', split: '60%', payout: '$74.64' },
   ]
 
   const residualColumns: Column<ResidualRow>[] = [
@@ -632,23 +780,77 @@ function ResidualsView() {
     { key: 'payout', header: 'Your Payout', render: (r) => <span style={{ fontWeight: 700, color: '#059669' }}>{r.payout}</span> },
   ]
 
+  const growth = ((3847 - 3635) / 3635 * 100).toFixed(1)
+
   return (
     <div className="dashboard-grid">
-      <div className="grid-3">
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
         {[
-          { label: 'March 2026 (Projected)', value: '$3,847', sub: 'Current month', accent: '#1578F7' },
-          { label: 'February 2026 (Paid)', value: '$3,635', sub: 'Last payout', accent: '#059669' },
-          { label: '12-Month Total', value: '$41,218', sub: 'Rolling total', accent: '#4F46E5' },
+          { label: 'March 2026 (Projected)', value: '$3,847', color: '#1578F7' },
+          { label: 'February 2026 (Paid)', value: '$3,635', color: '#059669' },
+          { label: 'MoM Growth', value: `+${growth}%`, color: '#10B981' },
+          { label: '12-Month Total', value: '$41,218', color: '#4F46E5' },
+          { label: 'Avg Per Merchant', value: '$0.83', color: '#0891B2' },
         ].map(r => (
           <div key={r.label} className="kpi-card">
             <div className="kpi-label">{r.label}</div>
-            <div className="kpi-value" style={{ color: r.accent }}>{r.value}</div>
-            <div className="kpi-sub">{r.sub}</div>
+            <div className="kpi-value" style={{ fontSize: 20, color: r.color }}>{r.value}</div>
           </div>
         ))}
       </div>
+
+      {/* Residual Trend + ISO Split */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+        <Card noPadding>
+          <CardHeader title="Residual Income Trend (6mo)" />
+          <div style={{ padding: '0 16px 16px', height: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={residualTrend}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} tickFormatter={(v: any) => `$${(v/1000).toFixed(1)}K`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`$${v.toLocaleString()}`, 'Residual']} />
+                <defs>
+                  <linearGradient id="resGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#10B981" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <Area type="monotone" dataKey="residual" stroke="#10B981" fill="url(#resGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        <Card noPadding>
+          <CardHeader title="Residual by ISO" />
+          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {[
+              { iso: 'Harlow Direct', amount: '$1,840', pct: 48, split: '100%', color: '#1578F7' },
+              { iso: 'Zenith Payments', amount: '$890', pct: 23, split: '70%', color: '#4F46E5' },
+              { iso: 'Liberty Processing', amount: '$480', pct: 12, split: '60%', color: '#8B5CF6' },
+            ].map(iso => (
+              <div key={iso.iso}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
+                  <span style={{ fontWeight: 600, color: '#334155' }}>{iso.iso}</span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <span style={{ fontWeight: 700, color: '#059669' }}>{iso.amount}</span>
+                    <span style={{ color: '#94A3B8', fontSize: 10, fontWeight: 500 }}>Split: {iso.split}</span>
+                  </div>
+                </div>
+                <div style={{ height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ width: `${iso.pct}%`, height: '100%', background: iso.color, borderRadius: 3 }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Table */}
       <Card noPadding>
-        <CardHeader title="Residual Breakdown -- February 2026" />
+        <CardHeader title="Residual Breakdown — Top Merchants (February 2026)" />
         <DataTable columns={residualColumns} data={residualData} hoverable />
       </Card>
     </div>
@@ -657,15 +859,24 @@ function ResidualsView() {
 
 /* ═══ Tickets ═══ */
 function TicketsView() {
-  type TicketRow = { id: string; desc: string; merchant: string; type: string; created: string; assigned: string; status: string }
+  type TicketRow = { id: string; desc: string; merchant: string; type: string; priority: string; created: string; assigned: string; status: string }
 
   const tickets: TicketRow[] = [
-    { id: 'TKT-2026-0312', desc: 'Replace PAX A920', merchant: 'Sunrise Deli', type: 'Equipment', created: 'Mar 12', assigned: 'Operations', status: 'In Progress' },
-    { id: 'TKT-2026-0308', desc: 'Update bank account', merchant: 'Lucky Nail Salon', type: 'Bank Info', created: 'Mar 8', assigned: 'Kate Palmarini', status: 'Awaiting Docs' },
-    { id: 'TKT-2026-0301', desc: 'Switch to Cash Discount', merchant: 'Metro Tobacco', type: 'Pricing', created: 'Mar 1', assigned: 'David Goldfarb', status: 'Pending Approval' },
+    { id: 'TKT-2026-0314', desc: 'Chargeback response needed', merchant: "Bella's Bistro", type: 'Chargeback', priority: 'Urgent', created: 'Mar 14', assigned: 'Sarah Chen', status: 'Open' },
+    { id: 'TKT-2026-0312', desc: 'Replace PAX A920', merchant: 'Sunrise Deli', type: 'Equipment', priority: 'Normal', created: 'Mar 12', assigned: 'Operations', status: 'In Progress' },
+    { id: 'TKT-2026-0311', desc: 'Rate review request', merchant: 'Jade Garden', type: 'Pricing', priority: 'Normal', created: 'Mar 11', assigned: 'David Goldfarb', status: 'In Progress' },
+    { id: 'TKT-2026-0308', desc: 'Update bank account', merchant: 'Lucky Nail Salon', type: 'Bank Info', priority: 'High', created: 'Mar 8', assigned: 'Kate Palmarini', status: 'Awaiting Docs' },
+    { id: 'TKT-2026-0305', desc: 'PCI compliance reminder', merchant: 'Metro Tobacco', type: 'Compliance', priority: 'Normal', created: 'Mar 5', assigned: 'AI Auto', status: 'Resolved' },
+    { id: 'TKT-2026-0301', desc: 'Switch to Cash Discount', merchant: 'Metro Tobacco', type: 'Pricing', priority: 'Low', created: 'Mar 1', assigned: 'David Goldfarb', status: 'Pending Approval' },
   ]
 
-  const statusVariant = (s: string) => s.includes('Progress') ? 'blue' as const : s.includes('Awaiting') ? 'amber' as const : 'gray' as const
+  const open = tickets.filter(t => t.status === 'Open' || t.status === 'In Progress').length
+  const awaiting = tickets.filter(t => t.status.includes('Awaiting')).length
+  const resolved = tickets.filter(t => t.status === 'Resolved').length
+  const urgent = tickets.filter(t => t.priority === 'Urgent' || t.priority === 'High').length
+
+  const statusVariant = (s: string) => s === 'Open' ? 'rose' as const : s.includes('Progress') ? 'blue' as const : s.includes('Awaiting') ? 'amber' as const : s === 'Resolved' ? 'emerald' as const : 'gray' as const
+  const priorityColor = (p: string) => p === 'Urgent' ? '#EF4444' : p === 'High' ? '#F59E0B' : p === 'Normal' ? '#64748B' : '#94A3B8'
 
   const ticketColumns: Column<TicketRow>[] = [
     { key: 'id', header: 'Ticket', render: (r) => (
@@ -676,14 +887,83 @@ function TicketsView() {
     )},
     { key: 'merchant', header: 'Merchant' },
     { key: 'type', header: 'Type' },
+    { key: 'priority', header: 'Priority', render: (r) => (
+      <span style={{ fontSize: 11, fontWeight: 700, color: priorityColor(r.priority) }}>{r.priority}</span>
+    )},
     { key: 'created', header: 'Created' },
     { key: 'assigned', header: 'Assigned' },
     { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={statusVariant(r.status)}>{r.status}</StatusBadge> },
   ]
 
+  // Category breakdown
+  const categories: Record<string, number> = {}
+  tickets.forEach(t => { categories[t.type] = (categories[t.type] || 0) + 1 })
+
   return (
-    <Card noPadding>
-      <DataTable columns={ticketColumns} data={tickets} hoverable />
-    </Card>
+    <div className="dashboard-grid">
+      {/* KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+        {[
+          { label: 'Total Tickets', value: tickets.length, color: '#1578F7' },
+          { label: 'Open', value: open, color: '#3B82F6' },
+          { label: 'Awaiting', value: awaiting, color: '#F59E0B' },
+          { label: 'Urgent/High', value: urgent, color: urgent > 0 ? '#EF4444' : '#10B981' },
+          { label: 'Resolved', value: resolved, color: '#10B981' },
+        ].map(kpi => (
+          <div key={kpi.label} className="kpi-card">
+            <div className="kpi-label">{kpi.label}</div>
+            <div className="kpi-value" style={{ fontSize: 22, color: kpi.color }}>{kpi.value}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* Category + Resolution */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+        <Card noPadding>
+          <CardHeader title="By Category" />
+          <div style={{ padding: '0 16px 16px' }}>
+            {Object.entries(categories).sort((a, b) => b[1] - a[1]).map(([cat, count]) => (
+              <div key={cat} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, width: 100 }}>{cat}</span>
+                <div style={{ flex: 1, height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
+                  <div style={{ width: `${(count / tickets.length) * 100}%`, height: '100%', background: '#1578F7', borderRadius: 3 }} />
+                </div>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', width: 20, textAlign: 'right' }}>{count}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+        <Card noPadding>
+          <CardHeader title="Resolution Metrics" />
+          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+            {[
+              { label: 'Avg Resolution Time', value: '4.2 hours', ok: true },
+              { label: 'First Response', value: '12 min', ok: true },
+              { label: 'SLA Compliance', value: '94%', ok: true },
+              { label: 'AI Auto-Resolved', value: '38%', ok: true },
+              { label: 'Escalation Rate', value: '8%', ok: true },
+            ].map(m => (
+              <div key={m.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{m.label}</span>
+                <span style={{ fontSize: 13, fontWeight: 700, color: m.ok ? '#0F172A' : '#EF4444' }}>{m.value}</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Table */}
+      <Card noPadding>
+        <div style={{ padding: '12px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>All Tickets</span>
+          <button style={{
+            display: 'flex', alignItems: 'center', gap: 6, fontSize: 12,
+            background: 'linear-gradient(to right, #609FFF, #1578F7)',
+            color: 'white', borderRadius: 8, padding: '7px 14px', fontWeight: 600, border: 'none', cursor: 'pointer',
+          }}><Plus size={14} /> New Ticket</button>
+        </div>
+        <DataTable columns={ticketColumns} data={tickets} hoverable />
+      </Card>
+    </div>
   )
 }
