@@ -18,7 +18,7 @@ const mainNav = [
 ]
 
 export default function MerchantLayout() {
-  const [luminaOpen, setLuminaOpen] = useState(false)
+  const [luminaOpen, setLuminaOpen] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
 
