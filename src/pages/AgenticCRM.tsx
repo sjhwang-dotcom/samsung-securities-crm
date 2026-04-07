@@ -1,19 +1,18 @@
 import { useState } from 'react'
 import {
   Plus, Search, CheckCircle, AlertTriangle, FileText, Upload, ChevronRight,
-  Kanban, ShieldCheck, Store, DollarSign, TicketCheck, ClipboardList,
+  Kanban, Store, DollarSign, TicketCheck, ClipboardList,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import { leadPipeline, merchants, onboardingApps } from '../data/mockData'
 
-type SubNav = 'pipeline' | 'applications' | 'underwriting' | 'merchants' | 'residuals' | 'tickets'
+type SubNav = 'pipeline' | 'onboarding' | 'merchants' | 'residuals' | 'tickets'
 
 const subNavItems: { id: SubNav; label: string; icon: typeof Kanban }[] = [
   { id: 'pipeline', label: 'Pipeline', icon: Kanban },
-  { id: 'applications', label: 'Applications', icon: ClipboardList },
-  { id: 'underwriting', label: 'Underwriting', icon: ShieldCheck },
+  { id: 'onboarding', label: 'Onboarding', icon: ClipboardList },
   { id: 'merchants', label: 'My Merchants', icon: Store },
   { id: 'residuals', label: 'Residuals', icon: DollarSign },
   { id: 'tickets', label: 'Tickets', icon: TicketCheck },
@@ -21,7 +20,6 @@ const subNavItems: { id: SubNav; label: string; icon: typeof Kanban }[] = [
 
 export default function AgenticCRM() {
   const [activeNav, setActiveNav] = useState<SubNav>('pipeline')
-  const [selectedApp, setSelectedApp] = useState<string | null>(null)
 
   return (
     <div className="dashboard-grid">
@@ -70,8 +68,7 @@ export default function AgenticCRM() {
       </div>
 
       {activeNav === 'pipeline' && <PipelineView />}
-      {activeNav === 'applications' && <ApplicationsView onSelectApp={(m) => { setSelectedApp(m); setActiveNav('underwriting') }} />}
-      {activeNav === 'underwriting' && <UnderwritingView selectedApp={selectedApp} onBack={() => setActiveNav('applications')} />}
+      {activeNav === 'onboarding' && <OnboardingMasterDetail />}
       {activeNav === 'merchants' && <MerchantsView />}
       {activeNav === 'residuals' && <ResidualsView />}
       {activeNav === 'tickets' && <TicketsView />}
@@ -397,249 +394,228 @@ function PipelineView() {
   )
 }
 
-/* ═══ Applications ═══ */
-function ApplicationsView({ onSelectApp }: { onSelectApp: (merchant: string) => void }) {
-  type AppRow = { merchant: string; bank: string; submitted: string; stage: string; riskScore: number | null; riskLabel: string; status: string; assigned: string }
-  const apps = onboardingApps as unknown as AppRow[]
+/* ═══ Onboarding Master-Detail (ISO-style layout) ═══ */
+function OnboardingMasterDetail() {
+  const apps = onboardingApps
+  const [selectedIdx, setSelectedIdx] = useState(0)
+  const selected = apps[selectedIdx]
 
-  const inProgress = apps.filter(a => a.status === 'In Progress').length
-  const inReview = apps.filter(a => a.status === 'In Review').length
-  const needsDocs = apps.filter(a => a.status.includes('Needs') || a.status.includes('Awaiting')).length
-  const avgRisk = Math.round(apps.filter(a => a.riskScore).reduce((s, a) => s + (a.riskScore ?? 0), 0) / Math.max(apps.filter(a => a.riskScore).length, 1))
-
-  const riskVariant = (label: string) => label === 'Low Risk' ? 'emerald' as const : label === 'Medium' ? 'amber' as const : label === 'High Risk' ? 'rose' as const : 'gray' as const
-  const statusVariant = (s: string) => s === 'In Progress' ? 'blue' as const : s === 'In Review' ? 'indigo' as const : s.includes('Needs') ? 'rose' as const : 'amber' as const
-
-  const columns: Column<AppRow>[] = [
-    { key: 'merchant', header: 'Merchant', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.merchant}</span> },
-    { key: 'bank', header: 'Bank' },
-    { key: 'submitted', header: 'Submitted' },
-    { key: 'stage', header: 'Stage' },
-    { key: 'riskScore', header: 'Risk Score', render: (r) =>
-      r.riskScore ? <StatusBadge variant={riskVariant(r.riskLabel)}>{r.riskScore} -- {r.riskLabel}</StatusBadge> : <span style={{ color: '#94A3B8', fontSize: 12 }}>Pending</span>
-    },
-    { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={statusVariant(r.status)}>{r.status}</StatusBadge> },
-    { key: 'assigned', header: 'Assigned' },
-    { key: '', header: '', render: () => <ChevronRight size={14} style={{ color: '#94A3B8' }} /> },
-  ]
-
-  // Stage breakdown for mini bar
-  const stageBreakdown = [
-    { stage: 'E-Sign', count: apps.filter(a => a.stage.includes('Sign')).length, color: '#3B82F6' },
-    { stage: 'KYB/KYC', count: apps.filter(a => a.stage.includes('KYB') || a.stage.includes('KYC')).length, color: '#8B5CF6' },
-    { stage: 'UW Review', count: apps.filter(a => a.stage.includes('Underwriting') || a.stage.includes('Review')).length, color: '#F59E0B' },
-    { stage: 'High Risk', count: apps.filter(a => a.stage.includes('High')).length, color: '#F43F5E' },
-  ]
-
-  return (
-    <div className="dashboard-grid">
-      {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
-        {[
-          { label: 'Total Applications', value: apps.length, color: '#1578F7' },
-          { label: 'In Progress', value: inProgress, color: '#3B82F6' },
-          { label: 'In Review', value: inReview, color: '#4F46E5' },
-          { label: 'Needs Action', value: needsDocs, color: '#F43F5E' },
-          { label: 'Avg Risk Score', value: avgRisk, color: avgRisk >= 60 ? '#10B981' : '#F59E0B' },
-        ].map(kpi => (
-          <div key={kpi.label} className="kpi-card">
-            <div className="kpi-label">{kpi.label}</div>
-            <div className="kpi-value" style={{ fontSize: 22, color: kpi.color }}>{kpi.value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Stage breakdown + SLA */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <Card noPadding>
-          <CardHeader title="Applications by Stage" />
-          <div style={{ padding: '0 16px 16px' }}>
-            {stageBreakdown.map(s => (
-              <div key={s.stage} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 10 }}>
-                <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, width: 80 }}>{s.stage}</span>
-                <div style={{ flex: 1, height: 8, background: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
-                  <div style={{ width: `${(s.count / Math.max(apps.length, 1)) * 100}%`, height: '100%', background: s.color, borderRadius: 4, minWidth: s.count > 0 ? 8 : 0 }} />
-                </div>
-                <span style={{ fontSize: 12, fontWeight: 700, color: '#334155', width: 20, textAlign: 'right' }}>{s.count}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card noPadding>
-          <CardHeader title="Processing SLA" />
-          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {[
-              { label: 'Avg Processing Time', value: '3.2 hours', target: '4h SLA', ok: true },
-              { label: 'Auto-Approval Rate', value: '42%', target: 'AI-qualified', ok: true },
-              { label: 'Docs Pending', value: `${needsDocs}`, target: 'needs upload', ok: needsDocs === 0 },
-              { label: 'Oldest Open App', value: '6 days', target: '< 7d target', ok: true },
-            ].map(item => (
-              <div key={item.label} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{item.label}</span>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                  <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{item.value}</span>
-                  <span style={{ fontSize: 10, color: item.ok ? '#059669' : '#EF4444', fontWeight: 500 }}>{item.target}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Application table */}
-      <Card noPadding>
-        <div style={{ padding: '12px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>All Applications</span>
-          <button style={{
-            display: 'flex', alignItems: 'center', gap: 6, fontSize: 12,
-            background: 'linear-gradient(to right, #609FFF, #1578F7)',
-            color: 'white', borderRadius: 8, padding: '7px 14px', fontWeight: 600, border: 'none', cursor: 'pointer',
-          }}><Plus size={14} /> New Application</button>
-        </div>
-        <DataTable columns={columns} data={apps} hoverable onRowClick={(row) => onSelectApp(row.merchant)} />
-      </Card>
-    </div>
-  )
-}
-
-/* ═══ Underwriting (from MerchantOnboarding detail) ═══ */
-function UnderwritingView({ selectedApp, onBack }: { selectedApp: string | null; onBack: () => void }) {
-  if (!selectedApp) {
-    return (
-      <div style={{ padding: 40, textAlign: 'center', color: '#94A3B8', fontSize: 14 }}>
-        Select an application from the <strong>Applications</strong> tab to view underwriting details.
-      </div>
-    )
-  }
+  const statusColor = (s: string) => s === 'In Progress' ? '#3B82F6' : s === 'In Review' ? '#4F46E5' : s.includes('Needs') || s.includes('Awaiting') ? '#F59E0B' : '#94A3B8'
+  const riskColor = (label: string) => label === 'Low Risk' ? '#10B981' : label === 'Medium' ? '#F59E0B' : label === 'High Risk' ? '#EF4444' : '#94A3B8'
 
   const steps = [
-    { label: 'Application Received', done: true },
-    { label: 'Document Collection', done: true },
-    { label: 'KYB/KYC Verification', current: true },
-    { label: 'AI Risk Assessment', done: false },
-    { label: 'Pricing & Terms', done: false },
-    { label: 'Boarding Complete', done: false },
-  ]
-
-  const docs = [
-    { name: 'Articles_of_Incorporation.pdf', status: 'AI Processed', extracted: 'Entity name, State, EIN, Formation date' },
-    { name: 'Drivers_License_Rossi.jpg', status: 'AI Processed', extracted: 'Name, DOB, Address, ID number' },
-    { name: '3mo_Bank_Statements.pdf', status: 'AI Processed', extracted: 'Avg monthly balance $47,200 | Deposit velocity: 142/mo' },
-    { name: 'Voided_Check.png', status: 'AI Processed', extracted: 'Routing #, Account #' },
-    { name: 'Processing_Statements_Previous.pdf', status: 'AI Processed', extracted: 'Monthly volume $89K | Avg ticket $34 | CB rate 0.3%' },
+    { label: 'Application', done: true },
+    { label: 'Documents', done: true },
+    { label: 'KYB/KYC', current: true },
+    { label: 'Risk Assessment', done: false },
+    { label: 'Pricing', done: false },
+    { label: 'Boarding', done: false },
   ]
 
   const kybResults = [
-    { icon: CheckCircle, color: '#10B981', title: 'Business Entity Verified', sub: "Bella's Bistro LLC, Delaware Corp, EIN validated", tag: 'Agentic Lakehouse -- Auto-Extracted from uploaded Articles of Incorporation' },
-    { icon: CheckCircle, color: '#10B981', title: 'Beneficial Ownership Confirmed', sub: 'Maria Rossi, 100% owner', tag: 'Graph DB -- Ownership chain resolved, no layered structures detected' },
-    { icon: CheckCircle, color: '#10B981', title: 'Sanctions & PEP Screening -- Clear', sub: 'No matches found', tag: 'Real-time screening against OFAC, EU, UN consolidated lists' },
-    { icon: AlertTriangle, color: '#F59E0B', title: 'Adverse Media Check -- 1 result flagged', sub: 'Awaiting review', tag: 'AI flagged: local health dept citation (2023) -- low relevance score 0.12' },
-    { icon: CheckCircle, color: '#10B981', title: 'Identity Verification -- Maria Rossi', sub: 'Verified', tag: 'Document AI -- Passport OCR + liveness check passed' },
+    { icon: CheckCircle, color: '#10B981', title: 'Business Entity Verified', sub: 'Delaware Corp, EIN validated' },
+    { icon: CheckCircle, color: '#10B981', title: 'Beneficial Ownership Confirmed', sub: '100% owner verified' },
+    { icon: CheckCircle, color: '#10B981', title: 'Sanctions & PEP Screening', sub: 'Clear — no matches' },
+    { icon: AlertTriangle, color: '#F59E0B', title: 'Adverse Media Check', sub: '1 result flagged — low relevance' },
+    { icon: CheckCircle, color: '#10B981', title: 'Identity Verification', sub: 'Passport OCR + liveness passed' },
+  ]
+
+  const docs = [
+    { name: 'Articles of Incorporation', status: 'Verified', extracted: 'Entity, State, EIN' },
+    { name: 'Driver License', status: 'Verified', extracted: 'Name, DOB, Address' },
+    { name: 'Bank Statements (3mo)', status: 'Verified', extracted: 'Avg balance $47.2K' },
+    { name: 'Voided Check', status: 'Verified', extracted: 'Routing #, Account #' },
+    { name: 'Processing Statements', status: 'Verified', extracted: 'Vol $89K | CB 0.3%' },
   ]
 
   return (
-    <div className="dashboard-grid">
-      <button onClick={onBack} style={{ fontSize: 13, color: '#64748B', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500, alignSelf: 'flex-start' }}>&larr; Back to Applications</button>
+    <div style={{ display: 'flex', gap: 0, margin: '-12px -20px -16px', overflow: 'hidden' }}>
+      {/* ═══ Left: Application List ═══ */}
+      <div style={{
+        width: 300, minWidth: 300, background: 'white',
+        borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column',
+        height: 'calc(100vh - 160px)',
+      }}>
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid #F1F5F9' }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A' }}>Applications</div>
+          <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{apps.length} active · Avg SLA 3.2h</div>
+        </div>
 
-      {/* Progress Bar */}
-      <Card>
-        <div style={{ padding: 18 }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
-            {steps.map((step, i) => (
-              <div key={i} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 8 }}>
-                <div style={{
-                  width: 28, height: 28, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
-                  background: step.done ? '#10B981' : step.current ? '#1578F7' : '#E2E8F0',
-                  color: step.done || step.current ? 'white' : '#94A3B8',
+        {/* Summary KPIs in sidebar */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6, padding: '10px 12px', borderBottom: '1px solid #F1F5F9' }}>
+          {[
+            { label: 'In Progress', value: apps.filter(a => a.status === 'In Progress').length, color: '#3B82F6' },
+            { label: 'In Review', value: apps.filter(a => a.status === 'In Review').length, color: '#4F46E5' },
+            { label: 'Needs Action', value: apps.filter(a => a.status.includes('Needs') || a.status.includes('Awaiting')).length, color: '#F59E0B' },
+            { label: 'Auto-Approve', value: '42%', color: '#10B981' },
+          ].map(k => (
+            <div key={k.label} style={{ background: '#FAFBFC', borderRadius: 8, padding: '6px 8px', textAlign: 'center' }}>
+              <div style={{ fontSize: 16, fontWeight: 800, color: k.color }}>{k.value}</div>
+              <div style={{ fontSize: 9, color: '#94A3B8', fontWeight: 500, marginTop: 1 }}>{k.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* App list */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {apps.map((app, i) => {
+            const isActive = selectedIdx === i
+            return (
+              <div key={app.merchant} onClick={() => setSelectedIdx(i)}
+                style={{
+                  padding: '12px 16px', cursor: 'pointer',
+                  borderLeft: isActive ? '3px solid #1578F7' : '3px solid transparent',
+                  background: isActive ? 'linear-gradient(90deg, rgba(21,120,247,0.06), transparent)' : 'transparent',
+                  borderBottom: '1px solid #F8FAFC',
                 }}>
-                  {step.done ? <CheckCircle size={14} /> : <span style={{ fontSize: 12, fontWeight: 700 }}>{i + 1}</span>}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+                  <span style={{ fontSize: 13, fontWeight: 700, color: isActive ? '#1578F7' : '#0F172A' }}>{app.merchant}</span>
+                  <ChevronRight size={12} color="#CBD5E1" style={{ opacity: isActive ? 1 : 0 }} />
                 </div>
-                <span style={{ fontSize: 12, fontWeight: 500, color: step.done ? '#059669' : step.current ? '#1578F7' : '#94A3B8' }}>
-                  {step.label}
-                </span>
-                {i < steps.length - 1 && <div style={{ flex: 1, height: 2, background: step.done ? '#A7F3D0' : '#E2E8F0' }} />}
+                <div style={{ fontSize: 11, color: '#94A3B8', marginBottom: 6 }}>{app.stage}</div>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${statusColor(app.status)}15`, color: statusColor(app.status) }}>
+                    {app.status}
+                  </span>
+                  {app.riskScore && (
+                    <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${riskColor(app.riskLabel)}15`, color: riskColor(app.riskLabel) }}>
+                      Risk: {app.riskScore}
+                    </span>
+                  )}
+                </div>
               </div>
-            ))}
+            )
+          })}
+        </div>
+
+        <div style={{ padding: '10px 16px', borderTop: '1px solid #F1F5F9' }}>
+          <button style={{
+            width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6, fontSize: 12,
+            background: 'linear-gradient(to right, #609FFF, #1578F7)',
+            color: 'white', borderRadius: 8, padding: '8px 0', fontWeight: 600, border: 'none', cursor: 'pointer',
+          }}><Plus size={14} /> New Application</button>
+        </div>
+      </div>
+
+      {/* ═══ Right: Detail View ═══ */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', height: 'calc(100vh - 160px)' }}>
+        <div className="dashboard-grid">
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{selected.merchant}</span>
+                <StatusBadge variant={selected.status === 'In Progress' ? 'blue' : selected.status === 'In Review' ? 'indigo' : 'amber'}>{selected.status}</StatusBadge>
+              </div>
+              <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 4, fontWeight: 500 }}>
+                {selected.bank} · Submitted {selected.submitted} · Assigned to {selected.assigned}
+              </div>
+            </div>
+            {selected.riskScore && (
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: 28, fontWeight: 800, color: riskColor(selected.riskLabel) }}>{selected.riskScore}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: riskColor(selected.riskLabel) }}>{selected.riskLabel}</div>
+              </div>
+            )}
           </div>
-        </div>
-      </Card>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 16 }}>
-        {/* Left Column */}
-        <div className="dashboard-grid">
-          <Card noPadding>
-            <CardHeader title="KYB / KYC Results" />
-            <div style={{ padding: '0 18px 18px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {kybResults.map((item, i) => (
-                <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: 12, padding: 12, borderRadius: 8, border: '1px solid #F1F5F9' }}>
-                  <item.icon size={18} style={{ marginTop: 2, flexShrink: 0, color: item.color }} />
-                  <div>
-                    <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{item.title}</div>
-                    <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>{item.sub}</div>
-                    <div style={{ fontSize: 10, color: '#4F46E5', marginTop: 4, background: '#EEF2FF', padding: '2px 8px', borderRadius: 12, display: 'inline-block' }}>{item.tag}</div>
+          {/* Progress Steps */}
+          <Card>
+            <div style={{ padding: 16 }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                {steps.map((step, i) => (
+                  <div key={i} style={{ flex: 1, display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <div style={{
+                      width: 24, height: 24, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
+                      background: step.done ? '#10B981' : step.current ? '#1578F7' : '#E2E8F0',
+                      color: step.done || step.current ? 'white' : '#94A3B8', fontSize: 10, fontWeight: 700,
+                    }}>
+                      {step.done ? <CheckCircle size={12} /> : i + 1}
+                    </div>
+                    <span style={{ fontSize: 11, fontWeight: 500, color: step.done ? '#059669' : step.current ? '#1578F7' : '#94A3B8' }}>{step.label}</span>
+                    {i < steps.length - 1 && <div style={{ flex: 1, height: 2, background: step.done ? '#A7F3D0' : '#E2E8F0' }} />}
                   </div>
-                </div>
-              ))}
-            </div>
-          </Card>
-
-          <Card noPadding>
-            <CardHeader title="AI Risk Assessment Preview" />
-            <div style={{ padding: '0 18px 18px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 24, marginBottom: 16 }}>
-                <div style={{ position: 'relative', width: 112, height: 112 }}>
-                  <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#F1F5F9" strokeWidth="8" />
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="#10B981" strokeWidth="8" strokeDasharray={`${72 * 2.64} ${100 * 2.64}`} strokeLinecap="round" />
-                  </svg>
-                  <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                    <span style={{ fontSize: 24, fontWeight: 800, color: '#0F172A' }}>72</span>
-                    <span style={{ fontSize: 10, color: '#059669', fontWeight: 500 }}>LOW RISK</span>
-                  </div>
-                </div>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, fontSize: 13 }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><CheckCircle size={14} style={{ color: '#10B981' }} /> MCC 5812 -- Chargeback: 0.3% vs industry 0.8%</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><CheckCircle size={14} style={{ color: '#10B981' }} /> Volume Consistency: stable &plusmn;6%</div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}><CheckCircle size={14} style={{ color: '#10B981' }} /> Fraud Signal Scan: No anomalies</div>
-                </div>
-              </div>
-              <div style={{ background: '#F0FDFA', border: '1px solid #99F6E4', borderRadius: 12, padding: 16 }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: '#0F766E' }}>AUTO-APPROVE -- Suggest Tier 2 pricing at 2.69% + $0.10</div>
-                <div style={{ fontSize: 12, color: '#1578F7', marginTop: 4, fontWeight: 500 }}>ML model trained on 50K+ merchant profiles | Human override available at Step 5</div>
+                ))}
               </div>
             </div>
           </Card>
-        </div>
 
-        {/* Right Column: Documents */}
-        <div className="dashboard-grid">
-          <Card noPadding>
-            <CardHeader title="Uploaded Documents" />
-            <div style={{ padding: '0 18px 18px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {docs.map((doc, i) => (
-                <div key={i} style={{ padding: 12, borderRadius: 8, border: '1px solid #F1F5F9' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <FileText size={14} style={{ color: '#94A3B8' }} />
-                    <span style={{ fontSize: 13, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.name}</span>
-                    <StatusBadge variant="indigo">{doc.status}</StatusBadge>
+          {/* KYB/KYC + Risk side by side */}
+          <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 12 }}>
+            {/* KYB/KYC */}
+            <Card noPadding>
+              <CardHeader title="KYB / KYC Verification" />
+              <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {kybResults.map((item, i) => (
+                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, border: '1px solid #F1F5F9' }}>
+                    <item.icon size={16} style={{ flexShrink: 0, color: item.color }} />
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{item.title}</div>
+                      <div style={{ fontSize: 11, color: '#64748B' }}>{item.sub}</div>
+                    </div>
                   </div>
-                  <div style={{ fontSize: 11, color: '#64748B', marginTop: 4, marginLeft: 22 }}>{doc.extracted}</div>
-                </div>
-              ))}
-              <button style={{
-                width: '100%', marginTop: 4, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8,
-                fontSize: 13, color: '#64748B', border: '1px dashed #CBD5E1', borderRadius: 8, padding: '10px 0',
-                background: 'none', cursor: 'pointer',
-              }}>
-                <Upload size={14} /> Add Document
-              </button>
-            </div>
-          </Card>
+                ))}
+              </div>
+            </Card>
 
-          <div style={{ background: '#FAFBFC', borderRadius: 12, padding: 16, fontSize: 12, color: '#64748B', fontWeight: 500 }}>
-            <div>Application ID: HRW-2026-0488292</div>
-            <div style={{ marginTop: 4 }}>Submitted: Mar 28, 2026 | SLA: 4h remaining</div>
-            <div style={{ marginTop: 4 }}>Assigned: Sarah Chen</div>
+            {/* Risk + Documents */}
+            <div className="dashboard-grid">
+              {/* AI Risk */}
+              <Card noPadding>
+                <CardHeader title="AI Risk Assessment" />
+                <div style={{ padding: '0 16px 16px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                    <div style={{ position: 'relative', width: 80, height: 80 }}>
+                      <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#F1F5F9" strokeWidth="8" />
+                        <circle cx="50" cy="50" r="42" fill="none" stroke="#10B981" strokeWidth="8" strokeDasharray={`${72 * 2.64} ${100 * 2.64}`} strokeLinecap="round" />
+                      </svg>
+                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>72</span>
+                        <span style={{ fontSize: 9, color: '#059669', fontWeight: 500 }}>LOW RISK</span>
+                      </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11 }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> CB Rate: 0.3%</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Volume: stable</div>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Fraud: clear</div>
+                    </div>
+                  </div>
+                  <div style={{ background: '#F0FDFA', border: '1px solid #99F6E4', borderRadius: 8, padding: 10, fontSize: 11 }}>
+                    <span style={{ fontWeight: 700, color: '#0F766E' }}>AUTO-APPROVE</span>
+                    <span style={{ color: '#64748B' }}> — Tier 2 at 2.69% + $0.10</span>
+                  </div>
+                </div>
+              </Card>
+
+              {/* Documents */}
+              <Card noPadding>
+                <CardHeader title={`Documents (${docs.length})`} />
+                <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
+                  {docs.map((doc, i) => (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 8px', borderRadius: 6, border: '1px solid #F1F5F9' }}>
+                      <FileText size={12} style={{ color: '#94A3B8', flexShrink: 0 }} />
+                      <div style={{ flex: 1, minWidth: 0 }}>
+                        <div style={{ fontSize: 11, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.name}</div>
+                        <div style={{ fontSize: 10, color: '#94A3B8' }}>{doc.extracted}</div>
+                      </div>
+                      <StatusBadge variant="emerald">{doc.status}</StatusBadge>
+                    </div>
+                  ))}
+                  <button style={{
+                    width: '100%', marginTop: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 6,
+                    fontSize: 11, color: '#64748B', border: '1px dashed #CBD5E1', borderRadius: 6, padding: '7px 0',
+                    background: 'none', cursor: 'pointer',
+                  }}><Upload size={12} /> Add Document</button>
+                </div>
+              </Card>
+
+              {/* Meta */}
+              <div style={{ background: '#FAFBFC', borderRadius: 8, padding: 12, fontSize: 11, color: '#64748B', fontWeight: 500 }}>
+                <div>ID: HRW-2026-0488292</div>
+                <div style={{ marginTop: 3 }}>SLA: 4h remaining</div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
