@@ -11,11 +11,11 @@ import LuminaPanel from './LuminaPanel'
 const navItems = [
   { to: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
   { to: '/crm', icon: ClipboardList, title: 'Agentic CRM' },
-  { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
-  { to: '/risk', icon: Shield, title: 'Risk & UW' },
-  { to: '/analytics', icon: TrendingUp, title: 'Analytics' },
   { to: '/voice', icon: Phone, title: 'Voice Agent', live: true },
   { to: '/iso', icon: Building2, title: 'ISOs' },
+  { to: '/analytics', icon: TrendingUp, title: 'Analytics' },
+  { to: '/risk', icon: Shield, title: 'Risk & UW' },
+  { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
   { to: '/portal', icon: Store, title: 'Merchant Portal' },
 ]
 

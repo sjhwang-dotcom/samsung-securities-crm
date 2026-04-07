@@ -3,6 +3,7 @@ import {
   Plus, Search, CheckCircle, AlertTriangle, FileText, Upload, ChevronRight,
   Kanban, ShieldCheck, Store, DollarSign, TicketCheck, ClipboardList,
 } from 'lucide-react'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import { leadPipeline, merchants, onboardingApps } from '../data/mockData'
@@ -100,97 +101,291 @@ function ScoreRing({ score, size = 40 }: { score: number; size?: number }) {
   )
 }
 
-/* ═══ Pipeline — Funnel Dashboard + Stage Drill-down ═══ */
+/* ═══ Pipeline Dashboard ═══ */
+const tooltipStyle = { borderRadius: 10, fontSize: 11, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }
+
+// Simulated monthly pipeline data
+const pipelineMonthly = [
+  { month: 'Oct', newLeads: 18, won: 4, lost: 3, value: 142 },
+  { month: 'Nov', newLeads: 22, won: 6, lost: 4, value: 168 },
+  { month: 'Dec', newLeads: 15, won: 5, lost: 2, value: 155 },
+  { month: 'Jan', newLeads: 28, won: 8, lost: 5, value: 198 },
+  { month: 'Feb', newLeads: 31, won: 7, lost: 4, value: 215 },
+  { month: 'Mar', newLeads: 35, won: 9, lost: 3, value: 247 },
+]
+
+const leadSourceData = [
+  { name: 'Voice Agent', value: 40, color: '#1578F7' },
+  { name: 'Referral', value: 25, color: '#10B981' },
+  { name: 'Website', value: 15, color: '#8B5CF6' },
+  { name: 'Walk-in', value: 10, color: '#F59E0B' },
+  { name: 'Cold Call', value: 10, color: '#94A3B8' },
+]
+
+const agentLeaderboard = [
+  { name: 'David Goldfarb', deals: 34, value: '$142K', winRate: '68%' },
+  { name: 'Sarah Chen', deals: 28, value: '$118K', winRate: '72%' },
+  { name: 'Mike Rodriguez', deals: 21, value: '$89K', winRate: '61%' },
+  { name: 'Kate Palmarini', deals: 18, value: '$76K', winRate: '65%' },
+]
+
+const recentDeals = [
+  { name: "Bella's Bistro LLC", stage: 'Approval', value: '$32K/mo', score: 72, time: '2h ago', status: 'Won' },
+  { name: 'GreenLeaf Market', stage: 'Application', value: '$35K/mo', score: 88, time: '5h ago', status: 'Active' },
+  { name: 'Sunrise Pharmacy', stage: 'Application', value: '$28K/mo', score: 81, time: '1d ago', status: 'Active' },
+  { name: "King's Crown Jewelry", stage: 'Underwriting', value: '$45K/mo', score: 67, time: '1d ago', status: 'At Risk' },
+  { name: 'Park Slope Yoga', stage: 'Proposal', value: '$12K/mo', score: 71, time: '2d ago', status: 'Active' },
+  { name: 'Metro Grill', stage: 'Equipment', value: '$24K/mo', score: 79, time: '3d ago', status: 'Won' },
+]
+
 function PipelineView() {
   const [activeStage, setActiveStage] = useState<string | null>(null)
   const stages = Object.entries(leadPipeline)
   const totalLeads = stages.reduce((s, [, l]) => s + l.length, 0)
   const totalVolume = stages.reduce((s, [, leads]) =>
     s + leads.reduce((v, l) => v + parseFloat((l.estVolume || '$0').replace(/[$K/mo]/g, '')) * 1000, 0), 0)
+  const avgScore = Math.round(stages.flatMap(([,l]) => l).reduce((s,l) => s + l.aiScore, 0) / totalLeads)
+  const conversionPct = Math.round(stages.filter(([s]) => ['Approval','Boarding','Equipment','Go-Live'].includes(s)).reduce((s,[,l]) => s + l.length, 0) / totalLeads * 100)
 
-  const stageInfo: Record<string, { color: string; icon: string }> = {
-    'Lead':         { color: '#3B82F6', icon: '🎯' },
-    'Proposal':     { color: '#4F46E5', icon: '📋' },
-    'Application':  { color: '#8B5CF6', icon: '📝' },
-    'Underwriting': { color: '#F59E0B', icon: '🔍' },
-    'Approval':     { color: '#10B981', icon: '✅' },
-    'Boarding':     { color: '#0891B2', icon: '🚀' },
-    'Equipment':    { color: '#EC4899', icon: '🖥️' },
-    'Go-Live':      { color: '#059669', icon: '⚡' },
+  const stageColors: Record<string, string> = {
+    'Lead': '#3B82F6', 'Proposal': '#4F46E5', 'Application': '#8B5CF6', 'Underwriting': '#F59E0B',
+    'Approval': '#10B981', 'Boarding': '#0891B2', 'Equipment': '#EC4899', 'Go-Live': '#059669',
   }
 
   const activeLeads = activeStage ? (leadPipeline as Record<string, any[]>)[activeStage] ?? [] : []
 
   return (
     <div className="dashboard-grid">
-      {/* KPI Summary */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+      {/* Row 1: KPIs */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 10 }}>
         {[
-          { label: 'Total Pipeline', value: totalLeads, sub: 'Active leads' },
-          { label: 'Pipeline Value', value: `$${(totalVolume / 1000).toFixed(0)}K/mo`, sub: 'Est. monthly volume' },
-          { label: 'Avg AI Score', value: Math.round(stages.flatMap(([,l]) => l).reduce((s,l) => s + l.aiScore, 0) / totalLeads), sub: 'Lead quality' },
-          { label: 'Conversion', value: `${Math.round(stages.filter(([s]) => ['Approval','Boarding','Equipment','Go-Live'].includes(s)).reduce((s,[,l]) => s + l.length, 0) / totalLeads * 100)}%`, sub: 'To approval+' },
+          { label: 'Active Pipeline', value: totalLeads, sub: 'leads', color: '#1578F7' },
+          { label: 'Pipeline Value', value: `$${(totalVolume / 1000).toFixed(0)}K`, sub: '/month est.', color: '#4F46E5' },
+          { label: 'Win Rate', value: '67%', sub: 'last 90 days', color: '#10B981' },
+          { label: 'Avg Deal Velocity', value: '18d', sub: 'lead to close', color: '#0891B2' },
+          { label: 'Avg AI Score', value: avgScore, sub: 'lead quality', color: '#8B5CF6' },
+          { label: 'Conversion', value: `${conversionPct}%`, sub: 'to approval+', color: '#059669' },
         ].map(kpi => (
           <div key={kpi.label} className="kpi-card">
             <div className="kpi-label">{kpi.label}</div>
-            <div className="kpi-value" style={{ fontSize: 22 }}>{kpi.value}</div>
+            <div className="kpi-value" style={{ fontSize: 20, color: kpi.color }}>{kpi.value}</div>
             <div style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500, marginTop: 2 }}>{kpi.sub}</div>
           </div>
         ))}
       </div>
 
-      {/* Funnel Bar — click to drill down */}
+      {/* Row 2: Funnel + Stage detail */}
       <Card noPadding>
         <div style={{ padding: '14px 16px 10px' }}>
           <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Pipeline Stages</div>
-
           {/* Horizontal funnel */}
-          <div style={{ display: 'flex', gap: 2, marginBottom: 12, borderRadius: 8, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', gap: 2, marginBottom: 8, borderRadius: 8, overflow: 'hidden' }}>
             {stages.map(([stage, leads]) => {
-              const info = stageInfo[stage] || { color: '#94A3B8', icon: '•' }
+              const color = stageColors[stage] ?? '#94A3B8'
               const pct = (leads.length / totalLeads) * 100
+              const isActive = activeStage === stage
               return (
-                <div key={stage}
-                  onClick={() => setActiveStage(activeStage === stage ? null : stage)}
+                <div key={stage} onClick={() => setActiveStage(isActive ? null : stage)}
                   style={{
-                    flex: Math.max(pct, 5),
-                    height: 32,
-                    background: activeStage === stage ? info.color : `${info.color}20`,
-                    display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    cursor: 'pointer', transition: 'all 0.2s ease',
-                    borderBottom: activeStage === stage ? `3px solid ${info.color}` : '3px solid transparent',
-                  }}
-                  title={`${stage}: ${leads.length} leads`}
-                >
-                  <span style={{
-                    fontSize: 11, fontWeight: 700,
-                    color: activeStage === stage ? 'white' : info.color,
-                  }}>
-                    {leads.length}
-                  </span>
+                    flex: Math.max(pct, 5), height: 36, cursor: 'pointer', transition: 'all 0.2s ease',
+                    background: isActive ? color : `${color}18`,
+                    display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                    borderBottom: isActive ? `3px solid ${color}` : '3px solid transparent',
+                  }} title={`${stage}: ${leads.length} leads`}>
+                  <span style={{ fontSize: 12, fontWeight: 800, color: isActive ? 'white' : color }}>{leads.length}</span>
                 </div>
               )
             })}
           </div>
-
-          {/* Stage labels */}
           <div style={{ display: 'flex', gap: 2 }}>
-            {stages.map(([stage, leads]) => {
-              const info = stageInfo[stage] || { color: '#94A3B8', icon: '•' }
-              const isActive = activeStage === stage
+            {stages.map(([stage, leads]) => (
+              <div key={stage} onClick={() => setActiveStage(activeStage === stage ? null : stage)}
+                style={{ flex: Math.max((leads.length / totalLeads) * 100, 5), textAlign: 'center', cursor: 'pointer', padding: '4px 0' }}>
+                <div style={{ fontSize: 9, fontWeight: activeStage === stage ? 700 : 500, color: activeStage === stage ? stageColors[stage] : '#94A3B8' }}>{stage}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Drill-down */}
+        {activeStage && activeLeads.length > 0 && (
+          <div style={{ borderTop: '1px solid #F1F5F9' }}>
+            <div style={{ padding: '10px 16px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                <div style={{ width: 10, height: 10, borderRadius: '50%', background: stageColors[activeStage] }} />
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{activeStage}</span>
+                <span style={{ fontSize: 11, color: '#94A3B8' }}>{activeLeads.length} leads</span>
+              </div>
+              <button onClick={() => setActiveStage(null)} style={{ fontSize: 11, color: '#94A3B8', background: 'none', border: 'none', cursor: 'pointer' }}>Close ✕</button>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: 10, padding: '0 16px 16px' }}>
+              {activeLeads.map((lead: any) => (
+                <div key={lead.name} className="harlow-card" style={{ padding: 12, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 6 }}>
+                    <div style={{ flex: 1 }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>{lead.name}</div>
+                      <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{lead.location}</div>
+                    </div>
+                    <ScoreRing score={lead.aiScore} size={36} />
+                  </div>
+                  <div style={{ display: 'flex', gap: 4, marginBottom: 6 }}>
+                    <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#F1F5F9', color: '#64748B' }}>MCC {lead.mcc}</span>
+                    <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#E8F0FE', color: '#1578F7' }}>{lead.estVolume}</span>
+                  </div>
+                  {lead.detail && <div style={{ fontSize: 11, color: '#64748B', paddingTop: 6, borderTop: '1px solid #F1F5F9' }}>{lead.detail}</div>}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </Card>
+
+      {/* Row 3: Pipeline Trend + Lead Sources + Conversion Funnel */}
+      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr 1fr', gap: 12 }}>
+        {/* Pipeline Activity Trend */}
+        <Card noPadding>
+          <CardHeader title="Pipeline Activity (6mo)" />
+          <div style={{ padding: '0 16px 16px', height: 200 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={pipelineMonthly} barGap={2}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Bar dataKey="newLeads" name="New Leads" fill="#1578F7" radius={[3,3,0,0]} />
+                <Bar dataKey="won" name="Won" fill="#10B981" radius={[3,3,0,0]} />
+                <Bar dataKey="lost" name="Lost" fill="#F43F5E" radius={[3,3,0,0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Lead Sources */}
+        <Card noPadding>
+          <CardHeader title="Lead Sources" />
+          <div style={{ padding: '0 16px 16px', height: 200, display: 'flex', alignItems: 'center' }}>
+            <div style={{ width: '100%' }}>
+              {leadSourceData.map(src => (
+                <div key={src.name} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
+                  <div style={{ width: 8, height: 8, borderRadius: '50%', background: src.color, flexShrink: 0 }} />
+                  <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, flex: 1 }}>{src.name}</span>
+                  <div style={{ width: 80, height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
+                    <div style={{ width: `${src.value}%`, height: '100%', background: src.color, borderRadius: 3 }} />
+                  </div>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', width: 32, textAlign: 'right' }}>{src.value}%</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </Card>
+
+        {/* Conversion Funnel */}
+        <Card noPadding>
+          <CardHeader title="Conversion Funnel" />
+          <div style={{ padding: '0 16px 16px', height: 200, display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+            {[
+              { stage: 'Leads', count: 200, pct: 100 },
+              { stage: 'Qualified', count: 142, pct: 71 },
+              { stage: 'Proposal', count: 98, pct: 49 },
+              { stage: 'Application', count: 62, pct: 31 },
+              { stage: 'Won', count: 39, pct: 19.5 },
+            ].map((f, i) => (
+              <div key={f.stage} style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+                <span style={{ fontSize: 10, color: '#94A3B8', width: 60, textAlign: 'right', fontWeight: 500 }}>{f.stage}</span>
+                <div style={{ flex: 1, position: 'relative', height: 20 }}>
+                  <div style={{
+                    width: `${f.pct}%`, height: '100%', borderRadius: 4,
+                    background: `linear-gradient(90deg, #1578F7${Math.round(255 - i * 40).toString(16).padStart(2,'0')}, #1578F7${Math.round(180 - i * 30).toString(16).padStart(2,'0')})`,
+                    display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6,
+                    transition: 'width 0.3s ease',
+                  }}>
+                    <span style={{ fontSize: 10, fontWeight: 700, color: 'white' }}>{f.count}</span>
+                  </div>
+                </div>
+                <span style={{ fontSize: 10, fontWeight: 600, color: '#64748B', width: 36, textAlign: 'right' }}>{f.pct}%</span>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Row 4: Pipeline Value Trend + Agent Leaderboard */}
+      <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 12 }}>
+        {/* Pipeline Value Trend */}
+        <Card noPadding>
+          <CardHeader title="Pipeline Value Trend ($K/mo)" />
+          <div style={{ padding: '0 16px 16px', height: 180 }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={pipelineMonthly}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} tickFormatter={(v: any) => `$${v}K`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`$${v}K`, 'Value']} />
+                <defs>
+                  <linearGradient id="valGrad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#1578F7" stopOpacity={0.15} />
+                    <stop offset="95%" stopColor="#1578F7" stopOpacity={0} />
+                  </linearGradient>
+                </defs>
+                <Area type="monotone" dataKey="value" stroke="#1578F7" fill="url(#valGrad)" strokeWidth={2} />
+              </AreaChart>
+            </ResponsiveContainer>
+          </div>
+        </Card>
+
+        {/* Agent Leaderboard */}
+        <Card noPadding>
+          <CardHeader title="Agent Leaderboard (Q1 2026)" />
+          <div style={{ padding: '0 16px 16px' }}>
+            {agentLeaderboard.map((agent, i) => (
+              <div key={agent.name} style={{
+                display: 'flex', alignItems: 'center', gap: 10, padding: '10px 0',
+                borderBottom: i < agentLeaderboard.length - 1 ? '1px solid #F8FAFC' : 'none',
+              }}>
+                <div style={{
+                  width: 26, height: 26, borderRadius: '50%', flexShrink: 0,
+                  background: i === 0 ? '#1578F7' : i === 1 ? '#3B82F6' : '#E8F0FE',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  fontSize: 11, fontWeight: 800, color: i < 2 ? 'white' : '#1578F7',
+                }}>{i + 1}</div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontSize: 13, fontWeight: 600, color: '#0F172A' }}>{agent.name}</div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{agent.deals} deals · {agent.value}</div>
+                </div>
+                <div style={{
+                  fontSize: 11, fontWeight: 700, padding: '3px 8px', borderRadius: 6,
+                  background: parseFloat(agent.winRate) >= 70 ? '#D1FAE5' : '#E8F0FE',
+                  color: parseFloat(agent.winRate) >= 70 ? '#059669' : '#1578F7',
+                }}>{agent.winRate}</div>
+              </div>
+            ))}
+          </div>
+        </Card>
+      </div>
+
+      {/* Row 5: Recent Deal Activity */}
+      <Card noPadding>
+        <CardHeader title="Recent Deal Activity" />
+        <div style={{ padding: '0 16px 16px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
+            {recentDeals.map(deal => {
+              const statusColor = deal.status === 'Won' ? '#10B981' : deal.status === 'At Risk' ? '#F59E0B' : '#1578F7'
               return (
-                <div key={stage}
-                  onClick={() => setActiveStage(isActive ? null : stage)}
-                  style={{
-                    flex: Math.max((leads.length / totalLeads) * 100, 5),
-                    textAlign: 'center', cursor: 'pointer',
-                    padding: '6px 2px', borderRadius: 6,
-                    background: isActive ? `${info.color}10` : 'transparent',
-                    transition: 'all 0.15s ease',
-                  }}
-                >
-                  <div style={{ fontSize: 10, fontWeight: isActive ? 700 : 500, color: isActive ? info.color : '#94A3B8' }}>
-                    {stage}
+                <div key={deal.name} className="harlow-card" style={{ padding: 12, cursor: 'pointer' }}>
+                  <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
+                    <div>
+                      <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{deal.name}</div>
+                      <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 1 }}>{deal.time}</div>
+                    </div>
+                    <span style={{
+                      fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 12,
+                      background: `${statusColor}15`, color: statusColor,
+                    }}>{deal.status}</span>
+                  </div>
+                  <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
+                    <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: `${stageColors[deal.stage] ?? '#94A3B8'}15`, color: stageColors[deal.stage] ?? '#94A3B8' }}>{deal.stage}</span>
+                    <span style={{ fontSize: 11, fontWeight: 700, color: '#1E293B' }}>{deal.value}</span>
+                    <span style={{ fontSize: 10, color: '#94A3B8', marginLeft: 'auto' }}>Score: {deal.score}</span>
                   </div>
                 </div>
               )
@@ -198,56 +393,6 @@ function PipelineView() {
           </div>
         </div>
       </Card>
-
-      {/* Stage Detail — shows when a stage is clicked */}
-      {activeStage && activeLeads.length > 0 && (
-        <Card noPadding>
-          <div style={{ padding: '12px 16px', borderBottom: '1px solid #F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-              <div style={{
-                width: 10, height: 10, borderRadius: '50%',
-                background: stageInfo[activeStage]?.color ?? '#94A3B8',
-              }} />
-              <span style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{activeStage}</span>
-              <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>{activeLeads.length} leads</span>
-            </div>
-            <button onClick={() => setActiveStage(null)}
-              style={{ fontSize: 11, color: '#94A3B8', background: 'none', border: 'none', cursor: 'pointer', fontWeight: 500 }}>
-              Close ✕
-            </button>
-          </div>
-
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10, padding: 16 }}>
-            {activeLeads.map((lead: any) => (
-              <div key={lead.name} className="harlow-card" style={{ padding: 14, cursor: 'pointer' }}>
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10, marginBottom: 8 }}>
-                  <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 700, fontSize: 13, color: '#0F172A' }}>{lead.name}</div>
-                    <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{lead.location}</div>
-                  </div>
-                  <ScoreRing score={lead.aiScore} />
-                </div>
-                <div style={{ display: 'flex', gap: 4, marginBottom: 8 }}>
-                  <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#F1F5F9', color: '#64748B' }}>MCC {lead.mcc}</span>
-                  <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#E8F0FE', color: '#1578F7' }}>{lead.estVolume}</span>
-                </div>
-                {lead.detail && (
-                  <div style={{ fontSize: 11, color: '#64748B', paddingTop: 8, borderTop: '1px solid #F1F5F9', fontWeight: 500 }}>
-                    {lead.detail}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </Card>
-      )}
-
-      {/* Empty state — no stage selected */}
-      {!activeStage && (
-        <div style={{ textAlign: 'center', padding: '24px 0', color: '#94A3B8', fontSize: 13 }}>
-          Click a stage above to view leads
-        </div>
-      )}
     </div>
   )
 }
