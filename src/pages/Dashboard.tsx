@@ -18,13 +18,15 @@ const isoVolumeData = [
   { name: 'Liberty', value: 4.8 },
 ]
 
+// Waterfall: each bar has invisible base + visible delta
+// Starting=28.5, +1.8 Organic, +1.2 Zenith, +0.8 Products, -0.2 Churn, =32.1 Current
 const waterfallData = [
-  { name: 'Starting', value: 28.5, fill: '#94A3B8' },
-  { name: 'Organic', value: 1.8, fill: '#10B981' },
-  { name: 'Zenith Acq.', value: 1.2, fill: '#3B82F6' },
-  { name: 'Products', value: 0.8, fill: '#8B5CF6' },
-  { name: 'Churn', value: -0.2, fill: '#EF4444' },
-  { name: 'Current', value: 32.1, fill: '#1578F7' },
+  { name: 'Starting', base: 0, delta: 28.5, fill: '#94A3B8' },
+  { name: 'Organic', base: 28.5, delta: 1.8, fill: '#10B981' },
+  { name: 'Zenith Acq.', base: 30.3, delta: 1.2, fill: '#3B82F6' },
+  { name: 'Products', base: 31.5, delta: 0.8, fill: '#8B5CF6' },
+  { name: 'Churn', base: 32.1, delta: 0.2, fill: '#EF4444' },
+  { name: 'Current', base: 0, delta: 31.9, fill: '#1578F7' },
 ]
 
 const tooltipStyle = {
@@ -182,7 +184,7 @@ export default function Dashboard() {
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${v}M`} />
                 <Bar dataKey="value" radius={[0, 6, 6, 0]} barSize={22}>
                   {isoVolumeData.map((_, i) => (
-                    <Cell key={i} fill={['#1578F7', '#3B82F6', '#8B5CF6'][i]} />
+                    <Cell key={i} fill={['#1578F7', '#10B981', '#F59E0B'][i]} />
                   ))}
                 </Bar>
               </BarChart>
@@ -198,9 +200,15 @@ export default function Dashboard() {
               <BarChart data={waterfallData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="name" tick={{ fontSize: 9, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} domain={[0, 'auto']} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${Math.abs(v)}M`} />
-                <Bar dataKey="value" radius={[4, 4, 0, 0]} barSize={28}>
+                <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} domain={[0, 36]} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => {
+                  if (name === 'base') return [null, null]
+                  return [`$${v}M`, 'Value']
+                }} />
+                {/* Invisible base */}
+                <Bar dataKey="base" stackId="waterfall" fill="transparent" barSize={28} />
+                {/* Visible delta */}
+                <Bar dataKey="delta" stackId="waterfall" radius={[4, 4, 0, 0]} barSize={28}>
                   {waterfallData.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
                 </Bar>
               </BarChart>

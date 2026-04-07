@@ -1,26 +1,17 @@
 import { useState, useEffect, useCallback } from 'react'
-import { Send, Bot, AlertTriangle, TrendingUp, Info, ChevronRight, FileText, MessageSquare, Lightbulb, BarChart3 } from 'lucide-react'
-import { luminaInsights } from '../data/mockData'
-
-const severityConfig: Record<string, { bg: string; iconBg: string; icon: React.ElementType; iconColor: string }> = {
-  high: { bg: 'lumina-card-high', iconBg: 'high', icon: AlertTriangle, iconColor: 'text-rose-500' },
-  medium: { bg: 'lumina-card-medium', iconBg: 'medium', icon: AlertTriangle, iconColor: 'text-amber-500' },
-  positive: { bg: 'lumina-card-positive', iconBg: 'positive', icon: TrendingUp, iconColor: 'text-emerald-500' },
-  info: { bg: 'lumina-card-info', iconBg: 'info', icon: Info, iconColor: 'text-blue-500' },
-}
+import { Send, Bot, AlertTriangle, FileText, MessageSquare, BarChart3 } from 'lucide-react'
 
 interface LuminaPanelProps {
   onClose?: () => void
 }
 
 export default function LuminaPanel({ onClose }: LuminaPanelProps) {
-  const [activeTab, setActiveTab] = useState<'chat' | 'insights' | 'reports'>('chat')
+  const [activeTab, setActiveTab] = useState<'chat' | 'reports'>('chat')
   const [panelWidth, setPanelWidth] = useState(() => Math.max(Math.round(window.innerWidth * 0.3), 420))
   const [isResizing, setIsResizing] = useState(false)
 
   const tabs = [
     { id: 'chat' as const, label: 'Chat', Icon: MessageSquare },
-    { id: 'insights' as const, label: 'Insights', Icon: Lightbulb },
     { id: 'reports' as const, label: 'Reports', Icon: BarChart3 },
   ]
 
@@ -100,7 +91,6 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
       {/* Content */}
       <div className="lumina-content">
         {activeTab === 'chat' && <ChatTab />}
-        {activeTab === 'insights' && <InsightsTab />}
         {activeTab === 'reports' && <ReportsTab />}
       </div>
 
@@ -187,32 +177,6 @@ function ChatTab() {
   )
 }
 
-function InsightsTab() {
-  return (
-    <div className="lumina-insights">
-      <div className="lumina-section-label">Auto-Generated Insights</div>
-      {luminaInsights.map((insight, i) => {
-        const cfg = severityConfig[insight.severity] || severityConfig.info
-        const Icon = cfg.icon
-        return (
-          <div key={i} className={`lumina-insight-card ${cfg.bg}`}>
-            <div className="lumina-insight-inner">
-              <div className={`lumina-insight-icon ${cfg.iconBg}`}>
-                <Icon size={14} className={cfg.iconColor} strokeWidth={2} />
-              </div>
-              <div className="lumina-insight-content">
-                <div className="lumina-insight-title">{insight.title}</div>
-                <div className="lumina-insight-text">{insight.text}</div>
-                <div className="lumina-insight-time">{insight.time}</div>
-              </div>
-              <ChevronRight size={14} className="lumina-insight-chevron" />
-            </div>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
 
 function ReportsTab() {
   const reports = [
