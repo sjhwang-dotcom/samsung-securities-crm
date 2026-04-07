@@ -6,7 +6,7 @@ import {
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
-import { leadPipeline, merchants, onboardingApps } from '../data/mockData'
+import { leadPipeline, allMerchants, onboardingApps } from '../data/mockData'
 
 type SubNav = 'pipeline' | 'onboarding' | 'merchants' | 'residuals' | 'tickets'
 
@@ -623,104 +623,238 @@ function OnboardingMasterDetail() {
   )
 }
 
-/* ═══ My Merchants ═══ */
+/* ═══ My Merchants — Master-Detail ═══ */
 function MerchantsView() {
-  type MerchantRow = { name: string; mid: string; processor: string; equipment: string; monthlyVol: string; pciStatus: string; status: string }
+  const [selectedIdx, setSelectedIdx] = useState(0)
+  const [search, setSearch] = useState('')
 
-  const active = merchants.filter(m => m.status === 'Active').length
-  const boarding = merchants.filter(m => m.status === 'Boarding').length
-  const inactive = merchants.filter(m => m.status === 'Inactive').length
-  const compliant = merchants.filter(m => m.pciStatus === 'Compliant').length
-  const totalVol = merchants.reduce((s, m) => s + parseFloat(m.monthlyVol.replace(/[$,K]/g, '') || '0') * (m.monthlyVol.includes('K') ? 1000 : 1), 0)
+  // Use DB merchants (first 100 for performance)
+  const merchantList = allMerchants.slice(0, 100)
+  const filtered = search
+    ? merchantList.filter(m => m.name.toLowerCase().includes(search.toLowerCase()) || m.processor?.toLowerCase().includes(search.toLowerCase()) || m.category?.toLowerCase().includes(search.toLowerCase()))
+    : merchantList
 
-  const pciVariant = (s: string) => s === 'Compliant' ? 'emerald' as const : s === 'Non-Compliant' ? 'rose' as const : 'gray' as const
-  const statusVariant = (s: string) => s === 'Active' ? 'emerald' as const : s === 'Boarding' ? 'blue' as const : 'gray' as const
+  const selected = filtered[selectedIdx] ?? filtered[0]
+  if (!selected) return <div style={{ padding: 40, textAlign: 'center', color: '#94A3B8' }}>No merchants found</div>
 
-  const columns: Column<MerchantRow>[] = [
-    { key: 'name', header: 'Merchant', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.name}</span> },
-    { key: 'mid', header: 'MID', render: (r) => <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#94A3B8' }}>{r.mid}</span> },
-    { key: 'processor', header: 'Processor' },
-    { key: 'equipment', header: 'Equipment' },
-    { key: 'monthlyVol', header: 'Monthly Vol', render: (r) => <span style={{ fontWeight: 700, color: '#1E293B' }}>{r.monthlyVol}</span> },
-    { key: 'pciStatus', header: 'PCI', render: (r) => <StatusBadge variant={pciVariant(r.pciStatus)}>{r.pciStatus}</StatusBadge> },
-    { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={statusVariant(r.status)}>{r.status}</StatusBadge> },
+  const riskColor = (s: number) => s >= 80 ? '#10B981' : s >= 60 ? '#0891B2' : s >= 40 ? '#F59E0B' : '#F43F5E'
+  const statusColor = (s: string) => s === 'Active' ? '#10B981' : s === 'Boarding' ? '#3B82F6' : '#94A3B8'
+  const monthlyVol = (selected.annual_volume ?? 0) / 12
+
+  // Simulated data for selected merchant
+  const monthlyData = Array.from({ length: 6 }, (_, i) => ({
+    month: ['Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'][i],
+    volume: Math.round(monthlyVol * (0.85 + i * 0.03 + Math.random() * 0.1)),
+  }))
+
+  const deposits = [
+    { date: 'Mar 14', txns: Math.round(monthlyVol / (selected.avg_ticket ?? 30) / 22), amount: `$${(monthlyVol / 22).toFixed(2)}` },
+    { date: 'Mar 13', txns: Math.round(monthlyVol / (selected.avg_ticket ?? 30) / 22 * 0.95), amount: `$${(monthlyVol / 22 * 0.95).toFixed(2)}` },
+    { date: 'Mar 12', txns: Math.round(monthlyVol / (selected.avg_ticket ?? 30) / 22 * 0.88), amount: `$${(monthlyVol / 22 * 0.88).toFixed(2)}` },
   ]
 
-  // Processor breakdown
-  const procBreakdown: Record<string, number> = {}
-  merchants.forEach(m => { procBreakdown[m.processor] = (procBreakdown[m.processor] || 0) + 1 })
-
   return (
-    <div className="dashboard-grid">
-      {/* KPIs */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
-        {[
-          { label: 'Total Merchants', value: merchants.length, color: '#1578F7' },
-          { label: 'Active', value: active, color: '#10B981' },
-          { label: 'Boarding', value: boarding, color: '#3B82F6' },
-          { label: 'PCI Compliant', value: `${Math.round(compliant / Math.max(merchants.length, 1) * 100)}%`, color: compliant / merchants.length > 0.85 ? '#10B981' : '#F59E0B' },
-          { label: 'Monthly Volume', value: `$${(totalVol / 1000).toFixed(0)}K`, color: '#4F46E5' },
-        ].map(kpi => (
-          <div key={kpi.label} className="kpi-card">
-            <div className="kpi-label">{kpi.label}</div>
-            <div className="kpi-value" style={{ fontSize: 22, color: kpi.color }}>{kpi.value}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Processor + Status breakdown */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
-        <Card noPadding>
-          <CardHeader title="By Processor" />
-          <div style={{ padding: '0 16px 16px' }}>
-            {Object.entries(procBreakdown).sort((a, b) => b[1] - a[1]).map(([proc, count]) => (
-              <div key={proc} style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
-                <span style={{ fontSize: 12, color: '#334155', fontWeight: 500, flex: 1, minWidth: 0, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{proc}</span>
-                <div style={{ width: 100, height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ width: `${(count / merchants.length) * 100}%`, height: '100%', background: '#1578F7', borderRadius: 3 }} />
-                </div>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#64748B', width: 24, textAlign: 'right' }}>{count}</span>
-              </div>
-            ))}
-          </div>
-        </Card>
-        <Card noPadding>
-          <CardHeader title="Status Breakdown" />
-          <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 12 }}>
-            {[
-              { label: 'Active', count: active, pct: Math.round(active / merchants.length * 100), color: '#10B981' },
-              { label: 'Boarding', count: boarding, pct: Math.round(boarding / merchants.length * 100), color: '#3B82F6' },
-              { label: 'Inactive', count: inactive, pct: Math.round(inactive / merchants.length * 100), color: '#94A3B8' },
-            ].map(s => (
-              <div key={s.label}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 4 }}>
-                  <span style={{ fontWeight: 500, color: '#334155' }}>{s.label}</span>
-                  <span style={{ fontWeight: 700, color: s.color }}>{s.count} ({s.pct}%)</span>
-                </div>
-                <div style={{ height: 6, background: '#F1F5F9', borderRadius: 3, overflow: 'hidden' }}>
-                  <div style={{ width: `${s.pct}%`, height: '100%', background: s.color, borderRadius: 3 }} />
-                </div>
-              </div>
-            ))}
-          </div>
-        </Card>
-      </div>
-
-      {/* Table */}
-      <Card noPadding>
-        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12, borderBottom: '1px solid #F1F5F9' }}>
-          <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>Merchant Portfolio</span>
-          <div style={{ marginLeft: 'auto', display: 'flex', gap: 8 }}>
-            <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '6px 10px', fontWeight: 600, color: '#475569', outline: 'none' }}>
-              <option>All Statuses</option><option>Active</option><option>Boarding</option><option>Inactive</option>
-            </select>
-            <select style={{ fontSize: 12, background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, padding: '6px 10px', fontWeight: 600, color: '#475569', outline: 'none' }}>
-              <option>All Processors</option><option>Harlow Payments</option><option>EPSG</option><option>Repay TSYS FEO</option>
-            </select>
+    <div style={{ display: 'flex', gap: 0, margin: '-12px -20px -16px', overflow: 'hidden' }}>
+      {/* ═══ Left: Merchant List ═══ */}
+      <div style={{
+        width: 300, minWidth: 300, background: 'white',
+        borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column',
+        height: 'calc(100vh - 160px)',
+      }}>
+        <div style={{ padding: '14px 16px 10px', borderBottom: '1px solid #F1F5F9' }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A' }}>My Merchants</div>
+          <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{allMerchants.length.toLocaleString()} total</div>
+          {/* Search */}
+          <div style={{ position: 'relative', marginTop: 8 }}>
+            <Search size={13} style={{ position: 'absolute', left: 10, top: '50%', transform: 'translateY(-50%)', color: '#CBD5E1' }} />
+            <input placeholder="Search..." value={search} onChange={e => { setSearch(e.target.value); setSelectedIdx(0) }}
+              style={{ width: '100%', background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, paddingLeft: 30, paddingRight: 10, paddingTop: 7, paddingBottom: 7, fontSize: 12, outline: 'none', color: '#334155' }} />
           </div>
         </div>
-        <DataTable columns={columns} data={merchants as unknown as MerchantRow[]} hoverable />
-      </Card>
+
+        {/* Mini KPIs */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, padding: '8px 12px', borderBottom: '1px solid #F1F5F9' }}>
+          {[
+            { label: 'Active', value: allMerchants.filter(m => m.status === 'Active').length, color: '#10B981' },
+            { label: 'Boarding', value: allMerchants.filter(m => m.status === 'Boarding').length, color: '#3B82F6' },
+            { label: 'At Risk', value: allMerchants.filter(m => (m.risk_score ?? 70) < 40).length, color: '#F43F5E' },
+          ].map(k => (
+            <div key={k.label} style={{ background: '#FAFBFC', borderRadius: 6, padding: '4px 6px', textAlign: 'center' }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: k.color }}>{k.value}</div>
+              <div style={{ fontSize: 8, color: '#94A3B8', fontWeight: 500 }}>{k.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* Merchant list */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {filtered.map((m, i) => {
+            const isActive = selectedIdx === i
+            return (
+              <div key={m.merchant_id} onClick={() => setSelectedIdx(i)}
+                style={{
+                  padding: '10px 16px', cursor: 'pointer',
+                  borderLeft: isActive ? '3px solid #1578F7' : '3px solid transparent',
+                  background: isActive ? 'linear-gradient(90deg, rgba(21,120,247,0.06), transparent)' : 'transparent',
+                  borderBottom: '1px solid #F8FAFC',
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <div style={{ fontSize: 12, fontWeight: 700, color: isActive ? '#1578F7' : '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{m.name}</div>
+                    <div style={{ fontSize: 10, color: '#94A3B8', marginTop: 1 }}>{m.category} · {m.processor}</div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexShrink: 0 }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: statusColor(m.status) }} />
+                    <span style={{ fontSize: 11, fontWeight: 700, color: riskColor(m.risk_score ?? 70) }}>{m.risk_score}</span>
+                  </div>
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <div style={{ padding: '8px 16px', borderTop: '1px solid #F1F5F9', fontSize: 10, color: '#94A3B8', textAlign: 'center' }}>
+          Showing {filtered.length} of {allMerchants.length.toLocaleString()}
+        </div>
+      </div>
+
+      {/* ═══ Right: Merchant Detail ═══ */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', height: 'calc(100vh - 160px)' }}>
+        <div className="dashboard-grid">
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{selected.name}</span>
+                <StatusBadge variant={selected.status === 'Active' ? 'emerald' : selected.status === 'Boarding' ? 'blue' : 'gray'}>{selected.status}</StatusBadge>
+              </div>
+              <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 4, display: 'flex', gap: 16, fontWeight: 500 }}>
+                <span>MID: <span style={{ fontFamily: 'monospace', color: '#64748B' }}>{selected.mid}</span></span>
+                <span>MCC: {selected.mcc} ({selected.mcc_desc})</span>
+                <span>{selected.processor}</span>
+                <span>{selected.iso_name}</span>
+              </div>
+            </div>
+            {/* Risk Score */}
+            <div style={{ textAlign: 'center' }}>
+              <div style={{ position: 'relative', width: 64, height: 64 }}>
+                <svg width={64} height={64} style={{ transform: 'rotate(-90deg)' }}>
+                  <circle cx={32} cy={32} r={26} fill="none" stroke="#F1F5F9" strokeWidth={4} />
+                  <circle cx={32} cy={32} r={26} fill="none" stroke={riskColor(selected.risk_score ?? 70)} strokeWidth={4}
+                    strokeDasharray={`${((selected.risk_score ?? 70) / 100) * 163.4} 163.4`} strokeLinecap="round" />
+                </svg>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 16, fontWeight: 800, color: riskColor(selected.risk_score ?? 70) }}>{selected.risk_score}</span>
+                  <span style={{ fontSize: 8, color: '#94A3B8', fontWeight: 500 }}>RISK</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* KPIs */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
+            {[
+              { label: 'Monthly Volume', value: `$${(monthlyVol / 1000).toFixed(1)}K`, color: '#1578F7' },
+              { label: 'Avg Ticket', value: `$${(selected.avg_ticket ?? 0).toFixed(2)}`, color: '#4F46E5' },
+              { label: 'Annual Volume', value: `$${((selected.annual_volume ?? 0) / 1000).toFixed(0)}K`, color: '#0891B2' },
+              { label: 'Effective Rate', value: '2.69%', color: '#059669' },
+              { label: 'Residual/mo', value: `$${(monthlyVol * 0.01).toFixed(2)}`, color: '#10B981' },
+            ].map(kpi => (
+              <div key={kpi.label} className="kpi-card">
+                <div className="kpi-label">{kpi.label}</div>
+                <div className="kpi-value" style={{ fontSize: 18, color: kpi.color }}>{kpi.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Volume Trend + Info */}
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+            <Card noPadding>
+              <CardHeader title="Volume Trend (6mo)" />
+              <div style={{ padding: '0 16px 16px', height: 160 }}>
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={monthlyData}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} tickFormatter={(v: any) => `$${(v/1000).toFixed(0)}K`} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`$${v.toLocaleString()}`, 'Volume']} />
+                    <Bar dataKey="volume" fill="#1578F7" radius={[4,4,0,0]} />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </Card>
+
+            <Card noPadding>
+              <CardHeader title="Merchant Info" />
+              <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { label: 'Category', value: selected.category },
+                  { label: 'City', value: `${selected.city}, ${selected.state}` },
+                  { label: 'Boarded', value: selected.boarding_date ? new Date(selected.boarding_date).toLocaleDateString() : '—' },
+                  { label: 'Processor', value: selected.processor },
+                  { label: 'ISO', value: selected.iso_name },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: '#94A3B8', fontWeight: 500 }}>{item.label}</span>
+                    <span style={{ color: '#0F172A', fontWeight: 600 }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+
+          {/* Compliance + Equipment + Recent Deposits */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 12 }}>
+            <Card noPadding>
+              <CardHeader title="Compliance" />
+              <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { label: 'PCI Status', value: 'Compliant', ok: true },
+                  { label: 'SAQ Type', value: 'SAQ B-IP', ok: true },
+                  { label: 'Last ASV Scan', value: 'Feb 28', ok: true },
+                  { label: 'P2PE', value: 'Validated', ok: true },
+                  { label: 'Chargeback Rate', value: '0.3%', ok: true },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: '#94A3B8', fontWeight: 500 }}>{item.label}</span>
+                    <span style={{ fontWeight: 600, color: item.ok ? '#059669' : '#EF4444' }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card noPadding>
+              <CardHeader title="Equipment" />
+              <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {[
+                  { label: 'Terminal', value: 'PAX A920' },
+                  { label: 'Connection', value: 'WiFi + 4G' },
+                  { label: 'Status', value: 'Online' },
+                  { label: 'Firmware', value: 'v11.4.2' },
+                  { label: 'Last Txn', value: 'Today' },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: '#94A3B8', fontWeight: 500 }}>{item.label}</span>
+                    <span style={{ fontWeight: 600, color: '#0F172A' }}>{item.value}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+
+            <Card noPadding>
+              <CardHeader title="Recent Deposits" />
+              <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                {deposits.map(d => (
+                  <div key={d.date} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                    <span style={{ color: '#94A3B8', fontWeight: 500 }}>{d.date}</span>
+                    <span style={{ color: '#64748B' }}>{d.txns} txns</span>
+                    <span style={{ fontWeight: 700, color: '#0F172A' }}>{d.amount}</span>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          </div>
+        </div>
+      </div>
     </div>
   )
 }
