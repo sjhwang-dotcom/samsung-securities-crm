@@ -17,14 +17,7 @@ import Statements from './pages/merchant/Statements'
 import PCI from './pages/merchant/PCI'
 import Equipment from './pages/merchant/Equipment'
 import Support from './pages/merchant/Support'
-import Funding from './pages/merchant/Funding'
-import Checking from './pages/merchant/Checking'
-import Accounting from './pages/merchant/Accounting'
-import PayrollPage from './pages/merchant/PayrollPage'
-import HealthInsurance from './pages/merchant/HealthInsurance'
-import BizInsurance from './pages/merchant/BizInsurance'
-import Crypto from './pages/merchant/Crypto'
-import Rewards from './pages/merchant/Rewards'
+import ProductsServices from './pages/merchant/ProductsServices'
 
 export default function App() {
   return (
@@ -55,15 +48,7 @@ export default function App() {
           <Route path="/portal/pci" element={<PCI />} />
           <Route path="/portal/equipment" element={<Equipment />} />
           <Route path="/portal/support" element={<Support />} />
-          {/* Products & Services */}
-          <Route path="/portal/funding" element={<Funding />} />
-          <Route path="/portal/checking" element={<Checking />} />
-          <Route path="/portal/accounting" element={<Accounting />} />
-          <Route path="/portal/payroll" element={<PayrollPage />} />
-          <Route path="/portal/insurance" element={<HealthInsurance />} />
-          <Route path="/portal/biz-insurance" element={<BizInsurance />} />
-          <Route path="/portal/crypto" element={<Crypto />} />
-          <Route path="/portal/rewards" element={<Rewards />} />
+          <Route path="/portal/products" element={<ProductsServices />} />
         </Route>
       </Routes>
     </BrowserRouter>

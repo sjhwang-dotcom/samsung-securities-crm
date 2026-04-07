@@ -3,7 +3,6 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   Home, ArrowLeftRight, FileText, Landmark, AlertTriangle,
   ShieldCheck, Monitor, HelpCircle, LogOut, Sparkles, Package,
-  DollarSign, Building, Calculator, Users, Heart, Shield, Bitcoin, Gift, ChevronDown,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
@@ -15,32 +14,13 @@ const mainNav = [
   { to: '/portal/statements', icon: FileText, title: 'Statements' },
   { to: '/portal/pci', icon: ShieldCheck, title: 'PCI & Compliance' },
   { to: '/portal/equipment', icon: Monitor, title: 'Equipment' },
+  { to: '/portal/products', icon: Package, title: 'Products & Services' },
 ]
-
-const productNav = [
-  { to: '/portal/funding', icon: DollarSign, title: 'Business Funding' },
-  { to: '/portal/checking', icon: Building, title: 'Business Checking' },
-  { to: '/portal/accounting', icon: Calculator, title: 'Accounting' },
-  { to: '/portal/payroll', icon: Users, title: 'Payroll' },
-  { to: '/portal/insurance', icon: Heart, title: 'Health Insurance' },
-  { to: '/portal/biz-insurance', icon: Shield, title: 'Business Insurance' },
-  { to: '/portal/crypto', icon: Bitcoin, title: 'Crypto Payments' },
-  { to: '/portal/rewards', icon: Gift, title: 'Rewards Program' },
-]
-
-const productPaths = productNav.map(p => p.to)
 
 export default function MerchantLayout() {
   const [luminaOpen, setLuminaOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
-
-  // Auto-expand if on a product route
-  const isOnProductRoute = productPaths.some(p => location.pathname === p)
-  const [productsExpanded, setProductsExpanded] = useState(isOnProductRoute)
-
-  // Keep in sync with route changes
-  if (isOnProductRoute && !productsExpanded) setProductsExpanded(true)
 
   return (
     <div className="harlow-shell">
@@ -51,7 +31,6 @@ export default function MerchantLayout() {
         </div>
 
         <div className="icon-rail-nav">
-          {/* Main nav */}
           {mainNav.map(item => {
             const isActive = item.end
               ? location.pathname === item.to
@@ -59,61 +38,12 @@ export default function MerchantLayout() {
             return (
               <NavLink key={item.to} to={item.to} end={item.end} title={item.title}
                 className={`icon-rail-item ${isActive ? 'active' : ''}`}
-                onClick={() => setProductsExpanded(false)}
               >
                 <item.icon size={18} strokeWidth={1.8} />
                 {item.badge && <span className="icon-rail-badge">{item.badge}</span>}
               </NavLink>
             )
           })}
-
-          {/* Divider */}
-          <div style={{ width: 28, height: 1, background: 'rgba(255,255,255,0.08)', margin: '6px 0' }} />
-
-          {/* Products toggle */}
-          <button
-            title="Products & Services"
-            className={`icon-rail-item ${isOnProductRoute ? 'active' : ''}`}
-            onClick={() => setProductsExpanded(!productsExpanded)}
-            style={{ position: 'relative' }}
-          >
-            <Package size={18} strokeWidth={1.8} />
-            <ChevronDown
-              size={10}
-              strokeWidth={2.5}
-              style={{
-                position: 'absolute',
-                bottom: 4,
-                right: 8,
-                color: 'rgba(255,255,255,0.4)',
-                transform: productsExpanded ? 'rotate(180deg)' : 'rotate(0deg)',
-                transition: 'transform 0.2s ease',
-              }}
-            />
-          </button>
-
-          {/* Products sub-menu (collapsible) */}
-          <div style={{
-            overflow: 'hidden',
-            maxHeight: productsExpanded ? 320 : 0,
-            transition: 'max-height 0.25s ease',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 2,
-            paddingLeft: 6,
-          }}>
-            {productNav.map(item => {
-              const isActive = location.pathname === item.to
-              return (
-                <NavLink key={item.to} to={item.to} title={item.title}
-                  className={`icon-rail-item ${isActive ? 'active' : ''}`}
-                  style={{ transform: 'scale(0.9)' }}
-                >
-                  <item.icon size={14} strokeWidth={1.8} />
-                </NavLink>
-              )
-            })}
-          </div>
         </div>
 
         <div className="icon-rail-bottom">

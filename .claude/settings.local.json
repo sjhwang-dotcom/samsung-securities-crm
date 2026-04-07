@@ -28,7 +28,21 @@
       "Bash(kill 91122 91120)",
       "Bash(python3 -c \"import pandas; print\\(pandas.__version__\\)\")",
       "Bash(python3 -u scripts/generate_harlow_db.py)",
-      "Bash(python3 scripts/export_to_frontend.py)"
+      "Bash(python3 scripts/export_to_frontend.py)",
+      "Bash(npm i:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:/usr/local/bin:$HOME/.nvm/versions/node/*/bin:$PATH\")",
+      "Bash(source ~/.zshrc)",
+      "Read(//opt/homebrew/bin/**)",
+      "Read(//usr/local/bin/**)",
+      "Read(//Users/sungjuhwang/**)",
+      "Bash(mdfind -name node -onlyin /opt)",
+      "Bash(/opt/homebrew/bin/brew install:*)",
+      "Bash(export PATH=\"/opt/homebrew/bin:$PATH\")",
+      "Bash(npm install:*)",
+      "Bash(npm run:*)",
+      "Bash(vercel --yes)",
+      "Bash(vercel login:*)",
+      "Bash(vercel --yes --prod)"
     ]
   }
 }
