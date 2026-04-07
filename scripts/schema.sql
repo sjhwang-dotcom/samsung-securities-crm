@@ -1,5 +1,5 @@
 -- Harlow Payments DuckDB Schema
--- 19 Tables for full payment processing platform
+-- 24 Tables for full payment processing platform
 
 -- ═══════════════════════════════════════════
 -- CORE TABLES
@@ -340,6 +340,75 @@ CREATE TABLE IF NOT EXISTS voice_calls (
 );
 
 -- ═══════════════════════════════════════════
+-- ISO EXTENDED TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS iso_monthly_metrics (
+    metric_id       INTEGER PRIMARY KEY,
+    iso_id          INTEGER NOT NULL,
+    month           DATE NOT NULL,
+    merchant_count  INTEGER,
+    new_merchants   INTEGER DEFAULT 0,
+    lost_merchants  INTEGER DEFAULT 0,
+    processing_volume DECIMAL(14,2),
+    total_residuals DECIMAL(14,2),
+    avg_ticket      DECIMAL(10,2),
+    churn_rate      DECIMAL(5,2),
+    chargeback_rate DECIMAL(5,4),
+    pci_compliance_rate DECIMAL(5,2),
+    product_penetration_rate DECIMAL(5,2),
+    voice_calls_made INTEGER DEFAULT 0,
+    voice_transfers INTEGER DEFAULT 0,
+    support_tickets_opened INTEGER DEFAULT 0,
+    support_tickets_resolved INTEGER DEFAULT 0,
+    UNIQUE(iso_id, month)
+);
+
+CREATE TABLE IF NOT EXISTS iso_processors (
+    id              INTEGER PRIMARY KEY,
+    iso_id          INTEGER NOT NULL,
+    processor_id    INTEGER NOT NULL,
+    is_primary      BOOLEAN DEFAULT FALSE,
+    volume_share_pct DECIMAL(5,2),
+    UNIQUE(iso_id, processor_id)
+);
+
+CREATE TABLE IF NOT EXISTS iso_events (
+    event_id        INTEGER PRIMARY KEY,
+    iso_id          INTEGER NOT NULL,
+    event_date      TIMESTAMP NOT NULL,
+    event_type      VARCHAR NOT NULL,
+    title           VARCHAR NOT NULL,
+    description     VARCHAR,
+    severity        VARCHAR DEFAULT 'info',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS iso_product_enrollment (
+    id              INTEGER PRIMARY KEY,
+    iso_id          INTEGER NOT NULL,
+    product_name    VARCHAR NOT NULL,
+    enrolled_count  INTEGER NOT NULL,
+    eligible_count  INTEGER NOT NULL,
+    enrollment_rate DECIMAL(5,2),
+    monthly_revenue DECIMAL(12,2),
+    UNIQUE(iso_id, product_name)
+);
+
+CREATE TABLE IF NOT EXISTS iso_contacts (
+    contact_id      INTEGER PRIMARY KEY,
+    iso_id          INTEGER NOT NULL,
+    first_name      VARCHAR NOT NULL,
+    last_name       VARCHAR NOT NULL,
+    title           VARCHAR,
+    role            VARCHAR,
+    phone           VARCHAR(15),
+    email           VARCHAR,
+    is_primary      BOOLEAN DEFAULT FALSE,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
 -- INDEXES
 -- ═══════════════════════════════════════════
 
@@ -355,3 +424,5 @@ CREATE INDEX IF NOT EXISTS idx_merchants_status ON merchants(status);
 CREATE INDEX IF NOT EXISTS idx_risk_merchant_date ON risk_assessments(merchant_id, assessed_date);
 CREATE INDEX IF NOT EXISTS idx_leads_stage ON leads(stage);
 CREATE INDEX IF NOT EXISTS idx_voice_calls_date ON voice_calls(call_date);
+CREATE INDEX IF NOT EXISTS idx_iso_metrics_iso_month ON iso_monthly_metrics(iso_id, month);
+CREATE INDEX IF NOT EXISTS idx_iso_events_iso ON iso_events(iso_id);
