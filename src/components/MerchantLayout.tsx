@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   Home, ArrowLeftRight, FileText, Landmark, AlertTriangle,
-  ShieldCheck, Monitor, HelpCircle, LogOut, Sparkles, Package,
+  ShieldCheck, Monitor, HelpCircle, LogOut, Sparkles,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
@@ -14,7 +14,6 @@ const mainNav = [
   { to: '/portal/statements', icon: FileText, title: 'Statements' },
   { to: '/portal/pci', icon: ShieldCheck, title: 'PCI & Compliance' },
   { to: '/portal/equipment', icon: Monitor, title: 'Equipment' },
-  { to: '/portal/products', icon: Package, title: 'Products & Services' },
 ]
 
 export default function MerchantLayout() {

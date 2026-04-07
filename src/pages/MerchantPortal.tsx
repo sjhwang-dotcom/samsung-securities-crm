@@ -3,7 +3,7 @@ import {
   DollarSign, TrendingUp, ChevronRight, Download,
   CheckCircle, Landmark, AlertTriangle, FileText, Monitor, ShieldCheck,
   CreditCard, Percent, ArrowUpRight, Gift, Calculator, Users, Heart, Bitcoin,
-  Building, Shield, Clock, Zap, Star, CalendarDays, Bell, ArrowRight,
+  Building, Shield, Clock, Zap, Star, Bell, ArrowRight,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
