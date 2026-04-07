@@ -18,7 +18,17 @@
       "Bash(python3 -c \":*)",
       "Bash(grep -o \"\"text\"\":\"\"[^\"\"]*\"\" /Users/sungju/.claude/projects/-Users-sungju-Library-Mobile-Documents-com-apple-CloudDocs-Harlow/1c512bd8-4e6a-4bbb-bd22-0268b2606e2f/tool-results/b3qh39l3i.txt)",
       "WebSearch",
-      "WebFetch(domain:www.harlowpayments.com)"
+      "WebFetch(domain:www.harlowpayments.com)",
+      "Bash(python scripts/generate_harlow_db.py)",
+      "Bash(python3 scripts/generate_harlow_db.py)",
+      "Bash(/bin/ls -la /private/tmp/claude-501/-Users-sungju-Library-Mobile-Documents-com-apple-CloudDocs-Harlow/4133acca-280f-484b-aba2-98763b4a015c/tasks/)",
+      "Bash(/bin/ls -la \"/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/Harlow/harlow.duckdb\")",
+      "Bash(kill 84731 85909 84729 85907)",
+      "Bash(/bin/ls -la '/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/Harlow/harlow.duckdb')",
+      "Bash(kill 91122 91120)",
+      "Bash(python3 -c \"import pandas; print\\(pandas.__version__\\)\")",
+      "Bash(python3 -u scripts/generate_harlow_db.py)",
+      "Bash(python3 scripts/export_to_frontend.py)"
     ]
   }
 }

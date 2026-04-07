@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Harlow Direct",
+    "merchants": 971625,
+    "volume_m": 19.0,
+    "churn_rate": 1.2,
+    "penetration": 8.4,
+    "status": "Primary",
+    "integration_pct": 100.0
+  },
+  {
+    "name": "Zenith Payments",
+    "merchants": 350604,
+    "volume_m": 7.2,
+    "churn_rate": 2.1,
+    "penetration": 3.2,
+    "status": "Acquired",
+    "integration_pct": 96.0
+  },
+  {
+    "name": "Liberty Processing",
+    "merchants": 253903,
+    "volume_m": 4.9,
+    "churn_rate": 3.4,
+    "penetration": 1.8,
+    "status": "Acquired",
+    "integration_pct": 92.0
+  }
+]

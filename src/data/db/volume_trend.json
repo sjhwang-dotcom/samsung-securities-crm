@@ -1,0 +1,62 @@
+[
+  {
+    "month": "2025-04-01T00:00:00",
+    "volume_m": 18.05,
+    "residuals_m": 0.18
+  },
+  {
+    "month": "2025-05-01T00:00:00",
+    "volume_m": 19.25,
+    "residuals_m": 0.19
+  },
+  {
+    "month": "2025-06-01T00:00:00",
+    "volume_m": 19.92,
+    "residuals_m": 0.2
+  },
+  {
+    "month": "2025-07-01T00:00:00",
+    "volume_m": 20.98,
+    "residuals_m": 0.21
+  },
+  {
+    "month": "2025-08-01T00:00:00",
+    "volume_m": 22.71,
+    "residuals_m": 0.23
+  },
+  {
+    "month": "2025-09-01T00:00:00",
+    "volume_m": 23.14,
+    "residuals_m": 0.23
+  },
+  {
+    "month": "2025-10-01T00:00:00",
+    "volume_m": 24.95,
+    "residuals_m": 0.25
+  },
+  {
+    "month": "2025-11-01T00:00:00",
+    "volume_m": 25.89,
+    "residuals_m": 0.26
+  },
+  {
+    "month": "2025-12-01T00:00:00",
+    "volume_m": 27.26,
+    "residuals_m": 0.27
+  },
+  {
+    "month": "2026-01-01T00:00:00",
+    "volume_m": 29.26,
+    "residuals_m": 0.29
+  },
+  {
+    "month": "2026-02-01T00:00:00",
+    "volume_m": 30.05,
+    "residuals_m": 0.3
+  },
+  {
+    "month": "2026-03-01T00:00:00",
+    "volume_m": 31.11,
+    "residuals_m": 0.31
+  }
+]

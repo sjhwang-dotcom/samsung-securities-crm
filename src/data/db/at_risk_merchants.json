@@ -1,0 +1,23 @@
+[
+  {
+    "name": "Corey's Bistro",
+    "riskScore": 64,
+    "volume": "$8159",
+    "trend": "-8%",
+    "severity": "MODERATE"
+  },
+  {
+    "name": "Tribeca Wellness",
+    "riskScore": 62,
+    "volume": "$9498",
+    "trend": "0%",
+    "severity": "MODERATE"
+  },
+  {
+    "name": "Park Slope Jewelers",
+    "riskScore": 60,
+    "volume": "$16911",
+    "trend": "3%",
+    "severity": "MODERATE"
+  }
+]

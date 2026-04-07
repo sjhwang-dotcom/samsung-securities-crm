@@ -1,0 +1,26 @@
+[
+  {
+    "make_model": "PAX A920",
+    "count": 1745,
+    "pct": 40.0,
+    "online": 1745.0
+  },
+  {
+    "make_model": "Clover Flex",
+    "count": 1096,
+    "pct": 25.0,
+    "online": 1096.0
+  },
+  {
+    "make_model": "Dejavoo Z11",
+    "count": 877,
+    "pct": 20.0,
+    "online": 877.0
+  },
+  {
+    "make_model": "Virtual Terminal",
+    "count": 651,
+    "pct": 15.0,
+    "online": 651.0
+  }
+]

@@ -1,0 +1,9 @@
+{
+  "total_merchants": 4369,
+  "monthly_volume": 31110857.59,
+  "monthly_volume_trend": 3.5,
+  "monthly_residuals": 3210000.18,
+  "monthly_residuals_trend": 3.4,
+  "churn_rate": 3.3,
+  "chargeback_rate": 0.31
+}

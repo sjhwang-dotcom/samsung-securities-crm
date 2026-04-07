@@ -1,0 +1,38 @@
+[
+  {
+    "name": "Restaurants",
+    "count": 1588,
+    "value": 34.4,
+    "color": "#0891B2"
+  },
+  {
+    "name": "Retail",
+    "count": 961,
+    "value": 20.8,
+    "color": "#4F46E5"
+  },
+  {
+    "name": "Services",
+    "count": 838,
+    "value": 18.2,
+    "color": "#10B981"
+  },
+  {
+    "name": "Auto",
+    "count": 556,
+    "value": 12.1,
+    "color": "#F59E0B"
+  },
+  {
+    "name": "Health",
+    "count": 385,
+    "value": 8.3,
+    "color": "#F43F5E"
+  },
+  {
+    "name": "Other",
+    "count": 284,
+    "value": 6.2,
+    "color": "#8B5CF6"
+  }
+]

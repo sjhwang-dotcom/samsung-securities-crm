@@ -1,0 +1,57 @@
+[
+  {
+    "hour": "8am",
+    "calls": 271,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "9am",
+    "calls": 243,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "10am",
+    "calls": 247,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "11am",
+    "calls": 242,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "12pm",
+    "calls": 264,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "13pm",
+    "calls": 256,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "14pm",
+    "calls": 246,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "15pm",
+    "calls": 275,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "16pm",
+    "calls": 263,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "17pm",
+    "calls": 236,
+    "transferRate": 0.0
+  },
+  {
+    "hour": "18pm",
+    "calls": 245,
+    "transferRate": 0.0
+  }
+]
