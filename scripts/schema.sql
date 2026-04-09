@@ -409,6 +409,227 @@ CREATE TABLE IF NOT EXISTS iso_contacts (
 );
 
 -- ═══════════════════════════════════════════
+-- VOICE AGENT TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS voice_scripts (
+    script_id       INTEGER PRIMARY KEY,
+    name            VARCHAR NOT NULL,
+    industry        VARCHAR,
+    mcc             VARCHAR(4),
+    script_text     VARCHAR NOT NULL,
+    win_rate        DECIMAL(5,2),
+    calls_used      INTEGER DEFAULT 0,
+    avg_duration_sec INTEGER,
+    is_recommended  BOOLEAN DEFAULT FALSE,
+    status          VARCHAR DEFAULT 'Active',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS voice_agent_config (
+    config_id       INTEGER PRIMARY KEY,
+    category        VARCHAR NOT NULL,
+    key             VARCHAR NOT NULL,
+    value           VARCHAR NOT NULL,
+    updated_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(category, key)
+);
+
+CREATE TABLE IF NOT EXISTS ai_learning_log (
+    log_id          INTEGER PRIMARY KEY,
+    event_date      TIMESTAMP NOT NULL,
+    category        VARCHAR NOT NULL,
+    title           VARCHAR NOT NULL,
+    detail          VARCHAR,
+    metric_change   VARCHAR,
+    impact          VARCHAR DEFAULT 'positive',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
+-- COMPLIANCE TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS compliance_items (
+    item_id         INTEGER PRIMARY KEY,
+    category        VARCHAR NOT NULL,
+    title           VARCHAR NOT NULL,
+    description     VARCHAR,
+    status          VARCHAR NOT NULL,
+    due_date        DATE,
+    last_checked    DATE,
+    merchant_id     INTEGER,
+    iso_id          INTEGER,
+    severity        VARCHAR DEFAULT 'info',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
+-- MERCHANT PORTAL TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS merchant_statements (
+    statement_id    INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    month           DATE NOT NULL,
+    generated_date  DATE,
+    volume          DECIMAL(12,2),
+    fees            DECIMAL(12,2),
+    net             DECIMAL(12,2),
+    txn_count       INTEGER,
+    avg_ticket      DECIMAL(10,2),
+    refund_amount   DECIMAL(12,2) DEFAULT 0,
+    chargeback_amount DECIMAL(12,2) DEFAULT 0,
+    effective_rate  DECIMAL(5,4),
+    approval_rate   DECIMAL(5,2),
+    pages           INTEGER DEFAULT 4,
+    pdf_url         VARCHAR,
+    UNIQUE(merchant_id, month)
+);
+
+CREATE TABLE IF NOT EXISTS merchant_transactions (
+    txn_id          INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    txn_date        TIMESTAMP NOT NULL,
+    txn_type        VARCHAR NOT NULL,
+    card_brand      VARCHAR,
+    card_last4      VARCHAR(4),
+    amount          DECIMAL(10,2) NOT NULL,
+    tip_amount      DECIMAL(10,2) DEFAULT 0,
+    total           DECIMAL(10,2) NOT NULL,
+    auth_code       VARCHAR(6),
+    status          VARCHAR DEFAULT 'Settled',
+    batch_id        VARCHAR
+);
+
+CREATE TABLE IF NOT EXISTS merchant_funding (
+    funding_id      INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    funded_amount   DECIMAL(12,2) NOT NULL,
+    total_payback   DECIMAL(12,2) NOT NULL,
+    factor_rate     DECIMAL(5,4),
+    daily_hold_pct  DECIMAL(5,2),
+    min_daily       DECIMAL(10,2),
+    term_months     INTEGER,
+    funded_date     DATE,
+    status          VARCHAR DEFAULT 'Active',
+    remaining       DECIMAL(12,2),
+    paid_to_date    DECIMAL(12,2) DEFAULT 0,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS merchant_checking (
+    account_id      INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    account_number  VARCHAR,
+    routing_number  VARCHAR,
+    balance         DECIMAL(12,2),
+    apy             DECIMAL(5,2),
+    status          VARCHAR DEFAULT 'Active',
+    opened_date     DATE,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS merchant_payroll (
+    payroll_id      INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    employee_name   VARCHAR NOT NULL,
+    employee_type   VARCHAR,
+    hours_weekly    DECIMAL(5,1),
+    rate            DECIMAL(10,2),
+    gross_pay       DECIMAL(10,2),
+    taxes           DECIMAL(10,2),
+    deductions      DECIMAL(10,2),
+    net_pay         DECIMAL(10,2),
+    pay_period      VARCHAR,
+    status          VARCHAR DEFAULT 'Active'
+);
+
+CREATE TABLE IF NOT EXISTS rewards_points (
+    reward_id       INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    total_points    INTEGER DEFAULT 0,
+    lifetime_points INTEGER DEFAULT 0,
+    tier            VARCHAR DEFAULT 'Silver',
+    monthly_earned  INTEGER DEFAULT 0,
+    last_redeemed   DATE,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
+-- LUMINA AI TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS lumina_conversations (
+    message_id      INTEGER PRIMARY KEY,
+    conversation_id VARCHAR NOT NULL,
+    role            VARCHAR NOT NULL,
+    content         VARCHAR NOT NULL,
+    context_page    VARCHAR,
+    merchant_id     INTEGER,
+    user_id         VARCHAR,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS lumina_reports (
+    report_id       INTEGER PRIMARY KEY,
+    title           VARCHAR NOT NULL,
+    report_type     VARCHAR,
+    generated_date  DATE NOT NULL,
+    pages           INTEGER,
+    summary         VARCHAR,
+    pdf_url         VARCHAR,
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
+-- RISK & UNDERWRITING TABLES
+-- ═══════════════════════════════════════════
+
+CREATE TABLE IF NOT EXISTS risk_alerts (
+    alert_id        INTEGER PRIMARY KEY,
+    merchant_id     INTEGER NOT NULL,
+    alert_type      VARCHAR NOT NULL,
+    risk_score      INTEGER,
+    score_change    INTEGER,
+    trigger_reason  VARCHAR,
+    recommended_action VARCHAR,
+    severity        VARCHAR NOT NULL,
+    status          VARCHAR DEFAULT 'Open',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    resolved_at     TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS underwriting_queue (
+    queue_id        INTEGER PRIMARY KEY,
+    application_id  INTEGER,
+    merchant_name   VARCHAR NOT NULL,
+    mcc             VARCHAR(4),
+    estimated_volume DECIMAL(12,2),
+    risk_score      INTEGER,
+    submitted_date  DATE NOT NULL,
+    sla_hours       INTEGER DEFAULT 24,
+    sla_remaining   DECIMAL(5,1),
+    assigned_to     VARCHAR,
+    priority        VARCHAR DEFAULT 'Normal',
+    status          VARCHAR DEFAULT 'Pending',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS ofac_screenings (
+    screening_id    INTEGER PRIMARY KEY,
+    scan_date       DATE NOT NULL,
+    merchants_scanned INTEGER,
+    matches_found   INTEGER DEFAULT 0,
+    auto_cleared    INTEGER DEFAULT 0,
+    pending_review  INTEGER DEFAULT 0,
+    false_positive_rate DECIMAL(5,2),
+    scan_type       VARCHAR DEFAULT 'Monthly',
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- ═══════════════════════════════════════════
 -- INDEXES
 -- ═══════════════════════════════════════════
 
@@ -426,3 +647,10 @@ CREATE INDEX IF NOT EXISTS idx_leads_stage ON leads(stage);
 CREATE INDEX IF NOT EXISTS idx_voice_calls_date ON voice_calls(call_date);
 CREATE INDEX IF NOT EXISTS idx_iso_metrics_iso_month ON iso_monthly_metrics(iso_id, month);
 CREATE INDEX IF NOT EXISTS idx_iso_events_iso ON iso_events(iso_id);
+CREATE INDEX IF NOT EXISTS idx_scripts_mcc ON voice_scripts(mcc);
+CREATE INDEX IF NOT EXISTS idx_learning_date ON ai_learning_log(event_date);
+CREATE INDEX IF NOT EXISTS idx_compliance_cat ON compliance_items(category);
+CREATE INDEX IF NOT EXISTS idx_stmts_merchant ON merchant_statements(merchant_id, month);
+CREATE INDEX IF NOT EXISTS idx_txns_merchant ON merchant_transactions(merchant_id, txn_date);
+CREATE INDEX IF NOT EXISTS idx_alerts_merchant ON risk_alerts(merchant_id);
+CREATE INDEX IF NOT EXISTS idx_lumina_conv ON lumina_conversations(conversation_id);
