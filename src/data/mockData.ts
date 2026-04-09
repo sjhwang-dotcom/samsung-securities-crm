@@ -14,8 +14,8 @@ import _categoryMix from './db/category_mix.json'
 import _isoPortfolio from './db/iso_portfolio.json'
 import _atRisk from './db/at_risk_merchants.json'
 import _activity from './db/recent_activity.json'
-import _pipeline from './db/lead_pipeline.json'
-import _apps from './db/applications.json'
+import _crm from './db/crm_data.json'
+import _partnerPortal from './db/partner_portal.json'
 import _riskDist from './db/risk_distribution.json'
 import _procDist from './db/processor_distribution.json'
 import _prodPen from './db/product_penetration.json'
@@ -84,8 +84,9 @@ export const recentActivity: ActivityItem[] = (_activity as any[]).map((r: any) 
 }))
 
 // ═══ Lead Pipeline ═══
+// ═══ Lead Pipeline (from DuckDB leads table) ═══
 export const leadPipeline: Record<string, Lead[]> = Object.fromEntries(
-  Object.entries(_pipeline as Record<string, any[]>).map(([stage, leads]) => [
+  Object.entries((_crm as any).leadPipeline as Record<string, any[]>).map(([stage, leads]) => [
     stage,
     leads.map((l: any) => ({
       name: l.name,
@@ -130,7 +131,7 @@ export const allMerchants = (_merchants as any[]).map((m: any) => ({
 }))
 
 // ═══ Onboarding Apps ═══
-export const onboardingApps: OnboardingApp[] = (_apps as any[]).map((a: any) => ({
+export const onboardingApps: OnboardingApp[] = ((_crm as any).applications as any[]).map((a: any) => ({
   merchant: a.merchant,
   bank: a.bank ?? 'Esquire Bank',
   submitted: a.submitted ? new Date(a.submitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
@@ -230,3 +231,6 @@ export const luminaInsights = [
 
 // ═══ ISO Data (for ISO Management page) ═══
 export const isoData = (_isos as any[])
+
+// ═══ Partner Portal Data (from DuckDB) ═══
+export const partnerData = _partnerPortal as any
