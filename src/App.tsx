@@ -18,6 +18,7 @@ import Equipment from './pages/merchant/Equipment'
 import Support from './pages/merchant/Support'
 import ProductsServices from './pages/merchant/ProductsServices'
 import AIAssistant from './pages/merchant/AIAssistant'
+import SalesAnalytics from './pages/merchant/SalesAnalytics'
 
 export default function App() {
   return (
@@ -43,6 +44,7 @@ export default function App() {
         <Route element={<MerchantLayout />}>
           <Route path="/portal" element={<MerchantPortal />} />
           <Route path="/portal/transactions" element={<Transactions />} />
+          <Route path="/portal/sales" element={<SalesAnalytics />} />
           <Route path="/portal/statements" element={<Statements />} />
           <Route path="/portal/pci" element={<PCI />} />
           <Route path="/portal/equipment" element={<Equipment />} />

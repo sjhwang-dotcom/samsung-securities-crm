@@ -1134,5 +1134,617 @@
     "statementFee": 0.0,
     "batchFee": 0.1,
     "chargebackFee": 25.0
-  }
+  },
+  "catalog": [
+    {
+      "id": 14,
+      "name": "Bread - White Loaf",
+      "category": "Bakery",
+      "price": 3.99,
+      "cost": 1.5,
+      "sku": "BAK-001"
+    },
+    {
+      "id": 15,
+      "name": "Bread - Whole Wheat",
+      "category": "Bakery",
+      "price": 4.49,
+      "cost": 1.8,
+      "sku": "BAK-002"
+    },
+    {
+      "id": 16,
+      "name": "Muffin - Blueberry",
+      "category": "Bakery",
+      "price": 3.49,
+      "cost": 1.0,
+      "sku": "BAK-003"
+    },
+    {
+      "id": 7,
+      "name": "Coffee - Large",
+      "category": "Beverages",
+      "price": 3.49,
+      "cost": 0.55,
+      "sku": "BEV-002"
+    },
+    {
+      "id": 6,
+      "name": "Coffee - Regular",
+      "category": "Beverages",
+      "price": 2.49,
+      "cost": 0.4,
+      "sku": "BEV-001"
+    },
+    {
+      "id": 8,
+      "name": "Juice - Fresh Orange",
+      "category": "Beverages",
+      "price": 4.99,
+      "cost": 1.5,
+      "sku": "BEV-003"
+    },
+    {
+      "id": 10,
+      "name": "Soda - Can",
+      "category": "Beverages",
+      "price": 1.49,
+      "cost": 0.35,
+      "sku": "BEV-005"
+    },
+    {
+      "id": 9,
+      "name": "Water Bottle",
+      "category": "Beverages",
+      "price": 1.99,
+      "cost": 0.3,
+      "sku": "BEV-004"
+    },
+    {
+      "id": 12,
+      "name": "Eggs - Dozen",
+      "category": "Dairy",
+      "price": 4.49,
+      "cost": 2.5,
+      "sku": "DAI-002"
+    },
+    {
+      "id": 11,
+      "name": "Milk - Whole Gallon",
+      "category": "Dairy",
+      "price": 5.99,
+      "cost": 3.2,
+      "sku": "DAI-001"
+    },
+    {
+      "id": 13,
+      "name": "Yogurt - Greek",
+      "category": "Dairy",
+      "price": 2.99,
+      "cost": 1.2,
+      "sku": "DAI-003"
+    },
+    {
+      "id": 3,
+      "name": "Deli Sandwich - BLT",
+      "category": "Deli",
+      "price": 10.99,
+      "cost": 3.5,
+      "sku": "DELI-003"
+    },
+    {
+      "id": 2,
+      "name": "Deli Sandwich - Italian Hero",
+      "category": "Deli",
+      "price": 13.99,
+      "cost": 4.8,
+      "sku": "DELI-002"
+    },
+    {
+      "id": 1,
+      "name": "Deli Sandwich - Turkey Club",
+      "category": "Deli",
+      "price": 12.99,
+      "cost": 4.5,
+      "sku": "DELI-001"
+    },
+    {
+      "id": 4,
+      "name": "Fresh Salad - Caesar",
+      "category": "Deli",
+      "price": 9.99,
+      "cost": 3.0,
+      "sku": "DELI-004"
+    },
+    {
+      "id": 5,
+      "name": "Fresh Salad - Greek",
+      "category": "Deli",
+      "price": 10.49,
+      "cost": 3.2,
+      "sku": "DELI-005"
+    },
+    {
+      "id": 20,
+      "name": "Pasta - Spaghetti",
+      "category": "Grocery",
+      "price": 2.49,
+      "cost": 0.9,
+      "sku": "GRO-002"
+    },
+    {
+      "id": 19,
+      "name": "Rice - 5lb Bag",
+      "category": "Grocery",
+      "price": 8.99,
+      "cost": 4.5,
+      "sku": "GRO-001"
+    },
+    {
+      "id": 21,
+      "name": "Tomato Sauce - Jar",
+      "category": "Grocery",
+      "price": 3.99,
+      "cost": 1.5,
+      "sku": "GRO-003"
+    },
+    {
+      "id": 22,
+      "name": "Chicken Breast - 1lb",
+      "category": "Meat",
+      "price": 7.99,
+      "cost": 4.0,
+      "sku": "MEA-001"
+    },
+    {
+      "id": 23,
+      "name": "Ground Beef - 1lb",
+      "category": "Meat",
+      "price": 6.99,
+      "cost": 3.5,
+      "sku": "MEA-002"
+    },
+    {
+      "id": 24,
+      "name": "Lottery Ticket",
+      "category": "Other",
+      "price": 5.0,
+      "cost": 4.5,
+      "sku": "OTH-001"
+    },
+    {
+      "id": 25,
+      "name": "Phone Card - $10",
+      "category": "Other",
+      "price": 10.0,
+      "cost": 9.0,
+      "sku": "OTH-002"
+    },
+    {
+      "id": 18,
+      "name": "Candy Bar",
+      "category": "Snacks",
+      "price": 1.99,
+      "cost": 0.8,
+      "sku": "SNK-002"
+    },
+    {
+      "id": 17,
+      "name": "Chips - Variety Pack",
+      "category": "Snacks",
+      "price": 5.99,
+      "cost": 2.5,
+      "sku": "SNK-001"
+    }
+  ],
+  "topItems": [
+    {
+      "name": "Deli Sandwich - Italian Hero",
+      "category": "Deli",
+      "price": 13.99,
+      "qtySold": 314,
+      "revenue": 4392.86,
+      "profit": 2885.66
+    },
+    {
+      "name": "Deli Sandwich - Turkey Club",
+      "category": "Deli",
+      "price": 12.99,
+      "qtySold": 330,
+      "revenue": 4286.7,
+      "profit": 2801.7
+    },
+    {
+      "name": "Deli Sandwich - BLT",
+      "category": "Deli",
+      "price": 10.99,
+      "qtySold": 229,
+      "revenue": 2516.71,
+      "profit": 1715.21
+    },
+    {
+      "name": "Fresh Salad - Greek",
+      "category": "Deli",
+      "price": 10.49,
+      "qtySold": 188,
+      "revenue": 1972.12,
+      "profit": 1370.52
+    },
+    {
+      "name": "Fresh Salad - Caesar",
+      "category": "Deli",
+      "price": 9.99,
+      "qtySold": 191,
+      "revenue": 1908.09,
+      "profit": 1335.09
+    },
+    {
+      "name": "Coffee - Large",
+      "category": "Beverages",
+      "price": 3.49,
+      "qtySold": 284,
+      "revenue": 991.16,
+      "profit": 834.96
+    },
+    {
+      "name": "Coffee - Regular",
+      "category": "Beverages",
+      "price": 2.49,
+      "qtySold": 345,
+      "revenue": 859.05,
+      "profit": 721.05
+    },
+    {
+      "name": "Lottery Ticket",
+      "category": "Other",
+      "price": 5.0,
+      "qtySold": 141,
+      "revenue": 705.0,
+      "profit": 70.5
+    },
+    {
+      "name": "Chicken Breast - 1lb",
+      "category": "Meat",
+      "price": 7.99,
+      "qtySold": 83,
+      "revenue": 663.17,
+      "profit": 331.17
+    },
+    {
+      "name": "Eggs - Dozen",
+      "category": "Dairy",
+      "price": 4.49,
+      "qtySold": 143,
+      "revenue": 642.07,
+      "profit": 284.57
+    },
+    {
+      "name": "Rice - 5lb Bag",
+      "category": "Grocery",
+      "price": 8.99,
+      "qtySold": 70,
+      "revenue": 629.3,
+      "profit": 314.3
+    },
+    {
+      "name": "Juice - Fresh Orange",
+      "category": "Beverages",
+      "price": 4.99,
+      "qtySold": 124,
+      "revenue": 618.76,
+      "profit": 432.76
+    },
+    {
+      "name": "Milk - Whole Gallon",
+      "category": "Dairy",
+      "price": 5.99,
+      "qtySold": 89,
+      "revenue": 533.11,
+      "profit": 248.31
+    },
+    {
+      "name": "Muffin - Blueberry",
+      "category": "Bakery",
+      "price": 3.49,
+      "qtySold": 152,
+      "revenue": 530.48,
+      "profit": 378.48
+    },
+    {
+      "name": "Bread - White Loaf",
+      "category": "Bakery",
+      "price": 3.99,
+      "qtySold": 117,
+      "revenue": 466.83,
+      "profit": 291.33
+    }
+  ],
+  "categorySales": [
+    {
+      "category": "Deli",
+      "qty": 1252,
+      "revenue": 15076.48
+    },
+    {
+      "category": "Beverages",
+      "qty": 1059,
+      "revenue": 3015.41
+    },
+    {
+      "category": "Dairy",
+      "qty": 345,
+      "revenue": 1513.05
+    },
+    {
+      "category": "Bakery",
+      "qty": 357,
+      "revenue": 1392.43
+    },
+    {
+      "category": "Other",
+      "qty": 186,
+      "revenue": 1155.0
+    },
+    {
+      "category": "Grocery",
+      "qty": 198,
+      "revenue": 1041.02
+    },
+    {
+      "category": "Meat",
+      "qty": 120,
+      "revenue": 921.8
+    },
+    {
+      "category": "Snacks",
+      "qty": 245,
+      "revenue": 763.55
+    }
+  ],
+  "hourlySales": [
+    {
+      "hour": 6,
+      "orders": 80,
+      "revenue": 579.19
+    },
+    {
+      "hour": 7,
+      "orders": 147,
+      "revenue": 1046.36
+    },
+    {
+      "hour": 8,
+      "orders": 269,
+      "revenue": 2143.53
+    },
+    {
+      "hour": 9,
+      "orders": 351,
+      "revenue": 2726.66
+    },
+    {
+      "hour": 10,
+      "orders": 327,
+      "revenue": 2514.36
+    },
+    {
+      "hour": 11,
+      "orders": 246,
+      "revenue": 1834.88
+    },
+    {
+      "hour": 12,
+      "orders": 386,
+      "revenue": 2999.31
+    },
+    {
+      "hour": 13,
+      "orders": 331,
+      "revenue": 2535.91
+    },
+    {
+      "hour": 14,
+      "orders": 266,
+      "revenue": 1803.17
+    },
+    {
+      "hour": 15,
+      "orders": 195,
+      "revenue": 1459.43
+    },
+    {
+      "hour": 16,
+      "orders": 154,
+      "revenue": 1134.32
+    },
+    {
+      "hour": 17,
+      "orders": 119,
+      "revenue": 918.74
+    },
+    {
+      "hour": 18,
+      "orders": 110,
+      "revenue": 681.4
+    },
+    {
+      "hour": 19,
+      "orders": 113,
+      "revenue": 868.81
+    },
+    {
+      "hour": 20,
+      "orders": 107,
+      "revenue": 820.81
+    },
+    {
+      "hour": 21,
+      "orders": 105,
+      "revenue": 811.86
+    }
+  ],
+  "dailyItemSales": [
+    {
+      "date": "2026-02-13",
+      "items": 113,
+      "revenue": 866.25
+    },
+    {
+      "date": "2026-02-14",
+      "items": 123,
+      "revenue": 822.17
+    },
+    {
+      "date": "2026-02-15",
+      "items": 135,
+      "revenue": 938.59
+    },
+    {
+      "date": "2026-02-16",
+      "items": 97,
+      "revenue": 710.43
+    },
+    {
+      "date": "2026-02-17",
+      "items": 103,
+      "revenue": 813.8
+    },
+    {
+      "date": "2026-02-18",
+      "items": 88,
+      "revenue": 677.56
+    },
+    {
+      "date": "2026-02-19",
+      "items": 90,
+      "revenue": 687.53
+    },
+    {
+      "date": "2026-02-20",
+      "items": 93,
+      "revenue": 695.53
+    },
+    {
+      "date": "2026-02-21",
+      "items": 141,
+      "revenue": 1130.47
+    },
+    {
+      "date": "2026-02-22",
+      "items": 132,
+      "revenue": 1070.58
+    },
+    {
+      "date": "2026-02-23",
+      "items": 129,
+      "revenue": 962.12
+    },
+    {
+      "date": "2026-02-24",
+      "items": 125,
+      "revenue": 1067.55
+    },
+    {
+      "date": "2026-02-25",
+      "items": 83,
+      "revenue": 651.62
+    },
+    {
+      "date": "2026-02-26",
+      "items": 76,
+      "revenue": 558.69
+    },
+    {
+      "date": "2026-02-27",
+      "items": 122,
+      "revenue": 895.17
+    },
+    {
+      "date": "2026-02-28",
+      "items": 163,
+      "revenue": 1228.25
+    },
+    {
+      "date": "2026-03-01",
+      "items": 94,
+      "revenue": 842.93
+    },
+    {
+      "date": "2026-03-02",
+      "items": 126,
+      "revenue": 808.18
+    },
+    {
+      "date": "2026-03-03",
+      "items": 93,
+      "revenue": 718.96
+    },
+    {
+      "date": "2026-03-04",
+      "items": 71,
+      "revenue": 524.7
+    },
+    {
+      "date": "2026-03-05",
+      "items": 107,
+      "revenue": 701.38
+    },
+    {
+      "date": "2026-03-06",
+      "items": 126,
+      "revenue": 931.12
+    },
+    {
+      "date": "2026-03-07",
+      "items": 92,
+      "revenue": 726.96
+    },
+    {
+      "date": "2026-03-08",
+      "items": 128,
+      "revenue": 1015.23
+    },
+    {
+      "date": "2026-03-09",
+      "items": 104,
+      "revenue": 735.89
+    },
+    {
+      "date": "2026-03-10",
+      "items": 88,
+      "revenue": 715.05
+    },
+    {
+      "date": "2026-03-11",
+      "items": 128,
+      "revenue": 817.74
+    },
+    {
+      "date": "2026-03-12",
+      "items": 73,
+      "revenue": 540.22
+    },
+    {
+      "date": "2026-03-13",
+      "items": 120,
+      "revenue": 920.64
+    },
+    {
+      "date": "2026-03-14",
+      "items": 143,
+      "revenue": 1103.43
+    }
+  ],
+  "paymentMethods": [
+    {
+      "method": "Cash",
+      "count": 687,
+      "revenue": 5037.61
+    },
+    {
+      "method": "Card",
+      "count": 2619,
+      "revenue": 19841.13
+    }
+  ]
 }
