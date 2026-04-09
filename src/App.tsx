@@ -12,8 +12,6 @@ import RiskUnderwriting from './pages/RiskUnderwriting'
 import ComplianceCenter from './pages/ComplianceCenter'
 import Login from './pages/Login'
 import Transactions from './pages/merchant/Transactions'
-import Deposits from './pages/merchant/Deposits'
-import Chargebacks from './pages/merchant/Chargebacks'
 import Statements from './pages/merchant/Statements'
 import PCI from './pages/merchant/PCI'
 import Equipment from './pages/merchant/Equipment'
@@ -45,8 +43,6 @@ export default function App() {
         <Route element={<MerchantLayout />}>
           <Route path="/portal" element={<MerchantPortal />} />
           <Route path="/portal/transactions" element={<Transactions />} />
-          <Route path="/portal/deposits" element={<Deposits />} />
-          <Route path="/portal/chargebacks" element={<Chargebacks />} />
           <Route path="/portal/statements" element={<Statements />} />
           <Route path="/portal/pci" element={<PCI />} />
           <Route path="/portal/equipment" element={<Equipment />} />

@@ -1,16 +1,14 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
-  Home, ArrowLeftRight, FileText, Landmark, AlertTriangle,
+  Home, ArrowLeftRight, FileText,
   ShieldCheck, Monitor, HelpCircle, LogOut, Sparkles, Package,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
 const mainNav = [
   { to: '/portal', icon: Home, title: 'Home', end: true },
-  { to: '/portal/transactions', icon: ArrowLeftRight, title: 'Transactions' },
-  { to: '/portal/deposits', icon: Landmark, title: 'Deposits' },
-  { to: '/portal/chargebacks', icon: AlertTriangle, title: 'Chargebacks', badge: 1 },
+  { to: '/portal/transactions', icon: ArrowLeftRight, title: 'Transactions', badge: 1 },
   { to: '/portal/statements', icon: FileText, title: 'Statements' },
   { to: '/portal/pci', icon: ShieldCheck, title: 'PCI & Compliance' },
   { to: '/portal/equipment', icon: Monitor, title: 'Equipment' },
