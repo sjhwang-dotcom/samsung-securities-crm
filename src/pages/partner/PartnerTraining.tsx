@@ -57,7 +57,7 @@ const statusVariant: Record<string, 'emerald' | 'amber' | 'gray'> = {
 
 export default function PartnerTraining() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{  }}>
       {/* Header Summary */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 14 }}>
         <Card>

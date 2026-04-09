@@ -192,8 +192,8 @@ export default function PartnerMerchants() {
       </div>
 
       {/* Right Detail */}
-      <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 96px)', padding: 24, background: '#FAFBFC' }}>
-        <div style={{ maxWidth: 720 }}>
+      <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 96px)', padding: '16px 20px' }}>
+        <div className="dashboard-grid">
           {/* Header */}
           <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20 }}>
             <div style={{

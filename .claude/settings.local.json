@@ -49,7 +49,13 @@
       "Bash(npx vercel:*)",
       "Bash(pandoc \"/Users/sungju/Downloads/Harlow White Paper v1.docx\" -t plain --wrap=none)",
       "Bash(python3 scripts/office/unpack.py \"/Users/sungju/Downloads/Harlow White Paper v1.docx\" /tmp/harlow-wp/)",
-      "Bash(export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH)"
+      "Bash(export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH)",
+      "Bash(sed -i '' \"s/display: ''flex'', flexDirection: ''column'', gap: 20//\" src/pages/partner/PartnerResiduals.tsx)",
+      "Bash(sed -i '' 's/<div style={{ }}>/<div className=\"\"dashboard-grid\"\">/' src/pages/partner/PartnerResiduals.tsx)",
+      "Bash(sed -i '' \"82s/display: ''flex'', flexDirection: ''column'', gap: 20//\" src/pages/partner/PartnerMarketing.tsx)",
+      "Bash(sed -i '' '82s/style={{ }}/className=\"\"dashboard-grid\"\"/' src/pages/partner/PartnerMarketing.tsx)",
+      "Bash(sed -i '' \"60s/display: ''flex'', flexDirection: ''column'', gap: 20//\" src/pages/partner/PartnerTraining.tsx)",
+      "Bash(sed -i '' '60s/style={{ }}/className=\"\"dashboard-grid\"\"/' src/pages/partner/PartnerTraining.tsx)"
     ]
   }
 }

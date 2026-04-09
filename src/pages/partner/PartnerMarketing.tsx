@@ -79,7 +79,7 @@ const cobrandCols: Column<CobrandRow>[] = [
 
 export default function PartnerMarketing() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{  }}>
       {/* Shareable Link */}
       <Card>
         <CardHeader title="Merchant Application Link" subtitle="Share this link with prospects for attributed referrals" />

@@ -91,7 +91,7 @@ export default function PartnerResiduals() {
   const detail = selectedMerchant ? merchantDetails[selectedMerchant] : null
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div style={{  }}>
       {/* KPIs - now 5 */}
       <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 14 }}>
         <KpiCard label="This Month" value="$4,218" icon={DollarSign} color="emerald" trend="+5.8%" trendDirection="up" trendPositive sub="34 merchants" />

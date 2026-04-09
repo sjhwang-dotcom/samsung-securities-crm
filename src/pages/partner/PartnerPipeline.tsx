@@ -205,8 +205,8 @@ export default function PartnerPipeline() {
         </div>
 
         {/* Right Detail */}
-        <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 310px)', padding: 24, background: '#FAFBFC' }}>
-          <div style={{ maxWidth: 720 }}>
+        <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 310px)', padding: '16px 20px', background: '#FAFBFC' }}>
+          <div className="dashboard-grid">
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
               <div>

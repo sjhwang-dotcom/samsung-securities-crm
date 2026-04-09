@@ -71,7 +71,7 @@ const tooltipStyle = { borderRadius: 10, fontSize: 11, border: '1px solid #E2E8F
 
 export default function PartnerDashboard() {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+    <div className="dashboard-grid">
       {/* KPI Row */}
       <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
         <KpiCard label="Active Merchants" value="34" icon={Store} color="emerald" trend="+3" trendDirection="up" trendPositive sub="this quarter" />
