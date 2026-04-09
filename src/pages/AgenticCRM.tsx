@@ -1355,9 +1355,73 @@ function ResidualsView() {
         <CardHeader title="Residual Breakdown — Top Merchants (February 2026)" />
         <DataTable columns={residualColumns} data={residualData} hoverable />
       </Card>
+
+      {/* Next Payout + Payout History */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        {/* Next Payout info card */}
+        <Card noPadding>
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <div style={{
+                width: 36, height: 36, borderRadius: 10,
+                background: 'linear-gradient(135deg, #EFF6FF, #DBEAFE)',
+                display: 'flex', alignItems: 'center', justifyContent: 'center',
+              }}>
+                <DollarSign size={18} style={{ color: '#1578F7' }} />
+              </div>
+              <div>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B' }}>Next Payout</div>
+                <div style={{ fontSize: 15, fontWeight: 800, color: '#0F172A' }}>Apr 5, 2026</div>
+              </div>
+            </div>
+            <div style={{ textAlign: 'right' }}>
+              <div style={{ fontSize: 11, fontWeight: 600, color: '#64748B' }}>Estimated</div>
+              <div style={{ fontSize: 15, fontWeight: 800, color: '#059669' }}>$3,847</div>
+            </div>
+          </div>
+        </Card>
+
+        {/* Payout History */}
+        <Card noPadding>
+          <CardHeader title="Payout History" />
+          <DataTable columns={payoutColumns} data={payoutData} hoverable />
+        </Card>
+      </div>
     </div>
   )
 }
+
+/* ═══ Payout History data (used by ResidualsView) ═══ */
+type PayoutRow = {
+  month: string
+  merchantCount: string
+  totalVolume: string
+  grossResidual: string
+  isoSplit: string
+  netPayout: string
+  status: string
+  paidDate: string
+}
+
+const payoutData: PayoutRow[] = [
+  { month: 'Mar 2026', merchantCount: '4,612', totalVolume: '$31.1M', grossResidual: '$5,420', isoSplit: '100%', netPayout: '$3,847', status: 'Pending', paidDate: '\u2014' },
+  { month: 'Feb 2026', merchantCount: '4,580', totalVolume: '$30.1M', grossResidual: '$5,180', isoSplit: '100%', netPayout: '$3,635', status: 'Paid', paidDate: 'Mar 5' },
+  { month: 'Jan 2026', merchantCount: '4,520', totalVolume: '$29.2M', grossResidual: '$5,010', isoSplit: '100%', netPayout: '$3,520', status: 'Paid', paidDate: 'Feb 5' },
+  { month: 'Dec 2025', merchantCount: '4,480', totalVolume: '$27.8M', grossResidual: '$4,720', isoSplit: '100%', netPayout: '$3,180', status: 'Paid', paidDate: 'Jan 5' },
+  { month: 'Nov 2025', merchantCount: '4,420', totalVolume: '$26.3M', grossResidual: '$4,450', isoSplit: '100%', netPayout: '$2,890', status: 'Paid', paidDate: 'Dec 5' },
+  { month: 'Oct 2025', merchantCount: '4,380', totalVolume: '$25.1M', grossResidual: '$4,250', isoSplit: '100%', netPayout: '$2,810', status: 'Paid', paidDate: 'Nov 5' },
+]
+
+const payoutColumns: Column<PayoutRow>[] = [
+  { key: 'month', header: 'Month', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.month}</span> },
+  { key: 'merchantCount', header: 'Merchant Count' },
+  { key: 'totalVolume', header: 'Total Volume', render: (r) => <span style={{ fontWeight: 600 }}>{r.totalVolume}</span> },
+  { key: 'grossResidual', header: 'Gross Residual' },
+  { key: 'isoSplit', header: 'ISO Split' },
+  { key: 'netPayout', header: 'Net Payout', render: (r) => <span style={{ fontWeight: 700, color: '#059669' }}>{r.netPayout}</span> },
+  { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={r.status === 'Paid' ? 'emerald' : 'blue'}>{r.status}</StatusBadge> },
+  { key: 'paidDate', header: 'Paid Date' },
+]
 
 /* ═══ Tickets ═══ */
 function TicketsView() {

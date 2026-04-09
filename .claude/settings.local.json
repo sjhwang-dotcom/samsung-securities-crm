@@ -48,7 +48,8 @@
       "Bash(find '/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/AIP' -type f -name *.tsx)",
       "Bash(npx vercel:*)",
       "Bash(pandoc \"/Users/sungju/Downloads/Harlow White Paper v1.docx\" -t plain --wrap=none)",
-      "Bash(python3 scripts/office/unpack.py \"/Users/sungju/Downloads/Harlow White Paper v1.docx\" /tmp/harlow-wp/)"
+      "Bash(python3 scripts/office/unpack.py \"/Users/sungju/Downloads/Harlow White Paper v1.docx\" /tmp/harlow-wp/)",
+      "Bash(export PATH=/opt/homebrew/bin:/usr/local/bin:$PATH)"
     ]
   }
 }
