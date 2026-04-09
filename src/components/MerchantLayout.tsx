@@ -47,9 +47,6 @@ export default function MerchantLayout() {
         </div>
 
         <div className="icon-rail-bottom">
-          <NavLink to="/portal/lumina" title="Lumina AI" className="icon-rail-item">
-            <Sparkles size={18} strokeWidth={1.8} />
-          </NavLink>
           <NavLink to="/portal/support" title="Support" className="icon-rail-item">
             <HelpCircle size={18} strokeWidth={1.8} />
           </NavLink>

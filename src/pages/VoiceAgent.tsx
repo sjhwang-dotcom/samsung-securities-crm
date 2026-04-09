@@ -214,19 +214,12 @@ function LiveCallsView() {
   return (
     <>
       {/* Hero Banner */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)',
+      <div className="harlow-card" style={{
         borderRadius: 14, padding: '24px 32px',
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-        boxShadow: '0 4px 24px rgba(0,0,0,0.15)',
+        border: '1px solid #E5E7EB',
         position: 'relative', overflow: 'hidden',
       }}>
-        {/* Subtle grid overlay */}
-        <div style={{
-          position: 'absolute', inset: 0, opacity: 0.03,
-          backgroundImage: 'radial-gradient(circle at 1px 1px, white 1px, transparent 0)',
-          backgroundSize: '24px 24px',
-        }} />
 
         <div style={{ display: 'flex', alignItems: 'center', gap: 16, position: 'relative', zIndex: 1 }}>
           <div style={{ position: 'relative' }}>
@@ -243,14 +236,14 @@ function LiveCallsView() {
               width: 12, height: 12, borderRadius: '50%', background: '#10B981',
               animation: 'harlowPulse 2s ease-in-out infinite',
               boxShadow: '0 0 8px rgba(16,185,129,0.6)',
-              border: '2px solid #0F172A',
+              border: '2px solid white',
             }} />
           </div>
           <div>
-            <div style={{ fontSize: 20, fontWeight: 800, color: '#FFFFFF', letterSpacing: '-0.02em' }}>
+            <div style={{ fontSize: 20, fontWeight: 800, color: '#0F172A', letterSpacing: '-0.02em' }}>
               Voice Agent Command Center
             </div>
-            <div style={{ fontSize: 12, color: 'rgba(255,255,255,0.45)', fontWeight: 500, marginTop: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
+            <div style={{ fontSize: 12, color: '#94A3B8', fontWeight: 500, marginTop: 3, display: 'flex', alignItems: 'center', gap: 6 }}>
               <Activity size={12} strokeWidth={2} />
               Real-time AI dialer operations
             </div>

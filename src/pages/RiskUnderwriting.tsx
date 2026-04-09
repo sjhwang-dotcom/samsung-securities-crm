@@ -165,17 +165,18 @@ export default function RiskUnderwriting() {
     <div className="dashboard-grid">
 
       {/* ════════════════ Risk Overview Banner ════════════════ */}
-      <div style={{
-        background: 'linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%)',
+      <div className="harlow-card" style={{
         borderRadius: 16, padding: '28px 32px', display: 'grid', gridTemplateColumns: '1fr auto',
-        alignItems: 'center', gap: 32, color: '#F8FAFC',
+        alignItems: 'center', gap: 32, border: '1px solid #E5E7EB',
       }}>
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 8 }}>
-            <ShieldAlert size={28} color={BRAND} />
-            <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em' }}>Agentic Risk Intelligence</span>
+            <div style={{ width: 40, height: 40, borderRadius: 10, background: '#E8F0FE', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <ShieldAlert size={20} color={BRAND} />
+            </div>
+            <span style={{ fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', color: '#0F172A' }}>Agentic Risk Intelligence</span>
           </div>
-          <p style={{ fontSize: 13, color: '#94A3B8', margin: 0, maxWidth: 520, lineHeight: 1.6 }}>
+          <p style={{ fontSize: 13, color: '#64748B', margin: 0, maxWidth: 520, lineHeight: 1.6 }}>
             Continuous portfolio monitoring powered by AI. Risk scores update in real-time
             across 1,240 active merchants with automated alert triage and resolution.
           </p>
@@ -186,12 +187,12 @@ export default function RiskUnderwriting() {
               { label: 'Auto-Resolved (30d)', value: '89', icon: Zap },
             ].map((s) => (
               <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <div style={{ width: 36, height: 36, borderRadius: 10, background: 'rgba(21,120,247,0.12)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: 36, height: 36, borderRadius: 10, background: '#F1F5F9', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <s.icon size={17} color={BRAND} />
                 </div>
                 <div>
-                  <div style={{ fontSize: 18, fontWeight: 800 }}>{s.value}</div>
-                  <div style={{ fontSize: 11, color: '#64748B', fontWeight: 500 }}>{s.label}</div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{s.value}</div>
+                  <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500 }}>{s.label}</div>
                 </div>
               </div>
             ))}
