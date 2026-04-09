@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { ArrowLeftRight, Landmark, AlertTriangle, CreditCard, DollarSign, TrendingUp, Search } from 'lucide-react'
 import { Card, CardHeader, StatusBadge, DataTable } from '../../components/ui'
 import type { Column } from '../../components/ui'
+import portalData from '../../data/db/merchant_portal.json'
 
 type SubTab = 'transactions' | 'deposits' | 'chargebacks'
 
@@ -131,20 +132,14 @@ function TransactionsTab() {
 function DepositsTab() {
   type DepRow = { date: string; batchId: string; txns: number; gross: string; fees: string; net: string; status: string }
 
-  // Generate 30 days of deposits
-  const deposits: DepRow[] = Array.from({ length: 30 }, (_, i) => {
-    const day = 14 - i
-    const month = day > 0 ? 'Mar' : 'Feb'
-    const d = day > 0 ? day : 28 + day
-    const txns = Math.round(80 + Math.random() * 80)
-    const gross = Math.round(1200 + Math.random() * 1500)
-    const fees = Math.round(gross * 0.0269)
+  // From DuckDB daily_transactions
+  const deposits: DepRow[] = (portalData.deposits as any[]).map((d: any, i: number) => {
     return {
-      date: `${month} ${d}, 2026`,
-      batchId: `BTH-2026-${String(month === 'Mar' ? 300 + d : 200 + d).padStart(4, '0')}`,
-      txns, gross: `$${gross.toLocaleString()}.${String(Math.round(Math.random() * 99)).padStart(2, '0')}`,
-      fees: `-$${fees}.${String(Math.round(Math.random() * 99)).padStart(2, '0')}`,
-      net: `$${(gross - fees).toLocaleString()}.${String(Math.round(Math.random() * 99)).padStart(2, '0')}`,
+      date: new Date(d.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
+      batchId: `BTH-2026-${String(1000 + i).padStart(4, '0')}`,
+      txns: d.txns, gross: `$${d.gross.toLocaleString()}`,
+      fees: `-$${d.fees.toLocaleString()}`,
+      net: `$${d.net.toLocaleString()}`,
       status: 'Deposited',
     }
   })
@@ -201,13 +196,16 @@ function DepositsTab() {
 function ChargebacksTab() {
   type CbRow = { id: string; date: string; card: string; amount: string; reason: string; deadline: string; status: string }
 
-  const chargebacks: CbRow[] = [
-    { id: 'CB-2026-0047', date: 'Mar 12, 2026', card: 'Visa ****4821', amount: '$487.50', reason: 'Merchandise Not Received', deadline: 'Mar 26, 2026', status: 'Open — Response Needed' },
-    { id: 'CB-2026-0039', date: 'Feb 22, 2026', card: 'MC ****7190', amount: '$124.00', reason: 'Duplicate Transaction', deadline: 'Mar 8, 2026', status: 'Won — Resolved' },
-    { id: 'CB-2026-0031', date: 'Feb 10, 2026', card: 'Visa ****9905', amount: '$67.30', reason: 'Credit Not Processed', deadline: 'Feb 24, 2026', status: 'Won — Resolved' },
-    { id: 'CB-2026-0024', date: 'Jan 28, 2026', card: 'Amex ****3312', amount: '$215.00', reason: 'Not Recognized', deadline: 'Feb 11, 2026', status: 'Lost' },
-    { id: 'CB-2025-0418', date: 'Dec 15, 2025', card: 'Visa ****2277', amount: '$89.50', reason: 'Merchandise Not Received', deadline: 'Dec 29, 2025', status: 'Won — Resolved' },
-  ]
+  // From DuckDB chargebacks table
+  const dbCbs = portalData.chargebacks as any[]
+  const chargebacks: CbRow[] = dbCbs.length > 0
+    ? dbCbs.map((c: any) => ({
+        id: c.id, date: c.date, card: c.card, amount: `$${c.amount.toLocaleString()}`,
+        reason: c.reason, deadline: c.deadline || '—', status: c.status,
+      }))
+    : [
+        { id: 'CB-2026-0047', date: 'Mar 12, 2026', card: 'Visa ****4821', amount: '$487.50', reason: 'Merchandise Not Received', deadline: 'Mar 26, 2026', status: 'Open — Response Needed' },
+      ]
 
   const open = chargebacks.filter(c => c.status.includes('Open')).length
   const won = chargebacks.filter(c => c.status.includes('Won')).length

@@ -1,0 +1,811 @@
+{
+  "merchantId": 4580,
+  "merchantName": "Taste of Bayside #4580",
+  "statements": [
+    {
+      "month": "March 2026",
+      "date": "Apr 05, 2026",
+      "pages": 4,
+      "volume": 9816.15,
+      "fees": 264.05,
+      "net": 9552.1,
+      "txnCount": 155,
+      "avgTicket": 63.33,
+      "refunds": 0.0,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 98.9,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 317
+        },
+        {
+          "day": "5",
+          "vol": 317
+        },
+        {
+          "day": "9",
+          "vol": 253
+        },
+        {
+          "day": "13",
+          "vol": 380
+        },
+        {
+          "day": "17",
+          "vol": 253
+        },
+        {
+          "day": "21",
+          "vol": 317
+        },
+        {
+          "day": "25",
+          "vol": 253
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 179.55,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 39.87,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 31.95,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 3.8
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 3.8
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 71,
+          "volume": 4496.43,
+          "pct": 46
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 50,
+          "volume": 3166.5,
+          "pct": 32
+        },
+        {
+          "brand": "Amex",
+          "txns": 30,
+          "volume": 1899.9,
+          "pct": 19
+        },
+        {
+          "brand": "Discover",
+          "txns": 4,
+          "volume": 253.32,
+          "pct": 3
+        }
+      ]
+    },
+    {
+      "month": "February 2026",
+      "date": "Mar 08, 2026",
+      "pages": 4,
+      "volume": 8739.54,
+      "fees": 235.09,
+      "net": 8504.45,
+      "txnCount": 138,
+      "avgTicket": 63.33,
+      "refunds": 0.0,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 98.7,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 380
+        },
+        {
+          "day": "5",
+          "vol": 253
+        },
+        {
+          "day": "9",
+          "vol": 253
+        },
+        {
+          "day": "13",
+          "vol": 317
+        },
+        {
+          "day": "17",
+          "vol": 253
+        },
+        {
+          "day": "21",
+          "vol": 380
+        },
+        {
+          "day": "25",
+          "vol": 317
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 159.86,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 35.5,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 28.45,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 4.2
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 4.2
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 62,
+          "volume": 3926.46,
+          "pct": 45
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 46,
+          "volume": 2913.18,
+          "pct": 33
+        },
+        {
+          "brand": "Amex",
+          "txns": 27,
+          "volume": 1709.91,
+          "pct": 20
+        },
+        {
+          "brand": "Discover",
+          "txns": 3,
+          "volume": 189.99,
+          "pct": 2
+        }
+      ]
+    },
+    {
+      "month": "January 2026",
+      "date": "Feb 05, 2026",
+      "pages": 4,
+      "volume": 8486.22,
+      "fees": 228.28,
+      "net": 8257.94,
+      "txnCount": 134,
+      "avgTicket": 63.33,
+      "refunds": 0.0,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 98.5,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 253
+        },
+        {
+          "day": "5",
+          "vol": 190
+        },
+        {
+          "day": "9",
+          "vol": 317
+        },
+        {
+          "day": "13",
+          "vol": 253
+        },
+        {
+          "day": "17",
+          "vol": 380
+        },
+        {
+          "day": "21",
+          "vol": 190
+        },
+        {
+          "day": "25",
+          "vol": 317
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 155.23,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 34.47,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 27.62,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 4.4
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 4.4
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 59,
+          "volume": 3736.47,
+          "pct": 44
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 43,
+          "volume": 2723.19,
+          "pct": 32
+        },
+        {
+          "brand": "Amex",
+          "txns": 23,
+          "volume": 1456.59,
+          "pct": 17
+        },
+        {
+          "brand": "Discover",
+          "txns": 9,
+          "volume": 569.97,
+          "pct": 7
+        }
+      ]
+    },
+    {
+      "month": "December 2025",
+      "date": "Jan 05, 2026",
+      "pages": 4,
+      "volume": 7979.58,
+      "fees": 214.65,
+      "net": 7764.93,
+      "txnCount": 126,
+      "avgTicket": 63.33,
+      "refunds": 126.66,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 99.2,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 253
+        },
+        {
+          "day": "5",
+          "vol": 317
+        },
+        {
+          "day": "9",
+          "vol": 190
+        },
+        {
+          "day": "13",
+          "vol": 380
+        },
+        {
+          "day": "17",
+          "vol": 253
+        },
+        {
+          "day": "21",
+          "vol": 253
+        },
+        {
+          "day": "25",
+          "vol": 253
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 145.96,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 32.41,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 25.97,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 4.6
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 4.6
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 57,
+          "volume": 3609.81,
+          "pct": 45
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 38,
+          "volume": 2406.54,
+          "pct": 30
+        },
+        {
+          "brand": "Amex",
+          "txns": 23,
+          "volume": 1456.59,
+          "pct": 18
+        },
+        {
+          "brand": "Discover",
+          "txns": 8,
+          "volume": 506.64,
+          "pct": 6
+        }
+      ]
+    },
+    {
+      "month": "November 2025",
+      "date": "Dec 06, 2025",
+      "pages": 4,
+      "volume": 7916.25,
+      "fees": 212.95,
+      "net": 7703.3,
+      "txnCount": 125,
+      "avgTicket": 63.33,
+      "refunds": 189.99,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 98.5,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 253
+        },
+        {
+          "day": "5",
+          "vol": 253
+        },
+        {
+          "day": "9",
+          "vol": 253
+        },
+        {
+          "day": "13",
+          "vol": 253
+        },
+        {
+          "day": "17",
+          "vol": 190
+        },
+        {
+          "day": "21",
+          "vol": 253
+        },
+        {
+          "day": "25",
+          "vol": 190
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 144.81,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 32.16,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 25.77,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 4.7
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 4.7
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 57,
+          "volume": 3609.81,
+          "pct": 46
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 38,
+          "volume": 2406.54,
+          "pct": 30
+        },
+        {
+          "brand": "Amex",
+          "txns": 24,
+          "volume": 1519.92,
+          "pct": 19
+        },
+        {
+          "brand": "Discover",
+          "txns": 6,
+          "volume": 379.98,
+          "pct": 5
+        }
+      ]
+    },
+    {
+      "month": "October 2025",
+      "date": "Nov 05, 2025",
+      "pages": 4,
+      "volume": 7282.95,
+      "fees": 195.91,
+      "net": 7087.04,
+      "txnCount": 115,
+      "avgTicket": 63.33,
+      "refunds": 0.0,
+      "chargebacks": 0,
+      "effectiveRate": 2.69,
+      "approvalRate": 99.3,
+      "dailyBreakdown": [
+        {
+          "day": "1",
+          "vol": 253
+        },
+        {
+          "day": "5",
+          "vol": 253
+        },
+        {
+          "day": "9",
+          "vol": 190
+        },
+        {
+          "day": "13",
+          "vol": 190
+        },
+        {
+          "day": "17",
+          "vol": 253
+        },
+        {
+          "day": "21",
+          "vol": 190
+        },
+        {
+          "day": "25",
+          "vol": 317
+        }
+      ],
+      "feeBreakdown": [
+        {
+          "category": "Interchange",
+          "amount": 133.22,
+          "pct": 68.0
+        },
+        {
+          "category": "Assessment",
+          "amount": 29.58,
+          "pct": 15.1
+        },
+        {
+          "category": "Processor Markup",
+          "amount": 23.71,
+          "pct": 12.1
+        },
+        {
+          "category": "Monthly Fee",
+          "amount": 9.95,
+          "pct": 5.1
+        },
+        {
+          "category": "PCI Compliance",
+          "amount": 9.95,
+          "pct": 5.1
+        }
+      ],
+      "cardBreakdown": [
+        {
+          "brand": "Visa",
+          "txns": 49,
+          "volume": 3103.17,
+          "pct": 43
+        },
+        {
+          "brand": "Mastercard",
+          "txns": 35,
+          "volume": 2216.55,
+          "pct": 30
+        },
+        {
+          "brand": "Amex",
+          "txns": 17,
+          "volume": 1076.61,
+          "pct": 15
+        },
+        {
+          "brand": "Discover",
+          "txns": 14,
+          "volume": 886.62,
+          "pct": 12
+        }
+      ]
+    }
+  ],
+  "deposits": [
+    {
+      "date": "2026-03-31",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-30",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-29",
+      "txns": 6,
+      "gross": 379.98,
+      "fees": 10.22,
+      "net": 369.76
+    },
+    {
+      "date": "2026-03-28",
+      "txns": 8,
+      "gross": 506.64,
+      "fees": 13.63,
+      "net": 493.01
+    },
+    {
+      "date": "2026-03-27",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-26",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-25",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-24",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-23",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-22",
+      "txns": 6,
+      "gross": 379.98,
+      "fees": 10.22,
+      "net": 369.76
+    },
+    {
+      "date": "2026-03-21",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-20",
+      "txns": 6,
+      "gross": 379.98,
+      "fees": 10.22,
+      "net": 369.76
+    },
+    {
+      "date": "2026-03-19",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-18",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-17",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-16",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-15",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-14",
+      "txns": 7,
+      "gross": 443.31,
+      "fees": 11.93,
+      "net": 431.38
+    },
+    {
+      "date": "2026-03-13",
+      "txns": 6,
+      "gross": 379.98,
+      "fees": 10.22,
+      "net": 369.76
+    },
+    {
+      "date": "2026-03-12",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-11",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-10",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-09",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-08",
+      "txns": 6,
+      "gross": 379.98,
+      "fees": 10.22,
+      "net": 369.76
+    },
+    {
+      "date": "2026-03-07",
+      "txns": 8,
+      "gross": 506.64,
+      "fees": 13.63,
+      "net": 493.01
+    },
+    {
+      "date": "2026-03-06",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-05",
+      "txns": 5,
+      "gross": 316.65,
+      "fees": 8.52,
+      "net": 308.13
+    },
+    {
+      "date": "2026-03-04",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    },
+    {
+      "date": "2026-03-03",
+      "txns": 3,
+      "gross": 189.99,
+      "fees": 5.11,
+      "net": 184.88
+    },
+    {
+      "date": "2026-03-02",
+      "txns": 4,
+      "gross": 253.32,
+      "fees": 6.81,
+      "net": 246.51
+    }
+  ],
+  "chargebacks": [
+    {
+      "id": "CB-2025-001844",
+      "date": "2025-06-01",
+      "card": "Amex ****1206",
+      "amount": 98.39,
+      "reason": "Not Recognized",
+      "deadline": "2025-07-01",
+      "status": "Lost"
+    }
+  ]
+}
