@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Layout from './components/Layout'
 import MerchantLayout from './components/MerchantLayout'
+import PartnerLayout from './components/PartnerLayout'
 import Dashboard from './pages/Dashboard'
 import ISOManagement from './pages/ISOManagement'
 import AgenticCRM from './pages/AgenticCRM'
@@ -19,6 +20,12 @@ import Support from './pages/merchant/Support'
 import ProductsServices from './pages/merchant/ProductsServices'
 import AIAssistant from './pages/merchant/AIAssistant'
 import SalesAnalytics from './pages/merchant/SalesAnalytics'
+import PartnerDashboard from './pages/partner/PartnerDashboard'
+import PartnerPipeline from './pages/partner/PartnerPipeline'
+import PartnerMerchants from './pages/partner/PartnerMerchants'
+import PartnerResiduals from './pages/partner/PartnerResiduals'
+import PartnerMarketing from './pages/partner/PartnerMarketing'
+import PartnerTraining from './pages/partner/PartnerTraining'
 
 export default function App() {
   return (
@@ -51,6 +58,16 @@ export default function App() {
           <Route path="/portal/support" element={<Support />} />
           <Route path="/portal/products" element={<ProductsServices />} />
           <Route path="/portal/lumina" element={<AIAssistant />} />
+        </Route>
+
+        {/* Partner Portal */}
+        <Route element={<PartnerLayout />}>
+          <Route path="/partner" element={<PartnerDashboard />} />
+          <Route path="/partner/pipeline" element={<PartnerPipeline />} />
+          <Route path="/partner/merchants" element={<PartnerMerchants />} />
+          <Route path="/partner/residuals" element={<PartnerResiduals />} />
+          <Route path="/partner/marketing" element={<PartnerMarketing />} />
+          <Route path="/partner/training" element={<PartnerTraining />} />
         </Route>
       </Routes>
     </BrowserRouter>

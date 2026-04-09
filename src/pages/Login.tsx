@@ -54,6 +54,21 @@ export default function Login() {
             <span style={{ fontSize: 18, color: '#CBD5E1' }}>→</span>
           </button>
 
+          {/* Partner Portal */}
+          <button style={s.portalCard} onClick={() => navigate('/partner')}
+            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#10B981'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(16,185,129,0.12)' }}
+            onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
+          >
+            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #065F46, #10B981)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 00-3-3.87" /><path strokeLinecap="round" strokeLinejoin="round" d="M16 3.13a4 4 0 010 7.75" /></svg>
+            </div>
+            <div style={{ flex: 1, textAlign: 'left' }}>
+              <div style={s.portalTitle}>Partner Portal</div>
+              <div style={s.portalDesc}>Pipeline tracking, residual earnings, marketing tools</div>
+            </div>
+            <span style={{ fontSize: 18, color: '#CBD5E1' }}>→</span>
+          </button>
+
           <div style={{ marginTop: 24, textAlign: 'center', fontSize: 12, color: '#94A3B8' }}>
             Need help? <a href="mailto:support@harlowpayments.com" style={{ color: '#0F172A', fontWeight: 500, textDecoration: 'none' }}>support@harlowpayments.com</a>
           </div>

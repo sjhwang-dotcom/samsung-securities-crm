@@ -3,7 +3,7 @@ import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
 import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, ClipboardList, Phone,
-  Store, TrendingUp, Shield, CheckCircle,
+  TrendingUp, Shield, CheckCircle,
   Sparkles, Banknote,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
@@ -17,7 +17,6 @@ const navItems = [
   { to: '/funding-mgmt', icon: Banknote, title: 'Funding' },
   { to: '/risk', icon: Shield, title: 'Risk & UW' },
   { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
-  { to: '/portal', icon: Store, title: 'Merchant Portal' },
 ]
 
 const pageTitles: Record<string, { title: string; sub: string }> = {
