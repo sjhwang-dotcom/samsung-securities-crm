@@ -905,6 +905,17 @@ body {
   background: rgba(24,59,74,0.03);
 }
 
+/* Markdown in chat */
+.lumina-markdown { font-size: 13px; line-height: 1.6; }
+.lumina-markdown p { margin: 0 0 8px; }
+.lumina-markdown p:last-child { margin-bottom: 0; }
+.lumina-markdown strong { font-weight: 700; color: #0F172A; }
+.lumina-markdown em { font-style: italic; }
+.lumina-markdown ul, .lumina-markdown ol { margin: 4px 0 8px 16px; padding: 0; }
+.lumina-markdown li { margin-bottom: 2px; }
+.lumina-markdown code { background: #F1F5F9; padding: 1px 4px; border-radius: 3px; font-size: 12px; font-family: monospace; }
+.lumina-markdown h1, .lumina-markdown h2, .lumina-markdown h3 { font-size: 13px; font-weight: 700; margin: 8px 0 4px; }
+
 /* Input */
 .lumina-input-area {
   padding: 14px 16px;

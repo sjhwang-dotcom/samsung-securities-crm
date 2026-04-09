@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import { Send, Bot, FileText, MessageSquare, BarChart3, Loader2 } from 'lucide-react'
+import Markdown from 'react-markdown'
 
 interface LuminaPanelProps {
   onClose?: () => void
@@ -279,11 +280,15 @@ function ChatTab() {
             )}
             <div>
               <div className={`lumina-msg-bubble ${msg.role === 'user' ? 'user' : 'ai'}`}>
-                {msg.content || (isLoading && i === messages.length - 1 ? (
+                {msg.content ? (
+                  <div className="lumina-markdown">
+                    <Markdown>{msg.content}</Markdown>
+                  </div>
+                ) : (isLoading && i === messages.length - 1 ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94A3B8' }}>
                     <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Thinking...
                   </span>
-                ) : '')}
+                ) : null)}
               </div>
             </div>
           </div>
