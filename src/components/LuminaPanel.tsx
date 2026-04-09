@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Send, Bot, FileText, MessageSquare, BarChart3, Loader2 } from 'lucide-react'
+import { Send, Bot, FileText, MessageSquare, Loader2 } from 'lucide-react'
 import Markdown from 'react-markdown'
 
 interface LuminaPanelProps {
@@ -15,13 +15,13 @@ interface ChatMessage {
 const API_URL = '/api/chat'
 
 export default function LuminaPanel({ onClose }: LuminaPanelProps) {
-  const [activeTab, setActiveTab] = useState<'chat' | 'reports'>('chat')
+  const [activeTab, setActiveTab] = useState<'chat' | 'documents'>('chat')
   const [panelWidth, setPanelWidth] = useState(() => Math.max(Math.round(window.innerWidth * 0.3), 420))
   const [isResizing, setIsResizing] = useState(false)
 
   const tabs = [
     { id: 'chat' as const, label: 'Chat', Icon: MessageSquare },
-    { id: 'reports' as const, label: 'Reports', Icon: BarChart3 },
+    { id: 'documents' as const, label: 'Documents', Icon: FileText },
   ]
 
   const startResizing = useCallback(() => setIsResizing(true), [])
@@ -98,7 +98,7 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
 
       {/* Content — chat uses flex layout for pinned input */}
       {activeTab === 'chat' && <ChatTab />}
-      {activeTab === 'reports' && <div className="lumina-content"><ReportsTab /></div>}
+      {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab /></div>}
     </aside>
   )
 }
@@ -323,30 +323,63 @@ function ChatTab() {
 }
 
 /* ═══ Reports Tab ═══ */
-function ReportsTab() {
-  const reports = [
-    { title: 'Portfolio Intelligence Report', date: 'Mar 28, 2026', pages: '12 pages' },
-    { title: 'Monthly Residuals Summary', date: 'Mar 5, 2026', pages: '8 pages' },
-    { title: 'Risk Assessment — Q1 2026', date: 'Mar 1, 2026', pages: '15 pages' },
-    { title: 'Zenith Integration Status', date: 'Feb 28, 2026', pages: '6 pages' },
-    { title: 'Voice Agent ROI Analysis', date: 'Feb 15, 2026', pages: '10 pages' },
+function DocumentsTab() {
+  const sections = [
+    {
+      label: 'Reports',
+      items: [
+        { title: 'Portfolio Intelligence Report', date: 'Mar 28, 2026', type: 'PDF', pages: '12 pages' },
+        { title: 'Monthly Residuals Summary', date: 'Mar 5, 2026', type: 'PDF', pages: '8 pages' },
+        { title: 'Risk Assessment — Q1 2026', date: 'Mar 1, 2026', type: 'PDF', pages: '15 pages' },
+        { title: 'Zenith Integration Status', date: 'Feb 28, 2026', type: 'PDF', pages: '6 pages' },
+        { title: 'Voice Agent ROI Analysis', date: 'Feb 15, 2026', type: 'PDF', pages: '10 pages' },
+      ],
+    },
+    {
+      label: 'Statements',
+      items: [
+        { title: 'February 2026 Statement', date: 'Mar 5, 2026', type: 'PDF', pages: '4 pages' },
+        { title: 'January 2026 Statement', date: 'Feb 5, 2026', type: 'PDF', pages: '4 pages' },
+        { title: 'December 2025 Statement', date: 'Jan 5, 2026', type: 'PDF', pages: '4 pages' },
+      ],
+    },
+    {
+      label: 'Compliance',
+      items: [
+        { title: 'PCI DSS Certificate', date: 'Dec 15, 2025', type: 'PDF', pages: '2 pages' },
+        { title: 'SAQ-A Completion', date: 'Dec 15, 2025', type: 'PDF', pages: '8 pages' },
+        { title: 'TCPA Compliance Audit', date: 'Jan 10, 2026', type: 'PDF', pages: '5 pages' },
+      ],
+    },
+    {
+      label: 'Contracts',
+      items: [
+        { title: 'Harlow Direct ISO Agreement', date: 'Jan 1, 2019', type: 'PDF', pages: '24 pages' },
+        { title: 'Zenith Acquisition Agreement', date: 'Oct 1, 2025', type: 'PDF', pages: '48 pages' },
+        { title: 'Liberty Processing Agreement', date: 'Jan 15, 2026', type: 'PDF', pages: '36 pages' },
+      ],
+    },
   ]
+
   return (
     <div className="lumina-reports">
-      <div className="lumina-reports-header">
-        <div className="lumina-section-label">Generated Reports</div>
-        <button className="lumina-new-report">+ New Report</button>
-      </div>
-      {reports.map((r, i) => (
-        <div key={i} className="lumina-report-item">
-          <div className="lumina-report-icon">
-            <FileText size={16} color="#3B82F6" strokeWidth={1.8} />
+      {sections.map((section, si) => (
+        <div key={si}>
+          <div style={{ padding: '12px 16px 6px', fontSize: 10, fontWeight: 700, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+            {section.label}
           </div>
-          <div className="lumina-report-info">
-            <div className="lumina-report-title">{r.title}</div>
-            <div className="lumina-report-meta">{r.date} &middot; {r.pages}</div>
-          </div>
-          <span className="lumina-report-status">Ready</span>
+          {section.items.map((item, i) => (
+            <div key={i} className="lumina-report-item" style={{ cursor: 'pointer' }}>
+              <div className="lumina-report-icon">
+                <FileText size={16} color="#3B82F6" strokeWidth={1.8} />
+              </div>
+              <div className="lumina-report-info">
+                <div className="lumina-report-title">{item.title}</div>
+                <div className="lumina-report-meta">{item.date} &middot; {item.pages}</div>
+              </div>
+              <span className="lumina-report-status">{item.type}</span>
+            </div>
+          ))}
         </div>
       ))}
     </div>
