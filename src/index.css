@@ -650,6 +650,13 @@ body {
 }
 .grid-3 > * { min-width: 0; overflow: hidden; }
 
+.grid-6 {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 12px;
+}
+.grid-6 > * { min-width: 0; overflow: hidden; }
+
 /* ═══════════════════════════════════════════════════════════
    DASHBOARD: Health Matrix
    ═══════════════════════════════════════════════════════════ */
