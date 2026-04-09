@@ -1,10 +1,10 @@
 import { useState } from 'react'
 import {
   Search, Plus, Building2, Calendar, DollarSign,
-  MapPin, Phone, Mail, Link2, Percent, Clock,
-  PhoneCall, Send, Users, Target, Timer, Rocket,
+  MapPin, Phone, Mail, Link2, Clock,
+  PhoneCall, Send,
 } from 'lucide-react'
-import { Card, CardHeader, StatusBadge, KpiCard } from '../../components/ui'
+import { Card, CardHeader, StatusBadge } from '../../components/ui'
 
 interface Lead {
   id: number
@@ -86,56 +86,12 @@ export default function PartnerPipeline() {
   const estResidual = Math.round(parseVolume(selected.estimatedVolume) * 0.6 * 0.0275)
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 0, height: '100%', margin: '-16px -20px', overflow: 'hidden' }}>
-      {/* KPI Cards */}
-      <div style={{ padding: '16px 20px 0', background: '#FAFBFC' }}>
-        <div className="kpi-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 14 }}>
-          <KpiCard label="Active Leads" value="15" icon={Users} color="emerald" trend="+3" trendDirection="up" trendPositive sub="in pipeline" />
-          <KpiCard label="Pipeline Value" value="$285K/mo" icon={DollarSign} color="teal" trend="+18%" trendDirection="up" trendPositive sub="est. volume" />
-          <KpiCard label="Conversion Rate" value="28%" icon={Percent} color="blue" trend="+2.1%" trendDirection="up" trendPositive sub="lead to live" />
-          <KpiCard label="Avg Time to Close" value="22d" icon={Timer} color="purple" trend="-3d" trendDirection="down" trendPositive sub="vs last quarter" />
-          <KpiCard label="This Month Submitted" value="4" icon={Target} color="amber" sub="new leads" />
-          <KpiCard label="Go-Live Rate" value="20%" icon={Rocket} color="indigo" trend="+4%" trendDirection="up" trendPositive sub="last 90 days" />
-        </div>
-
-        {/* Stage Distribution Bar */}
-        <div style={{ marginTop: 14, marginBottom: 14 }}>
-          <Card>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 10 }}>
-              <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>Stage Distribution</span>
-              <span style={{ fontSize: 11, color: '#94A3B8' }}>{totalCount} total leads</span>
-            </div>
-            <div style={{ display: 'flex', borderRadius: 8, overflow: 'hidden', height: 28 }}>
-              {stageCounts.map(({ stage, count }) => (
-                <div key={stage} style={{
-                  flex: count, background: stageColors[stage], display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  minWidth: count > 0 ? 48 : 0, transition: 'flex 0.3s ease',
-                }}>
-                  <span style={{ fontSize: 10, fontWeight: 700, color: 'white', textShadow: '0 1px 2px rgba(0,0,0,0.2)' }}>
-                    {stage} ({count})
-                  </span>
-                </div>
-              ))}
-            </div>
-            <div style={{ display: 'flex', gap: 16, marginTop: 8 }}>
-              {stageCounts.map(({ stage, count }) => (
-                <div key={stage} style={{ display: 'flex', alignItems: 'center', gap: 5 }}>
-                  <div style={{ width: 8, height: 8, borderRadius: 2, background: stageColors[stage] }} />
-                  <span style={{ fontSize: 10, color: '#64748B', fontWeight: 500 }}>{stage}: {count}</span>
-                </div>
-              ))}
-            </div>
-          </Card>
-        </div>
-      </div>
-
-      {/* Master-Detail */}
-      <div style={{ display: 'flex', gap: 0, flex: 1, overflow: 'hidden' }}>
+    <div style={{ display: 'flex', gap: 0, height: '100%', margin: '-16px -20px', overflow: 'hidden' }}>
         {/* Left Panel */}
         <div style={{
-          width: 320, minWidth: 320, background: 'white',
+          width: 300, minWidth: 300, background: 'white',
           borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column',
-          height: 'calc(100vh - 310px)',
+          height: 'calc(100vh - 96px)',
         }}>
           <div style={{ padding: '16px 16px 12px', borderBottom: '1px solid #F1F5F9' }}>
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
@@ -205,7 +161,7 @@ export default function PartnerPipeline() {
         </div>
 
         {/* Right Detail */}
-        <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 310px)', padding: '16px 20px', background: '#FAFBFC' }}>
+        <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 96px)', padding: '16px 20px' }}>
           <div className="dashboard-grid">
             {/* Header */}
             <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 20 }}>
@@ -325,7 +281,6 @@ export default function PartnerPipeline() {
             </Card>
           </div>
         </div>
-      </div>
     </div>
   )
 }
