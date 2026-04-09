@@ -132,13 +132,13 @@ export default function MerchantPortal() {
       {/* Quick Actions */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 10 }}>
         {[
-          { icon: ArrowRight, label: 'Send Invoice', color: '#1578F7', bg: '#E8F0FE' },
-          { icon: Download, label: 'Download Statement', color: '#10B981', bg: '#D1FAE5' },
-          { icon: AlertTriangle, label: 'Respond to CB', color: '#EF4444', bg: '#FEE2E2' },
-          { icon: Star, label: 'Redeem Points', color: '#8B5CF6', bg: '#EDE9FE' },
-          { icon: Bell, label: 'Manage Alerts', color: '#F59E0B', bg: '#FEF3C7' },
+          { icon: ArrowRight, label: 'Send Invoice', color: '#1578F7', bg: '#E8F0FE', to: '/portal/transactions' },
+          { icon: Download, label: 'Download Statement', color: '#10B981', bg: '#D1FAE5', to: '/portal/statements' },
+          { icon: AlertTriangle, label: 'Respond to CB', color: '#EF4444', bg: '#FEE2E2', to: '/portal/transactions' },
+          { icon: Star, label: 'Redeem Points', color: '#8B5CF6', bg: '#EDE9FE', to: '/portal/products?tab=rewards' },
+          { icon: Bell, label: 'Manage Alerts', color: '#F59E0B', bg: '#FEF3C7', to: '/portal/support' },
         ].map(action => (
-          <button key={action.label} className="harlow-card" style={{ padding: '14px 12px', cursor: 'pointer', border: 'none', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
+          <button key={action.label} onClick={() => navigate(action.to)} className="harlow-card" style={{ padding: '14px 12px', cursor: 'pointer', border: 'none', background: 'white', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 8 }}>
             <div style={{ width: 36, height: 36, borderRadius: 10, background: action.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <action.icon size={16} color={action.color} strokeWidth={2} />
             </div>
