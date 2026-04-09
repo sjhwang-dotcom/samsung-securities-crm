@@ -7,6 +7,7 @@ import {
   Target, ArrowUpRight, Award, Activity, Zap,
   AlertCircle, CheckCircle, XCircle, Layers,
   GitBranch, Gauge, CalendarClock, Hash,
+  CalendarPlus, PlusCircle, Ban, PlayCircle,
 } from 'lucide-react'
 import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,

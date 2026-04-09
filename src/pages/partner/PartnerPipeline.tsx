@@ -82,7 +82,6 @@ export default function PartnerPipeline() {
     l.contact.toLowerCase().includes(searchTerm.toLowerCase())
   )
 
-  const totalCount = leads.length
   const estResidual = Math.round(parseVolume(selected.estimatedVolume) * 0.6 * 0.0275)
 
   return (

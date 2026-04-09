@@ -207,7 +207,7 @@ export default function RiskUnderwriting() {
       </div>
 
       {/* ════════════════ KPI Row ════════════════ */}
-      <div className="kpi-row">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: 12 }}>
         <KpiCard icon={Shield} label="Portfolio Risk Score" value="72 / 100" color="blue" trend="3 pts" trendDirection="up" trendPositive />
         <KpiCard icon={TrendingDown} label="Chargeback Rate" value="0.82%" color="emerald" trend="0.11%" trendDirection="down" trendPositive />
         <KpiCard icon={FileCheck} label="PCI Compliance" value={`${pciPct}%`} color="teal" trend="2.1%" trendDirection="up" trendPositive />
