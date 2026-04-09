@@ -95,28 +95,88 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         </div>
       </div>
 
-      {/* Content */}
-      <div className="lumina-content">
-        {activeTab === 'chat' && <ChatTab />}
-        {activeTab === 'reports' && <ReportsTab />}
-      </div>
+      {/* Content — chat uses flex layout for pinned input */}
+      {activeTab === 'chat' && <ChatTab />}
+      {activeTab === 'reports' && <div className="lumina-content"><ReportsTab /></div>}
     </aside>
   )
+}
+
+/* ═══ Pre-seeded conversations per page ═══ */
+const seedConversations: Record<string, ChatMessage[]> = {
+  '/dashboard': [
+    { role: 'assistant', content: "Good morning. I've completed my overnight analysis across all 3 ISOs. Portfolio volume hit $31.1M this month — up 3.5% MoM. Three items need your attention." },
+    { role: 'user', content: "What are the three items?" },
+    { role: 'assistant', content: "1. **Sunrise Deli** churn probability hit 87% — volume down 42% in 30 days. I've prepared a retention offer.\n\n2. **Liberty Processing** migration is at 92% — 59 merchants still need bank info updates. I've drafted follow-up emails.\n\n3. **Zenith** PCI compliance dropped to 88.5% — 3 healthcare merchants have expired SAQ-A forms. Auto-remediation initiated." },
+    { role: 'user', content: "How's the waterfall looking?" },
+    { role: 'assistant', content: "Portfolio value bridge: Starting at **$28.5M** → +$1.8M organic growth → +$1.2M from Zenith acquisition → +$0.8M product revenue → -$0.2M churn loss → **Current $32.1M**. Net gain of $3.6M this quarter. Churn loss is minimal at 0.6%." },
+  ],
+  '/crm': [
+    { role: 'assistant', content: "Pipeline overview: **200 active leads** across 8 stages. Pipeline value is approximately $209K/mo in estimated volume. Win rate trending at 67%." },
+    { role: 'user', content: "Which agents are performing best?" },
+    { role: 'assistant', content: "**Sarah Chen** leads with a 72% win rate across 28 deals ($118K). David Goldfarb has the most deals (34) but a lower 68% rate. I'd recommend having Sarah share her objection-handling approach with the team — her restaurant vertical close rate is 81%." },
+    { role: 'user', content: "Any deals at risk?" },
+    { role: 'assistant', content: "**King's Crown Jewelry** is in Underwriting with a risk score of 67 — flagged for high-risk MCC (5944). The $45K/mo volume makes it valuable but chargeback exposure is elevated. I'd recommend requesting additional processing statements before approval." },
+  ],
+  '/voice': [
+    { role: 'assistant', content: "Voice Agent status: **47 active calls** right now, 847 completed today. Transfer rate is 15.1% — up 0.3% from yesterday. Cost today: $42.35." },
+    { role: 'user', content: "What's our best performing script?" },
+    { role: 'assistant', content: "**Restaurant Savings Hook** leads at 41.2% win rate across 3,420 calls. Key factor: the empathy phrase added in v12 boosted transfers by 3.2%. Second best is Rate Comparison Direct at 38.7%. The seasonal rate lock script is underperforming at 24.1% — I'd recommend retiring it." },
+    { role: 'user', content: "How much are we saving vs human callers?" },
+    { role: 'assistant', content: "**$498K/month** in savings. Human team cost: $500K/mo ($16.67/transfer). AI Voice Agent: $1,270/mo ($0.33/transfer). That's a **99.7% cost reduction**. Annual savings: $5.98M. The AI also operates 9am-6pm with 50 concurrent lines — equivalent to a 200-person call center." },
+  ],
+  '/iso': [
+    { role: 'assistant', content: "Portfolio companies overview: 3 ISOs managing 4,612 merchants with $32.1M combined monthly volume." },
+    { role: 'user', content: "How's Liberty integration going?" },
+    { role: 'assistant', content: "Liberty Processing integration is at **92%** — 59 merchants remaining. Key blocker: 12 merchants need bank info updates (legacy accounts from pre-acquisition). Migration target date is May 30, 2026. I've flagged the bank info issue to Lisa Nguyen on the Liberty team. Churn has improved from 5.8% to 3.4% since acquisition thanks to AI retention outreach." },
+    { role: 'user', content: "What did we pay for Zenith?" },
+    { role: 'assistant', content: "Zenith was acquired for **$12.5M** at a **4.2x revenue multiple**. Current monthly volume: $8.9M with 1,024 merchants. The 70/30 residual split generates ~$890K/mo. Integration is 96% complete — 28 merchants remaining. Post-acquisition churn dropped from 4.1% to 2.1%. ROI is tracking ahead of the 3-year payback projection." },
+  ],
+  '/analytics': [
+    { role: 'assistant', content: "Portfolio health score: **87/100**. All dimensions are strong except Churn (78) — driven by Liberty's 3.4% rate pulling the average up." },
+    { role: 'user', content: "Where should we focus product cross-sell?" },
+    { role: 'assistant', content: "Product penetration is only **4.7%** average — huge upside. Top opportunity: **POS Upgrade** at 9.2% penetration generates $211K revenue. Biggest gap: **Insurance** at 2.1% with only 98 enrolled out of 4,612 eligible. I'd recommend a targeted campaign for Embedded Financing (currently 6.8%) — restaurants in the $30-50K volume range have the highest conversion rate at 14.2%." },
+  ],
+  '/risk': [
+    { role: 'assistant', content: "Portfolio risk score: **72/100**, up 3 points from last month. Chargeback rate at 0.82% — well below Visa's 1.0% threshold. 7 high-risk merchants being monitored." },
+    { role: 'user', content: "Which merchants are highest risk?" },
+    { role: 'assistant', content: "Top concern: a jewelry store (MCC 5944) with risk score 34 — volume decline + chargeback spike. Also monitoring 2 car washes with scores in the low 50s. The OFAC scan flagged 3 matches last month — 2 auto-cleared as false positives, 1 pending manual review. PCI compliance is at 87% — the 47 non-compliant merchants are costing us $937/mo in non-compliance fees." },
+  ],
+  '/compliance': [
+    { role: 'assistant', content: "All compliance systems are current. Next action item: **Employee Security Training** due May 1, 2026. OFAC screening runs monthly — last scan: April 1." },
+    { role: 'user', content: "Any TCPA concerns?" },
+    { role: 'assistant', content: "TCPA is fully compliant. DNC list syncs every 6 hours (last sync: April 6). Two-party consent enforced in all applicable states. Time-of-day restrictions auto-enforced across 47 states. Zero violations in the past 90 days. The Voice Agent's compliance module blocked 23 calls last week that would have violated state timing rules." },
+  ],
+  '/portal': [
+    { role: 'assistant', content: "Welcome back, Mario. Your restaurant processed **$47,230** this month — up 8.2% from February. Approval rate is excellent at 98.7%." },
+    { role: 'user', content: "I have an open chargeback, what should I do?" },
+    { role: 'assistant', content: "You have **1 open chargeback** for $487.50 (Visa ****4821, reason: Merchandise Not Received). Deadline is **March 26**. I'd recommend gathering your delivery confirmation or signed receipt. If you have a signed credit card slip showing the customer was present, that's usually sufficient to win. The industry win rate for this reason code is about 65%. Want me to draft a response template?" },
+    { role: 'user', content: "Am I eligible for funding?" },
+    { role: 'assistant', content: "Yes! You're **pre-approved for up to $25,000** based on your processing volume. Terms: 1.15 factor rate, 15% daily hold, funds in 24-48 hours. Your current volume of $47K/mo and 98.7% approval rate make you a strong candidate. You could use this for equipment upgrades, inventory, or seasonal hiring. Want me to show you the full offer details?" },
+  ],
 }
 
 /* ═══ Chat Tab with Claude API ═══ */
 function ChatTab() {
   const location = useLocation()
-  const [messages, setMessages] = useState<ChatMessage[]>([
-    { role: 'assistant', content: "Hi, I'm Lumina — your AI portfolio analyst. I have context on the page you're viewing. Ask me anything about your merchants, volume, risk, or pipeline." },
-  ])
+  const currentPage = location.pathname.startsWith('/portal') ? '/portal' : location.pathname
+  const seed = seedConversations[currentPage] || seedConversations['/dashboard'] || []
+
+  const [messages, setMessages] = useState<ChatMessage[]>(seed)
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const chatEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
+  const prevPageRef = useRef(currentPage)
 
-  // Get the base path for context (e.g., /portal/transactions → /portal)
-  const currentPage = location.pathname.startsWith('/portal') ? '/portal' : location.pathname
+  // Reset conversation when page changes
+  useEffect(() => {
+    if (prevPageRef.current !== currentPage) {
+      prevPageRef.current = currentPage
+      const newSeed = seedConversations[currentPage] || seedConversations['/dashboard'] || []
+      setMessages(newSeed)
+    }
+  }, [currentPage])
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
@@ -198,10 +258,10 @@ function ChatTab() {
   }
 
   return (
-    <>
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
       {/* Context indicator */}
       <div style={{
-        padding: '8px 16px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9',
+        padding: '8px 16px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9', flexShrink: 0,
         fontSize: 11, color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6,
       }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
@@ -232,7 +292,7 @@ function ChatTab() {
       </div>
 
       {/* Input */}
-      <div className="lumina-input-area">
+      <div className="lumina-input-area" style={{ flexShrink: 0 }}>
         <div className="lumina-input-wrapper">
           <input
             ref={inputRef}
@@ -253,7 +313,7 @@ function ChatTab() {
           </button>
         </div>
       </div>
-    </>
+    </div>
   )
 }
 
