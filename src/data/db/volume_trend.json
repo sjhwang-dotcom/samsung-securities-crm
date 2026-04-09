@@ -1,62 +1,62 @@
 [
   {
-    "month": "2025-04-01T00:00:00",
+    "month": "2025-04-01",
     "volume_m": 18.05,
-    "residuals_m": 0.18
+    "residuals_m": 1.87
   },
   {
-    "month": "2025-05-01T00:00:00",
+    "month": "2025-05-01",
     "volume_m": 19.25,
-    "residuals_m": 0.19
+    "residuals_m": 1.99
   },
   {
-    "month": "2025-06-01T00:00:00",
+    "month": "2025-06-01",
     "volume_m": 19.92,
-    "residuals_m": 0.2
+    "residuals_m": 2.07
   },
   {
-    "month": "2025-07-01T00:00:00",
+    "month": "2025-07-01",
     "volume_m": 20.98,
-    "residuals_m": 0.21
+    "residuals_m": 2.18
   },
   {
-    "month": "2025-08-01T00:00:00",
+    "month": "2025-08-01",
     "volume_m": 22.71,
-    "residuals_m": 0.23
+    "residuals_m": 2.35
   },
   {
-    "month": "2025-09-01T00:00:00",
+    "month": "2025-09-01",
     "volume_m": 23.14,
-    "residuals_m": 0.23
+    "residuals_m": 2.4
   },
   {
-    "month": "2025-10-01T00:00:00",
+    "month": "2025-10-01",
     "volume_m": 24.95,
-    "residuals_m": 0.25
+    "residuals_m": 2.59
   },
   {
-    "month": "2025-11-01T00:00:00",
+    "month": "2025-11-01",
     "volume_m": 25.89,
-    "residuals_m": 0.26
+    "residuals_m": 2.68
   },
   {
-    "month": "2025-12-01T00:00:00",
+    "month": "2025-12-01",
     "volume_m": 27.26,
-    "residuals_m": 0.27
+    "residuals_m": 2.82
   },
   {
-    "month": "2026-01-01T00:00:00",
+    "month": "2026-01-01",
     "volume_m": 29.26,
-    "residuals_m": 0.29
+    "residuals_m": 3.03
   },
   {
-    "month": "2026-02-01T00:00:00",
+    "month": "2026-02-01",
     "volume_m": 30.05,
-    "residuals_m": 0.3
+    "residuals_m": 3.1
   },
   {
-    "month": "2026-03-01T00:00:00",
+    "month": "2026-03-01",
     "volume_m": 31.11,
-    "residuals_m": 0.31
+    "residuals_m": 3.21
   }
 ]
