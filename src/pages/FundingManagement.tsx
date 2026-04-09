@@ -541,98 +541,184 @@ function ActiveFundingsView() {
 /* Tab 3: Applications                           */
 /* ══════════════════════════════════════════════ */
 function ApplicationsView() {
-  const [expandedId, setExpandedId] = useState<number | null>(null)
+  const [selectedIdx, setSelectedIdx] = useState(0)
+  const selected = applications[selectedIdx]
 
   const autoApproved = applications.filter(a => a.aiDecision === 'Auto-Approved').length
   const manualReview = applications.filter(a => a.aiDecision === 'Manual Review').length
   const declined = applications.filter(a => a.aiDecision === 'Declined').length
 
-  const decisionBadge = (d: string) => {
-    if (d === 'Auto-Approved') return <StatusBadge variant="emerald">Auto-Approved</StatusBadge>
-    if (d === 'Manual Review') return <StatusBadge variant="amber">Manual Review</StatusBadge>
-    return <StatusBadge variant="rose">Declined</StatusBadge>
-  }
-
-  const statusBadge = (s: string) => {
-    if (s === 'Approved') return <StatusBadge variant="emerald">{s}</StatusBadge>
-    if (s === 'Under Review') return <StatusBadge variant="amber">{s}</StatusBadge>
-    if (s === 'Pending') return <StatusBadge variant="blue">{s}</StatusBadge>
-    return <StatusBadge variant="rose">{s}</StatusBadge>
-  }
+  const decisionColor = (d: string) => d === 'Auto-Approved' ? '#10B981' : d === 'Manual Review' ? '#F59E0B' : '#F43F5E'
+  const statusColor = (s: string) => s === 'Approved' ? '#10B981' : s === 'Under Review' ? '#F59E0B' : s === 'Pending' ? '#3B82F6' : '#F43F5E'
+  const riskColor = (s: number) => s >= 80 ? '#10B981' : s >= 60 ? '#F59E0B' : '#F43F5E'
 
   return (
-    <>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-        <KpiCard label="Total Applications" value="15" icon={FileText} color="blue" sub="this month" />
-        <KpiCard label="Auto-Approved" value={String(autoApproved)} icon={CheckCircle} color="emerald" sub={`${((autoApproved / 15) * 100).toFixed(0)}% approval rate`} />
-        <KpiCard label="Manual Review" value={String(manualReview)} icon={Shield} color="amber" sub="awaiting underwriter" />
-        <KpiCard label="Declined" value={String(declined)} icon={XCircle} color="rose" sub="by AI scoring" />
+    <div style={{ display: 'flex', gap: 0, margin: '-12px -20px -16px', overflow: 'hidden' }}>
+      {/* Left: Application List */}
+      <div style={{ width: 320, minWidth: 320, background: 'white', borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column', height: 'calc(100vh - 160px)' }}>
+        <div style={{ padding: '14px 16px', borderBottom: '1px solid #F1F5F9' }}>
+          <div style={{ fontSize: 13, fontWeight: 800, color: '#0F172A' }}>Funding Applications</div>
+          <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 2 }}>{applications.length} total this month</div>
+        </div>
+
+        {/* Mini KPIs */}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: 4, padding: '8px 12px', borderBottom: '1px solid #F1F5F9' }}>
+          {[
+            { label: 'Approved', value: autoApproved, color: '#10B981' },
+            { label: 'Review', value: manualReview, color: '#F59E0B' },
+            { label: 'Declined', value: declined, color: '#F43F5E' },
+          ].map(k => (
+            <div key={k.label} style={{ background: '#FAFBFC', borderRadius: 6, padding: '4px 6px', textAlign: 'center' }}>
+              <div style={{ fontSize: 14, fontWeight: 800, color: k.color }}>{k.value}</div>
+              <div style={{ fontSize: 8, color: '#94A3B8', fontWeight: 500 }}>{k.label}</div>
+            </div>
+          ))}
+        </div>
+
+        {/* List */}
+        <div style={{ flex: 1, overflowY: 'auto' }}>
+          {applications.map((app, i) => {
+            const isActive = selectedIdx === i
+            return (
+              <div key={app.id} onClick={() => setSelectedIdx(i)} style={{
+                padding: '10px 16px', cursor: 'pointer',
+                borderLeft: isActive ? '3px solid #1578F7' : '3px solid transparent',
+                background: isActive ? 'linear-gradient(90deg, rgba(21,120,247,0.06), transparent)' : 'transparent',
+                borderBottom: '1px solid #F8FAFC',
+              }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 3 }}>
+                  <span style={{ fontSize: 12, fontWeight: 700, color: isActive ? '#1578F7' : '#0F172A' }}>{app.merchant}</span>
+                  <span style={{ fontSize: 11, fontWeight: 700, color: riskColor(app.riskScore) }}>{app.riskScore}</span>
+                </div>
+                <div style={{ fontSize: 11, color: '#94A3B8', marginBottom: 4 }}>{fmtFull(app.requestedAmount)} requested</div>
+                <div style={{ display: 'flex', gap: 4 }}>
+                  <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${decisionColor(app.aiDecision)}15`, color: decisionColor(app.aiDecision) }}>{app.aiDecision}</span>
+                  <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${statusColor(app.status)}15`, color: statusColor(app.status) }}>{app.status}</span>
+                </div>
+              </div>
+            )
+          })}
+        </div>
       </div>
 
-      <Card>
-        <CardHeader title="Pending Applications" badge={<StatusBadge variant="blue">{applications.length} total</StatusBadge>} />
-        <div className="harlow-table-wrapper">
-          <table className="harlow-table harlow-table--compact">
-            <thead>
-              <tr>
-                <th>Merchant</th>
-                <th style={{ textAlign: 'right' }}>Requested</th>
-                <th style={{ textAlign: 'right' }}>Recommended</th>
-                <th style={{ textAlign: 'center' }}>Risk Score</th>
-                <th>AI Decision</th>
-                <th>Status</th>
-                <th>Assigned To</th>
-                <th>Submitted</th>
-              </tr>
-            </thead>
-            <tbody>
-              {applications.map(app => (
+      {/* Right: Application Detail */}
+      <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', height: 'calc(100vh - 160px)' }}>
+        <div className="dashboard-grid">
+          {/* Header */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+                <span style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{selected.merchant}</span>
+                <StatusBadge variant={selected.status === 'Approved' ? 'emerald' : selected.status === 'Declined' ? 'rose' : selected.status === 'Under Review' ? 'amber' : 'blue'}>{selected.status}</StatusBadge>
+              </div>
+              <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 4 }}>Submitted {selected.submitted} · Assigned to {selected.assignedTo}</div>
+            </div>
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: 6 }}>
+              {selected.status === 'Under Review' && (
                 <>
-                  <tr key={app.id} className="row--hoverable row--clickable" onClick={() => setExpandedId(expandedId === app.id ? null : app.id)}>
-                    <td>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                        <ChevronRight size={12} style={{ transform: expandedId === app.id ? 'rotate(90deg)' : 'none', transition: 'transform 0.15s', color: '#94A3B8' }} />
-                        <span style={{ fontWeight: 600 }}>{app.merchant}</span>
-                      </div>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>{fmtFull(app.requestedAmount)}</td>
-                    <td style={{ textAlign: 'right', color: app.recommendedAmount === 0 ? '#F43F5E' : '#0F172A' }}>
-                      {app.recommendedAmount > 0 ? fmtFull(app.recommendedAmount) : '---'}
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span style={{
-                        display: 'inline-block', padding: '2px 8px', borderRadius: 6, fontSize: 11, fontWeight: 700,
-                        background: app.riskScore >= 80 ? '#D1FAE5' : app.riskScore >= 60 ? '#FEF3C7' : '#FEE2E2',
-                        color: app.riskScore >= 80 ? '#059669' : app.riskScore >= 60 ? '#D97706' : '#DC2626',
-                      }}>
-                        {app.riskScore}
-                      </span>
-                    </td>
-                    <td>{decisionBadge(app.aiDecision)}</td>
-                    <td>{statusBadge(app.status)}</td>
-                    <td style={{ fontSize: 12, color: app.assignedTo === 'AI Auto' ? '#1578F7' : '#334155' }}>{app.assignedTo}</td>
-                    <td style={{ fontSize: 12, color: '#94A3B8' }}>{app.submitted}</td>
-                  </tr>
-                  {expandedId === app.id && (
-                    <tr key={`${app.id}-detail`}>
-                      <td colSpan={8} style={{ background: '#F8FAFC', padding: '12px 20px 12px 36px' }}>
-                        <div style={{ display: 'flex', alignItems: 'flex-start', gap: 8 }}>
-                          <Brain size={14} color="#1578F7" style={{ marginTop: 1, flexShrink: 0 }} />
-                          <div>
-                            <div style={{ fontSize: 11, fontWeight: 700, color: '#1578F7', marginBottom: 4 }}>AI Qualification Summary</div>
-                            <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.5 }}>{app.aiSummary}</div>
-                          </div>
-                        </div>
-                      </td>
-                    </tr>
-                  )}
+                  <button style={{ padding: '7px 14px', fontSize: 12, fontWeight: 600, background: '#1578F7', color: 'white', border: 'none', borderRadius: 7, cursor: 'pointer' }}>Approve</button>
+                  <button style={{ padding: '7px 14px', fontSize: 12, fontWeight: 600, background: 'white', color: '#F43F5E', border: '1px solid #FCA5A5', borderRadius: 7, cursor: 'pointer' }}>Decline</button>
+                  <button style={{ padding: '7px 14px', fontSize: 12, fontWeight: 600, background: 'white', color: '#64748B', border: '1px solid #E2E8F0', borderRadius: 7, cursor: 'pointer' }}>Request Info</button>
                 </>
-              ))}
-            </tbody>
-          </table>
+              )}
+              {selected.status === 'Approved' && (
+                <button style={{ padding: '7px 14px', fontSize: 12, fontWeight: 600, background: '#10B981', color: 'white', border: 'none', borderRadius: 7, cursor: 'pointer' }}>Disburse Funds</button>
+              )}
+            </div>
+          </div>
+
+          {/* KPIs */}
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+            {[
+              { label: 'Requested', value: fmtFull(selected.requestedAmount), color: '#1578F7' },
+              { label: 'Recommended', value: selected.recommendedAmount > 0 ? fmtFull(selected.recommendedAmount) : 'N/A', color: selected.recommendedAmount > 0 ? '#10B981' : '#F43F5E' },
+              { label: 'Risk Score', value: String(selected.riskScore), color: riskColor(selected.riskScore) },
+              { label: 'Factor Rate', value: selected.recommendedAmount > 0 ? `1.${10 + Math.round((100 - selected.riskScore) * 0.2)}` : 'N/A', color: '#4F46E5' },
+            ].map(k => (
+              <div key={k.label} className="kpi-card">
+                <div className="kpi-label">{k.label}</div>
+                <div className="kpi-value" style={{ fontSize: 20, color: k.color }}>{k.value}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* AI Decision + Summary */}
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+            <Card noPadding>
+              <CardHeader title="AI Qualification" />
+              <div style={{ padding: '0 16px 16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 12 }}>
+                  <Brain size={18} color="#1578F7" />
+                  <StatusBadge variant={selected.aiDecision === 'Auto-Approved' ? 'emerald' : selected.aiDecision === 'Manual Review' ? 'amber' : 'rose'}>
+                    {selected.aiDecision}
+                  </StatusBadge>
+                </div>
+                <div style={{ fontSize: 13, color: '#334155', lineHeight: 1.7 }}>{selected.aiSummary}</div>
+              </div>
+            </Card>
+
+            <Card noPadding>
+              <CardHeader title="Proposed Terms" />
+              <div style={{ padding: '0 16px 16px' }}>
+                {selected.recommendedAmount > 0 ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    {[
+                      { label: 'Funding Amount', value: fmtFull(selected.recommendedAmount) },
+                      { label: 'Factor Rate', value: `1.${10 + Math.round((100 - selected.riskScore) * 0.2)}` },
+                      { label: 'Total Payback', value: fmtFull(Math.round(selected.recommendedAmount * (1 + (10 + (100 - selected.riskScore) * 0.2) / 100))) },
+                      { label: 'Daily Hold', value: `${Math.round(10 + (100 - selected.riskScore) * 0.1)}%` },
+                      { label: 'Est. Term', value: `~${Math.round(250 + (100 - selected.riskScore) * 2)} days` },
+                    ].map(item => (
+                      <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, padding: '6px 0', borderBottom: '1px solid #F8FAFC' }}>
+                        <span style={{ color: '#64748B' }}>{item.label}</span>
+                        <span style={{ fontWeight: 700, color: '#0F172A' }}>{item.value}</span>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div style={{ padding: 20, textAlign: 'center', color: '#F43F5E', fontSize: 13 }}>
+                    <XCircle size={24} style={{ margin: '0 auto 8px', display: 'block' }} />
+                    Application declined — does not meet funding criteria
+                  </div>
+                )}
+              </div>
+            </Card>
+          </div>
+
+          {/* Risk Factors */}
+          <Card noPadding>
+            <CardHeader title="Risk Assessment" />
+            <div style={{ padding: '0 16px 16px', display: 'flex', gap: 16 }}>
+              <div style={{ position: 'relative', width: 80, height: 80, flexShrink: 0 }}>
+                <svg width={80} height={80} style={{ transform: 'rotate(-90deg)' }}>
+                  <circle cx={40} cy={40} r={34} fill="none" stroke="#F1F5F9" strokeWidth={6} />
+                  <circle cx={40} cy={40} r={34} fill="none" stroke={riskColor(selected.riskScore)} strokeWidth={6}
+                    strokeDasharray={`${(selected.riskScore / 100) * 213.6} 213.6`} strokeLinecap="round" />
+                </svg>
+                <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ fontSize: 18, fontWeight: 800, color: riskColor(selected.riskScore) }}>{selected.riskScore}</span>
+                </div>
+              </div>
+              <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
+                {[
+                  { label: 'Card Volume History', pass: selected.riskScore >= 50 },
+                  { label: 'Business Tenure', pass: selected.riskScore >= 40 },
+                  { label: 'Payment History', pass: selected.riskScore >= 60 },
+                  { label: 'Industry Risk', pass: selected.riskScore >= 55 },
+                  { label: 'Owner Credit', pass: selected.riskScore >= 45 },
+                ].map(item => (
+                  <div key={item.label} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 12 }}>
+                    {item.pass ? <CheckCircle size={14} color="#10B981" /> : <XCircle size={14} color="#F43F5E" />}
+                    <span style={{ color: item.pass ? '#334155' : '#F43F5E' }}>{item.label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </Card>
         </div>
-      </Card>
-    </>
+      </div>
+    </div>
   )
 }
 
