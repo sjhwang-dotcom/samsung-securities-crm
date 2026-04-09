@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Plus, Search, CheckCircle, AlertTriangle, FileText, Upload, ChevronRight,
-  Kanban, Store, DollarSign, TicketCheck, ClipboardList,
+  Kanban, Store, DollarSign, TicketCheck, ClipboardList, Phone,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
@@ -127,13 +127,31 @@ const agentLeaderboard = [
 ]
 
 const recentDeals = [
-  { name: "Bella's Bistro LLC", stage: 'Approval', value: '$32K/mo', score: 72, time: '2h ago', status: 'Won' },
-  { name: 'GreenLeaf Market', stage: 'Application', value: '$35K/mo', score: 88, time: '5h ago', status: 'Active' },
-  { name: 'Sunrise Pharmacy', stage: 'Application', value: '$28K/mo', score: 81, time: '1d ago', status: 'Active' },
-  { name: "King's Crown Jewelry", stage: 'Underwriting', value: '$45K/mo', score: 67, time: '1d ago', status: 'At Risk' },
-  { name: 'Park Slope Yoga', stage: 'Proposal', value: '$12K/mo', score: 71, time: '2d ago', status: 'Active' },
-  { name: 'Metro Grill', stage: 'Equipment', value: '$24K/mo', score: 79, time: '3d ago', status: 'Won' },
+  { name: "Bella's Bistro LLC", stage: 'Approval', value: '$32K/mo', score: 72, time: '2h ago', status: 'Won', source: 'Voice Agent' },
+  { name: 'GreenLeaf Market', stage: 'Application', value: '$35K/mo', score: 88, time: '5h ago', status: 'Active', source: 'Voice Agent' },
+  { name: 'Sunrise Pharmacy', stage: 'Application', value: '$28K/mo', score: 81, time: '1d ago', status: 'Active', source: 'Referral' },
+  { name: "King's Crown Jewelry", stage: 'Underwriting', value: '$45K/mo', score: 67, time: '1d ago', status: 'At Risk', source: 'Voice Agent' },
+  { name: 'Park Slope Yoga', stage: 'Proposal', value: '$12K/mo', score: 71, time: '2d ago', status: 'Active', source: 'Walk-in' },
+  { name: 'Metro Grill', stage: 'Equipment', value: '$24K/mo', score: 79, time: '3d ago', status: 'Won', source: 'Website' },
 ]
+
+const leadCallHistory: Record<string, { lastCall: string; outcome: string; sentiment: string; callCount: number; source: string }> = {
+  'Queens Auto Repair': { lastCall: '2h ago', outcome: 'Callback Scheduled', sentiment: 'Positive', callCount: 3, source: 'Voice Agent' },
+  'Fresh Bake Cafe': { lastCall: '1d ago', outcome: 'No Answer', sentiment: 'Neutral', callCount: 2, source: 'Voice Agent' },
+  'Downtown Barber': { lastCall: '3d ago', outcome: 'Gatekeeper Block', sentiment: 'Neutral', callCount: 1, source: 'Cold Call' },
+  'Park Slope Yoga': { lastCall: '5h ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 4, source: 'Voice Agent' },
+  'Liberty Tax': { lastCall: 'Today', outcome: 'Callback Scheduled', sentiment: 'Positive', callCount: 2, source: 'Referral' },
+  'Chez Antoine': { lastCall: 'Today', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 3, source: 'Voice Agent' },
+  'GreenLeaf Market': { lastCall: '1d ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 5, source: 'Voice Agent' },
+  'Brooklyn Dry Cleaners #2': { lastCall: '2d ago', outcome: 'Voicemail', sentiment: 'Neutral', callCount: 2, source: 'Voice Agent' },
+  'Sunrise Pharmacy': { lastCall: 'Today', outcome: 'Callback Scheduled', sentiment: 'Positive', callCount: 3, source: 'Voice Agent' },
+  'Harlem Grocery #2': { lastCall: '3d ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 4, source: 'Voice Agent' },
+  "King's Crown Jewelry": { lastCall: '1d ago', outcome: 'Not Interested', sentiment: 'Skeptical', callCount: 6, source: 'Voice Agent' },
+  "Bella's Bistro LLC": { lastCall: '2h ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 3, source: 'Voice Agent' },
+  'Prestige Auto Wash': { lastCall: 'Today', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 2, source: 'Voice Agent' },
+  'Metro Grill': { lastCall: '1d ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 4, source: 'Voice Agent' },
+  'Jade Spa': { lastCall: '3d ago', outcome: 'Transfer Success', sentiment: 'Positive', callCount: 2, source: 'Voice Agent' },
+}
 
 function PipelineView() {
   const [activeStage, setActiveStage] = useState<string | null>(null)
@@ -229,12 +247,74 @@ function PipelineView() {
                     <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#F1F5F9', color: '#64748B' }}>MCC {lead.mcc}</span>
                     <span style={{ fontSize: 9, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: '#E8F0FE', color: '#1578F7' }}>{lead.estVolume}</span>
                   </div>
+                  {/* Call info row */}
+                  {(() => {
+                    const ch = leadCallHistory[lead.name]
+                    if (!ch) return null
+                    const outcomeColors: Record<string, { bg: string; color: string }> = {
+                      'Transfer Success': { bg: '#D1FAE5', color: '#059669' },
+                      'Callback Scheduled': { bg: '#DBEAFE', color: '#2563EB' },
+                      'No Answer': { bg: '#F1F5F9', color: '#94A3B8' },
+                      'Gatekeeper Block': { bg: '#FEF3C7', color: '#D97706' },
+                      'Not Interested': { bg: '#FEE2E2', color: '#DC2626' },
+                      'Voicemail': { bg: '#F1F5F9', color: '#94A3B8' },
+                    }
+                    const oc = outcomeColors[ch.outcome] || outcomeColors['Voicemail']
+                    return (
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 4, flexWrap: 'wrap', marginBottom: 6 }}>
+                        <Phone size={10} color="#94A3B8" strokeWidth={2} />
+                        <span style={{ fontSize: 9, color: '#94A3B8', fontWeight: 500 }}>Last: {ch.lastCall}</span>
+                        <span style={{ fontSize: 9, fontWeight: 700, padding: '1px 5px', borderRadius: 4, background: oc.bg, color: oc.color }}>{ch.outcome}</span>
+                        <span style={{ fontSize: 9, color: '#94A3B8', fontWeight: 500 }}>{ch.callCount} calls</span>
+                        {ch.source === 'Voice Agent' && (
+                          <span style={{ fontSize: 8, fontWeight: 800, padding: '1px 4px', borderRadius: 3, background: '#CCFBF1', color: '#0891B2' }}>AI</span>
+                        )}
+                      </div>
+                    )
+                  })()}
                   {lead.detail && <div style={{ fontSize: 11, color: '#64748B', paddingTop: 6, borderTop: '1px solid #F1F5F9' }}>{lead.detail}</div>}
                 </div>
               ))}
             </div>
           </div>
         )}
+      </Card>
+
+      {/* Voice Agent Activity Card */}
+      <Card noPadding>
+        <div style={{ padding: '12px 16px', display: 'flex', alignItems: 'center', gap: 12 }}>
+          <div style={{
+            width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+            background: 'linear-gradient(135deg, #0891B2, #06B6D4)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+          }}>
+            <Phone size={16} color="white" strokeWidth={2.5} />
+          </div>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 12, fontWeight: 700, color: '#0F172A', marginBottom: 3 }}>Voice Agent Activity (Today)</div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center' }}>
+              <span style={{ fontSize: 11, color: '#334155', fontWeight: 500 }}>
+                <strong style={{ color: '#0891B2' }}>847</strong> calls made
+              </span>
+              <span style={{ fontSize: 9, color: '#CBD5E1' }}>|</span>
+              <span style={{ fontSize: 11, color: '#334155', fontWeight: 500 }}>
+                <strong style={{ color: '#10B981' }}>128</strong> transfers (15.1%)
+              </span>
+              <span style={{ fontSize: 9, color: '#CBD5E1' }}>|</span>
+              <span style={{ fontSize: 11, color: '#334155', fontWeight: 500 }}>
+                <strong style={{ color: '#1578F7' }}>71</strong> callbacks scheduled
+              </span>
+            </div>
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, alignItems: 'center', marginTop: 3 }}>
+              <span style={{ fontSize: 10, color: '#94A3B8', fontWeight: 500 }}>Top converting:</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#059669' }}>Restaurants 41.2%</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#0891B2' }}>Auto 33.1%</span>
+              <span style={{ fontSize: 10, fontWeight: 700, color: '#1578F7' }}>Retail 29.5%</span>
+              <span style={{ fontSize: 9, color: '#CBD5E1' }}>|</span>
+              <span style={{ fontSize: 10, color: '#334155', fontWeight: 600 }}>12 leads moved to next stage via Voice Agent today</span>
+            </div>
+          </div>
+        </div>
       </Card>
 
       {/* Row 3: Pipeline Trend + Lead Sources + Conversion Funnel */}
@@ -366,7 +446,14 @@ function PipelineView() {
         <div style={{ padding: '0 16px 16px' }}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: 10 }}>
             {recentDeals.map(deal => {
-              const statusColor = deal.status === 'Won' ? '#10B981' : deal.status === 'At Risk' ? '#F59E0B' : '#1578F7'
+              const statusClr = deal.status === 'Won' ? '#10B981' : deal.status === 'At Risk' ? '#F59E0B' : '#1578F7'
+              const srcStyle: Record<string, { bg: string; color: string }> = {
+                'Voice Agent': { bg: '#CCFBF1', color: '#0891B2' },
+                'Referral': { bg: '#DBEAFE', color: '#2563EB' },
+                'Walk-in': { bg: '#F1F5F9', color: '#64748B' },
+                'Website': { bg: '#EDE9FE', color: '#7C3AED' },
+              }
+              const ss = srcStyle[deal.source] || srcStyle['Walk-in']
               return (
                 <div key={deal.name} className="harlow-card" style={{ padding: 12, cursor: 'pointer' }}>
                   <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: 6 }}>
@@ -376,11 +463,15 @@ function PipelineView() {
                     </div>
                     <span style={{
                       fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 12,
-                      background: `${statusColor}15`, color: statusColor,
+                      background: `${statusClr}15`, color: statusClr,
                     }}>{deal.status}</span>
                   </div>
                   <div style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
                     <span style={{ fontSize: 10, padding: '2px 6px', borderRadius: 4, fontWeight: 600, background: `${stageColors[deal.stage] ?? '#94A3B8'}15`, color: stageColors[deal.stage] ?? '#94A3B8' }}>{deal.stage}</span>
+                    <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 4, background: ss.bg, color: ss.color }}>
+                      {deal.source === 'Voice Agent' && <Phone size={8} strokeWidth={2.5} />}
+                      {deal.source}
+                    </span>
                     <span style={{ fontSize: 11, fontWeight: 700, color: '#1E293B' }}>{deal.value}</span>
                     <span style={{ fontSize: 10, color: '#94A3B8', marginLeft: 'auto' }}>Score: {deal.score}</span>
                   </div>

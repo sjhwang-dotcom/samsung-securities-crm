@@ -152,6 +152,25 @@ const settingsConfig = {
   compliance: { tcpa: true, dncList: true, dncLastSync: 'Apr 6, 2026', callRecording: true, consentMessage: 'Enabled', stateRestrictions: 'Auto-enforced (47 states)' },
 }
 
+/* ── CRM pipeline mapping for live calls ── */
+const crmPipelineMap: Record<string, { stage: string; color: string }> = {
+  'Queens Auto Repair': { stage: 'Lead', color: '#3B82F6' },
+  'Fresh Bake Cafe': { stage: 'Lead', color: '#3B82F6' },
+  'Downtown Barber': { stage: 'Lead', color: '#3B82F6' },
+  'Park Slope Yoga': { stage: 'Proposal', color: '#4F46E5' },
+  'Liberty Tax': { stage: 'Proposal', color: '#4F46E5' },
+  'Chez Antoine': { stage: 'Application', color: '#8B5CF6' },
+  'GreenLeaf Market': { stage: 'Application', color: '#8B5CF6' },
+  'Brooklyn Dry Cleaners #2': { stage: 'Lead', color: '#3B82F6' },
+  'Sunrise Pharmacy': { stage: 'Application', color: '#8B5CF6' },
+  'Harlem Grocery #2': { stage: 'Approval', color: '#10B981' },
+  "King's Crown Jewelry": { stage: 'Underwriting', color: '#F59E0B' },
+  "Bella's Bistro LLC": { stage: 'Approval', color: '#10B981' },
+  'Prestige Auto Wash': { stage: 'Boarding', color: '#0891B2' },
+  'Metro Grill': { stage: 'Equipment', color: '#EC4899' },
+  'Jade Spa': { stage: 'Lead', color: '#3B82F6' },
+}
+
 /* ── pulsing dot keyframe (injected once) ── */
 const pulseCSS = `
 @keyframes harlowPulse {
@@ -334,6 +353,18 @@ function LiveCallsView() {
                       </div>
                       <span style={{ fontSize: 9, color: '#94A3B8', fontWeight: 600, whiteSpace: 'nowrap' }}>{call.stage}</span>
                     </div>
+                    {/* CRM Pipeline badge */}
+                    {crmPipelineMap[call.merchant] && (
+                      <div style={{ marginTop: 4 }}>
+                        <span style={{
+                          fontSize: 9, fontWeight: 700, padding: '1px 6px', borderRadius: 4,
+                          background: `${crmPipelineMap[call.merchant].color}15`,
+                          color: crmPipelineMap[call.merchant].color,
+                        }}>
+                          Pipeline: {crmPipelineMap[call.merchant].stage}
+                        </span>
+                      </div>
+                    )}
                   </div>
                 )
               })}
@@ -604,6 +635,32 @@ function PerformanceView() {
           </div>
         </Card>
       </div>
+
+      {/* Pipeline Impact */}
+      <Card noPadding>
+        <CardHeader title="Pipeline Impact" badge={
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 3, fontSize: 9, fontWeight: 700, color: '#0891B2', background: '#CCFBF1', padding: '2px 7px', borderRadius: 5 }}>
+            <GitBranch size={10} /> CRM Integration
+          </span>
+        } />
+        <div style={{ padding: '0 18px 18px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: 12 }}>
+            {[
+              { label: 'Leads Advanced Today', value: '12', color: '#0891B2' },
+              { label: 'Leads Advanced This Week', value: '47', color: '#1578F7' },
+              { label: 'Direct-to-Close Rate', value: '8.2%', color: '#10B981', sub: 'calls to merchant boarding' },
+              { label: 'Avg Calls to Convert', value: '3.4', color: '#F59E0B' },
+              { label: 'Pipeline Value Generated', value: '$142K/mo', color: '#059669', sub: 'Voice Agent sourced leads' },
+            ].map(item => (
+              <div key={item.label} style={{ textAlign: 'center', padding: '12px 8px', borderRadius: 10, background: '#FAFBFC' }}>
+                <div style={{ fontSize: 22, fontWeight: 900, color: item.color, letterSpacing: '-0.02em', lineHeight: 1 }}>{item.value}</div>
+                <div style={{ fontSize: 10, fontWeight: 600, color: '#64748B', marginTop: 4 }}>{item.label}</div>
+                {item.sub && <div style={{ fontSize: 9, color: '#94A3B8', marginTop: 2 }}>{item.sub}</div>}
+              </div>
+            ))}
+          </div>
+        </div>
+      </Card>
     </>
   )
 }
