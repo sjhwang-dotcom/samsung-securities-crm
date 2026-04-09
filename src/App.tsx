@@ -7,6 +7,7 @@ import AgenticCRM from './pages/AgenticCRM'
 import VoiceAgent from './pages/VoiceAgent'
 import MerchantPortal from './pages/MerchantPortal'
 import PortfolioAnalytics from './pages/PortfolioAnalytics'
+import FundingManagement from './pages/FundingManagement'
 import RiskUnderwriting from './pages/RiskUnderwriting'
 import ComplianceCenter from './pages/ComplianceCenter'
 import Login from './pages/Login'
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/crm" element={<AgenticCRM />} />
           <Route path="/voice" element={<VoiceAgent />} />
           <Route path="/analytics" element={<PortfolioAnalytics />} />
+          <Route path="/funding-mgmt" element={<FundingManagement />} />
           <Route path="/risk" element={<RiskUnderwriting />} />
           <Route path="/compliance" element={<ComplianceCenter />} />
         </Route>

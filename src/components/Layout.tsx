@@ -4,7 +4,7 @@ import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, ClipboardList, Phone,
   Store, TrendingUp, Shield, CheckCircle,
-  Sparkles,
+  Sparkles, Banknote,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
@@ -14,6 +14,7 @@ const navItems = [
   { to: '/voice', icon: Phone, title: 'Voice Agent', live: true },
   { to: '/iso', icon: Building2, title: 'ISOs' },
   { to: '/analytics', icon: TrendingUp, title: 'Analytics' },
+  { to: '/funding-mgmt', icon: Banknote, title: 'Funding' },
   { to: '/risk', icon: Shield, title: 'Risk & UW' },
   { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
   { to: '/portal', icon: Store, title: 'Merchant Portal' },
@@ -26,6 +27,7 @@ const pageTitles: Record<string, { title: string; sub: string }> = {
   '/risk': { title: 'Agentic Risk Intelligence', sub: 'Transaction-based risk scoring and monitoring' },
   '/compliance': { title: 'Compliance Intelligence', sub: 'Automated regulatory monitoring' },
   '/analytics': { title: 'Agentic Portfolio Intelligence', sub: 'Cross-ISO performance analytics' },
+  '/funding-mgmt': { title: 'Funding Management', sub: 'MCA portfolio and merchant cash advance operations' },
   '/iso': { title: 'ISO Portfolio Companies', sub: 'Manage portfolio companies and integrations' },
   '/portal': { title: 'Merchant Portal', sub: 'Self-service merchant interface' },
 }
