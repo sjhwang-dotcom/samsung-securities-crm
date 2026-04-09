@@ -156,16 +156,46 @@ const seedConversations: Record<string, ChatMessage[]> = {
   '/portal': [
     { role: 'assistant', content: "Welcome back, Mario. Your restaurant processed **$47,230** this month — up 8.2% from February. Approval rate is excellent at 98.7%." },
     { role: 'user', content: "I have an open chargeback, what should I do?" },
-    { role: 'assistant', content: "You have **1 open chargeback** for $487.50 (Visa ****4821, reason: Merchandise Not Received). Deadline is **March 26**. I'd recommend gathering your delivery confirmation or signed receipt. If you have a signed credit card slip showing the customer was present, that's usually sufficient to win. The industry win rate for this reason code is about 65%. Want me to draft a response template?" },
-    { role: 'user', content: "Am I eligible for funding?" },
-    { role: 'assistant', content: "Yes! You're **pre-approved for up to $25,000** based on your processing volume. Terms: 1.15 factor rate, 15% daily hold, funds in 24-48 hours. Your current volume of $47K/mo and 98.7% approval rate make you a strong candidate. You could use this for equipment upgrades, inventory, or seasonal hiring. Want me to show you the full offer details?" },
+    { role: 'assistant', content: "You have **1 open chargeback** for $487.50 (Visa ****4821, reason: Merchandise Not Received). Deadline is **March 26**. I'd recommend gathering your delivery confirmation or signed receipt. The industry win rate for this reason code is about 65%." },
+  ],
+  '/portal/transactions': [
+    { role: 'assistant', content: "You're viewing your transaction history. Today you've processed **134 transactions** totaling **$2,148.20**. Average ticket is $35.19." },
+    { role: 'user', content: "Any refunds today?" },
+    { role: 'assistant', content: "You had **1 refund** today for $38.79 on a Discover card. Your refund rate is 1.8% which is well below the industry average of 3.2%. No voids today." },
+  ],
+  '/portal/statements': [
+    { role: 'assistant', content: "Your latest statement for **March 2026** shows total volume of **$9,816** with fees of $264.05 (2.69% effective rate). Net deposit: $9,552." },
+    { role: 'user', content: "How do my fees compare to last month?" },
+    { role: 'assistant', content: "Your effective rate has been stable at **2.69%** for the past 3 months. February fees were $235.09 on $8,740 volume. Your rate is competitive — the average restaurant pays 2.85-3.10%. The biggest fee component is **Interchange at 68%** ($179.55)." },
+  ],
+  '/portal/pci': [
+    { role: 'assistant', content: "Your PCI compliance status is **Compliant** through December 2026. SAQ-A completed, DSS Level 1. All checks passing." },
+    { role: 'user', content: "When do I need to renew?" },
+    { role: 'assistant', content: "Your SAQ-A is valid until **December 31, 2026** — about 8 months away. I'll send you a reminder 60 days before expiration. Your quarterly ASV scan is current (last passed Feb 28). P2PE is validated through your PAX A920 terminal." },
+  ],
+  '/portal/equipment': [
+    { role: 'assistant', content: "Your **PAX A920** terminal is online and running firmware v4.2.1. Last transaction processed today. Battery at 87%." },
+    { role: 'user', content: "Do I need a firmware update?" },
+    { role: 'assistant', content: "Your firmware **v4.2.1** is the latest version — no update needed. Your terminal has been online for 342 consecutive days with 99.8% uptime. Connection: WiFi + 4G backup. If you're experiencing any issues, I can schedule a replacement through Harlow support." },
+  ],
+  '/portal/products': [
+    { role: 'assistant', content: "You have **3 active products**: Business Checking (1.5% APY), Gift Cards, and Payroll. You're also **pre-approved** for Business Funding up to $25,000." },
+    { role: 'user', content: "Which products should I add?" },
+    { role: 'assistant', content: "Based on your business profile, I'd recommend:\n\n1. **Business Funding** — You're pre-approved for $25K at 1.15 factor. Great for seasonal inventory.\n2. **Accounting** — QuickBooks integration would auto-sync your $47K monthly volume and save ~4 hours/week on bookkeeping.\n3. **Health Insurance** — You have 3 employees. Group plans start at $385/mo and qualify for small business tax credits." },
+  ],
+  '/portal/support': [
+    { role: 'assistant', content: "How can I help? You have **0 open support tickets**. Your last ticket (rate review) was resolved 12 days ago." },
+    { role: 'user', content: "I need to update my bank account" },
+    { role: 'assistant', content: "To update your settlement bank account, I'll need:\n\n1. **Voided check** or bank letter for the new account\n2. **Government-issued ID** (we have yours on file)\n\nThe change takes 2-3 business days to process. During transition, deposits continue to your current Chase ****8834 account. Want me to start the process?" },
   ],
 }
 
 /* ═══ Chat Tab with Claude API ═══ */
 function ChatTab() {
   const location = useLocation()
-  const currentPage = location.pathname.startsWith('/portal') ? '/portal' : location.pathname
+  // Match exact path first, then fall back to /portal for unknown portal sub-routes
+  const path = location.pathname
+  const currentPage = seedConversations[path] ? path : path.startsWith('/portal') ? '/portal' : path
   const seed = seedConversations[currentPage] || seedConversations['/dashboard'] || []
 
   const [messages, setMessages] = useState<ChatMessage[]>(seed)
@@ -260,7 +290,14 @@ function ChatTab() {
     '/analytics': 'Portfolio Intelligence',
     '/risk': 'Risk & Underwriting',
     '/compliance': 'Compliance',
-    '/portal': 'Merchant Portal',
+    '/portal': 'Merchant Portal — Home',
+    '/portal/transactions': 'Transactions',
+    '/portal/statements': 'Monthly Statements',
+    '/portal/pci': 'PCI Compliance',
+    '/portal/equipment': 'Equipment',
+    '/portal/products': 'Products & Services',
+    '/portal/support': 'Support',
+    '/portal/funding': 'Business Funding',
   }
 
   return (
