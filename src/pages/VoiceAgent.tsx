@@ -13,7 +13,7 @@ import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend, Line, ComposedChart, AreaChart, Area, BarChart,
 } from 'recharts'
-import { KpiCard, Card, CardHeader, StatusBadge, DataTable, ActivityFeed } from '../components/ui'
+import { KpiCard, Card, CardHeader, StatusBadge, ActivityFeed } from '../components/ui'
 import type { Column } from '../components/ui'
 import { voiceCalls, voiceHourlyData, callOutcomeData } from '../data/mockData'
 
@@ -117,9 +117,24 @@ const scriptBarData = scriptsData.map(s => ({
 
 /* ── mock data for Call Log tab ── */
 interface CallLogEntry {
-  date: string; business: string; phone: string; duration: string; stage: string; outcome: string; sentiment: string; cost: string
+  id: number; date: string; business: string; phone: string; duration: string; stage: string; outcome: string; sentiment: string; cost: string
+  summary: string; keyMoments: { time: string; label: string }[]
 }
+
+const callSummaries: { summary: string; keyMoments: { time: string; label: string }[] }[] = [
+  { summary: 'Connected with the owner who was receptive to a rate comparison. Presented savings of $280/mo based on their current volume. Owner requested a follow-up call next Tuesday with their business partner present.', keyMoments: [{ time: '0:08', label: 'Connected with owner' }, { time: '0:32', label: 'Presented savings offer of $280/mo' }, { time: '1:15', label: 'Owner expressed interest' }, { time: '1:48', label: 'Requested callback next Tuesday' }] },
+  { summary: 'Reached the general manager who handles payment processing decisions. Discussed current PCI compliance costs and our included compliance program. Manager asked for a written proposal via email.', keyMoments: [{ time: '0:05', label: 'Reached general manager' }, { time: '0:28', label: 'Discussed PCI compliance costs' }, { time: '1:02', label: 'Presented free PCI compliance program' }, { time: '1:45', label: 'Manager requested email proposal' }] },
+  { summary: 'Owner was initially skeptical but engaged after hearing about same-day deposits. Current processor holds funds for 3 days. Transferred to sales rep for detailed rate review.', keyMoments: [{ time: '0:10', label: 'Connected with owner' }, { time: '0:35', label: 'Owner expressed skepticism' }, { time: '1:12', label: 'Same-day deposit benefit resonated' }, { time: '2:05', label: 'Warm transfer to sales rep' }] },
+  { summary: 'Spoke with assistant manager who confirmed they process $45K/mo in cards. Current rate is 3.1%. Offered 2.4% with free terminal upgrade. Call transferred to decision maker.', keyMoments: [{ time: '0:06', label: 'Reached assistant manager' }, { time: '0:40', label: 'Confirmed $45K monthly volume' }, { time: '1:18', label: 'Presented rate reduction offer' }, { time: '1:55', label: 'Transferred to decision maker' }] },
+  { summary: 'No answer after multiple rings. Left a voicemail mentioning potential savings of 15-20% on processing fees and provided callback number.', keyMoments: [{ time: '0:05', label: 'Call initiated, ringing' }, { time: '0:25', label: 'No answer, went to voicemail' }, { time: '0:30', label: 'Left savings-focused voicemail' }] },
+  { summary: 'Owner answered and was very interested in equipment upgrade program. Currently using outdated Verifone VX520. Discussed PAX A920 features. Scheduled in-person demo for Friday.', keyMoments: [{ time: '0:04', label: 'Owner answered directly' }, { time: '0:22', label: 'Discussed current equipment issues' }, { time: '1:05', label: 'Presented free PAX A920 upgrade' }, { time: '2:15', label: 'Scheduled Friday demo' }] },
+  { summary: 'Reached bookkeeper who handles vendor payments. Not authorized to make processing decisions. Obtained owner name and best time to call back (mornings before 11 AM).', keyMoments: [{ time: '0:07', label: 'Connected with bookkeeper' }, { time: '0:20', label: 'Bookkeeper not authorized for decisions' }, { time: '0:45', label: 'Obtained owner contact info' }, { time: '1:02', label: 'Noted best callback time' }] },
+  { summary: 'Owner recently switched processors and is locked into a 3-year contract. Not interested at this time but open to a review when contract expires in 18 months.', keyMoments: [{ time: '0:06', label: 'Connected with owner' }, { time: '0:18', label: 'Owner mentioned existing contract' }, { time: '0:42', label: 'Discussed contract buyout option' }, { time: '1:10', label: 'Noted 18-month follow-up date' }] },
+]
+
+let _callId = 0
 const callLogData: CallLogEntry[] = voiceCalls.map((c, i) => ({
+  id: ++_callId,
   date: `Apr ${7 - Math.floor(i / 4)}, ${['9:14 AM', '10:32 AM', '11:05 AM', '1:22 PM', '2:45 PM', '3:18 PM', '4:01 PM', '4:55 PM'][i % 8]}`,
   business: c.merchant,
   phone: c.phone,
@@ -128,11 +143,13 @@ const callLogData: CallLogEntry[] = voiceCalls.map((c, i) => ({
   outcome: c.status,
   sentiment: c.sentiment,
   cost: `$${(0.02 + Math.random() * 0.08).toFixed(2)}`,
+  ...callSummaries[i % callSummaries.length],
 }))
 
 const extendedCallLog: CallLogEntry[] = [
   ...callLogData,
   ...Array.from({ length: 40 }, (_, i) => ({
+    id: ++_callId,
     date: `Apr ${3 - Math.floor(i / 8)}, ${['9:00 AM', '10:15 AM', '11:30 AM', '12:45 PM', '2:00 PM', '3:15 PM', '4:30 PM', '5:00 PM'][i % 8]}`,
     business: ['Bella Pizza', 'Metro Deli', 'Harbor Seafood', 'Summit Coffee', 'Valley Auto', 'Cedar Salon', 'Prime Fitness', 'Oak Dry Clean'][i % 8],
     phone: `(${212 + (i % 5)}) ${300 + i}-${1000 + i * 7}`,
@@ -141,6 +158,7 @@ const extendedCallLog: CallLogEntry[] = [
     outcome: ['Completed', 'Transferred', 'No Answer', 'In Progress', 'Completed'][i % 5],
     sentiment: ['Positive', 'Neutral', 'Skeptical'][i % 3],
     cost: `$${(0.02 + Math.random() * 0.08).toFixed(2)}`,
+    ...callSummaries[i % callSummaries.length],
   })),
 ]
 
@@ -787,6 +805,7 @@ function CallLogView() {
   const [searchTerm, setSearchTerm] = useState('')
   const [filterOutcome, setFilterOutcome] = useState<string>('all')
   const [page, setPage] = useState(0)
+  const [selectedCallId, setSelectedCallId] = useState<number | null>(extendedCallLog[0]?.id ?? null)
 
   const filtered = extendedCallLog.filter(row => {
     const matchesSearch = !searchTerm ||
@@ -798,6 +817,7 @@ function CallLogView() {
 
   const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
   const pageData = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
+  const selectedCall = extendedCallLog.find(c => c.id === selectedCallId) ?? null
 
   // Summary stats
   const totalLogged = extendedCallLog.length
@@ -811,28 +831,31 @@ function CallLogView() {
   const transferredCount = extendedCallLog.filter(r => r.outcome === 'Transferred').length
   const transferRate = ((transferredCount / totalLogged) * 100).toFixed(1)
 
+  const outcomeVariant = (v: any) => v === 'Transferred' ? 'blue' as const : v === 'In Progress' ? 'emerald' as const : v === 'No Answer' ? 'gray' as const : 'teal' as const
+  const sentimentBadge = (v: any) => {
+    const s = sentimentStyle[v as string] || sentimentStyle.Neutral
+    return <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: s.bg, color: s.color }}>{v}</span>
+  }
+
   const columns: Column<CallLogEntry>[] = [
-    { key: 'date', header: 'Date/Time', width: '140px' },
-    { key: 'business', header: 'Business', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.business}</span> },
-    { key: 'phone', header: 'Phone', render: (r) => <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#94A3B8' }}>{r.phone}</span> },
-    { key: 'duration', header: 'Duration', width: '80px' },
-    { key: 'stage', header: 'Stage', width: '100px' },
+    { key: 'date', header: 'Time', width: '110px', render: (v: any) => <span style={{ fontSize: 11 }}>{v.date.split(', ')[1] || v.date}</span> },
+    { key: 'business', header: 'Business', render: (v: any) => <span style={{ fontWeight: 600, color: '#0F172A', fontSize: 12 }}>{v.business}</span> },
+    { key: 'duration', header: 'Dur.', width: '55px' },
     {
-      key: 'outcome', header: 'Outcome', width: '110px',
-      render: (r) => {
-        const variant = r.outcome === 'Transferred' ? 'blue' : r.outcome === 'In Progress' ? 'emerald' : r.outcome === 'No Answer' ? 'gray' : 'teal'
-        return <StatusBadge variant={variant}>{r.outcome}</StatusBadge>
-      },
+      key: 'outcome', header: 'Outcome', width: '100px',
+      render: (v: any) => <StatusBadge variant={outcomeVariant(v.outcome)}>{v.outcome}</StatusBadge>,
     },
     {
-      key: 'sentiment', header: 'Sentiment', width: '90px',
-      render: (r) => {
-        const s = sentimentStyle[r.sentiment] || sentimentStyle.Neutral
-        return <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 6px', borderRadius: 4, background: s.bg, color: s.color }}>{r.sentiment}</span>
-      },
+      key: 'sentiment', header: 'Sent.', width: '80px',
+      render: (v: any) => sentimentBadge(v.sentiment),
     },
-    { key: 'cost', header: 'Cost', width: '70px', align: 'right' },
   ]
+
+  const actionBtnStyle = (color: string, bg: string, border: string) => ({
+    display: 'flex', alignItems: 'center', gap: 6,
+    padding: '7px 12px', fontSize: 11, fontWeight: 600 as const, borderRadius: 8,
+    border: `1px solid ${border}`, background: bg, color, cursor: 'pointer',
+  })
 
   return (
     <>
@@ -855,7 +878,7 @@ function CallLogView() {
             style={{
               background: 'white', border: '1px solid #E5E7EB', borderRadius: 10,
               paddingLeft: 34, paddingRight: 16, paddingTop: 9, paddingBottom: 9,
-              fontSize: 13, outline: 'none', width: 260, color: '#334155',
+              fontSize: 13, outline: 'none', width: 240, color: '#334155',
             }}
           />
         </div>
@@ -878,51 +901,193 @@ function CallLogView() {
         </span>
       </div>
 
-      <Card noPadding>
-        <DataTable columns={columns} data={pageData} compact striped />
-      </Card>
+      {/* Master-Detail layout */}
+      <div style={{ display: 'flex', gap: 16, minHeight: 520 }}>
+        {/* Left: Call log table */}
+        <div style={{ flex: '0 0 56%', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          <Card noPadding>
+            <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+              <thead>
+                <tr style={{ borderBottom: '1px solid #F1F5F9' }}>
+                  {columns.map(col => (
+                    <th key={col.key as string} style={{ padding: '10px 10px', textAlign: (col.align || 'left') as any, fontSize: 11, fontWeight: 600, color: '#94A3B8', width: col.width }}>
+                      {col.header}
+                    </th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {pageData.map(row => {
+                  const isActive = row.id === selectedCallId
+                  return (
+                    <tr
+                      key={row.id}
+                      onClick={() => setSelectedCallId(row.id)}
+                      style={{
+                        cursor: 'pointer',
+                        background: isActive ? '#EFF6FF' : undefined,
+                        borderBottom: '1px solid #F8FAFC',
+                        transition: 'background 0.15s',
+                      }}
+                      onMouseEnter={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '#FAFBFD' }}
+                      onMouseLeave={e => { if (!isActive) (e.currentTarget as HTMLElement).style.background = '' }}
+                    >
+                      {columns.map(col => (
+                        <td key={col.key as string} style={{ padding: '8px 10px', fontSize: 12, color: '#334155', textAlign: (col.align || 'left') as any }}>
+                          {col.render ? col.render(row, 0) : (row as any)[col.key]}
+                        </td>
+                      ))}
+                    </tr>
+                  )
+                })}
+              </tbody>
+            </table>
+          </Card>
 
-      {/* Pagination */}
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
-        <button
-          disabled={page === 0}
-          onClick={() => setPage(p => p - 1)}
-          style={{
-            padding: '6px 14px', fontSize: 12, fontWeight: 600, borderRadius: 8,
-            border: '1px solid #E5E7EB', background: page === 0 ? '#F8FAFC' : 'white',
-            color: page === 0 ? '#CBD5E1' : '#334155', cursor: page === 0 ? 'default' : 'pointer',
-          }}
-        >
-          Previous
-        </button>
-        {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
-          const pageNum = totalPages <= 5 ? i : Math.max(0, Math.min(page - 2, totalPages - 5)) + i
-          return (
+          {/* Pagination */}
+          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6 }}>
             <button
-              key={pageNum}
-              onClick={() => setPage(pageNum)}
+              disabled={page === 0}
+              onClick={() => setPage(p => p - 1)}
               style={{
-                width: 32, height: 32, fontSize: 12, fontWeight: page === pageNum ? 700 : 500, borderRadius: 8,
-                border: page === pageNum ? '1px solid #1578F7' : '1px solid #E5E7EB',
-                background: page === pageNum ? '#EFF6FF' : 'white',
-                color: page === pageNum ? '#1578F7' : '#64748B', cursor: 'pointer',
+                padding: '5px 12px', fontSize: 11, fontWeight: 600, borderRadius: 8,
+                border: '1px solid #E5E7EB', background: page === 0 ? '#F8FAFC' : 'white',
+                color: page === 0 ? '#CBD5E1' : '#334155', cursor: page === 0 ? 'default' : 'pointer',
               }}
             >
-              {pageNum + 1}
+              Prev
             </button>
-          )
-        })}
-        <button
-          disabled={page >= totalPages - 1}
-          onClick={() => setPage(p => p + 1)}
-          style={{
-            padding: '6px 14px', fontSize: 12, fontWeight: 600, borderRadius: 8,
-            border: '1px solid #E5E7EB', background: page >= totalPages - 1 ? '#F8FAFC' : 'white',
-            color: page >= totalPages - 1 ? '#CBD5E1' : '#334155', cursor: page >= totalPages - 1 ? 'default' : 'pointer',
-          }}
-        >
-          Next
-        </button>
+            {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
+              const pageNum = totalPages <= 5 ? i : Math.max(0, Math.min(page - 2, totalPages - 5)) + i
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => setPage(pageNum)}
+                  style={{
+                    width: 28, height: 28, fontSize: 11, fontWeight: page === pageNum ? 700 : 500, borderRadius: 6,
+                    border: page === pageNum ? '1px solid #1578F7' : '1px solid #E5E7EB',
+                    background: page === pageNum ? '#EFF6FF' : 'white',
+                    color: page === pageNum ? '#1578F7' : '#64748B', cursor: 'pointer',
+                  }}
+                >
+                  {pageNum + 1}
+                </button>
+              )
+            })}
+            <button
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage(p => p + 1)}
+              style={{
+                padding: '5px 12px', fontSize: 11, fontWeight: 600, borderRadius: 8,
+                border: '1px solid #E5E7EB', background: page >= totalPages - 1 ? '#F8FAFC' : 'white',
+                color: page >= totalPages - 1 ? '#CBD5E1' : '#334155', cursor: page >= totalPages - 1 ? 'default' : 'pointer',
+              }}
+            >
+              Next
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Call detail panel */}
+        <div style={{ flex: 1, minWidth: 0 }}>
+          {selectedCall ? (
+            <Card noPadding>
+              {/* Call header */}
+              <CardHeader title={selectedCall.business} badge={
+                <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#94A3B8' }}>{selectedCall.phone}</span>
+              } />
+              <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
+                {/* Date / Duration row */}
+                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <CalendarClock size={13} color="#94A3B8" />
+                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.date}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <Clock size={13} color="#94A3B8" />
+                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.duration}</span>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <DollarSign size={13} color="#94A3B8" />
+                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.cost}</span>
+                  </div>
+                </div>
+
+                {/* Outcome + Sentiment badges */}
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <StatusBadge variant={outcomeVariant(selectedCall.outcome)}>{selectedCall.outcome}</StatusBadge>
+                  {sentimentBadge(selectedCall.sentiment)}
+                  <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500, marginLeft: 4 }}>Stage: {selectedCall.stage}</span>
+                </div>
+
+                {/* AI Summary */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+                    <Sparkles size={13} color="#1578F7" />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>AI Call Summary</span>
+                  </div>
+                  <div style={{
+                    background: '#F8FAFC', borderRadius: 10, padding: '12px 14px',
+                    fontSize: 12, lineHeight: 1.6, color: '#334155', border: '1px solid #F1F5F9',
+                  }}>
+                    {selectedCall.summary}
+                  </div>
+                </div>
+
+                {/* Key Moments timeline */}
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                    <PlayCircle size={13} color="#1578F7" />
+                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>Key Moments</span>
+                  </div>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+                    {selectedCall.keyMoments.map((m, idx) => (
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, position: 'relative', paddingBottom: idx < selectedCall.keyMoments.length - 1 ? 12 : 0, paddingLeft: 2 }}>
+                        {/* Vertical line connector */}
+                        {idx < selectedCall.keyMoments.length - 1 && (
+                          <div style={{ position: 'absolute', left: 9, top: 14, width: 2, height: 'calc(100% - 6px)', background: '#E5E7EB', borderRadius: 1 }} />
+                        )}
+                        {/* Dot */}
+                        <div style={{
+                          width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
+                          background: idx === 0 ? '#DBEAFE' : idx === selectedCall.keyMoments.length - 1 ? '#D1FAE5' : '#F1F5F9',
+                          border: `2px solid ${idx === 0 ? '#1578F7' : idx === selectedCall.keyMoments.length - 1 ? '#10B981' : '#CBD5E1'}`,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1,
+                        }}>
+                          <div style={{ width: 6, height: 6, borderRadius: '50%', background: idx === 0 ? '#1578F7' : idx === selectedCall.keyMoments.length - 1 ? '#10B981' : '#94A3B8' }} />
+                        </div>
+                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, minWidth: 0 }}>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1578F7', fontFamily: 'monospace', flexShrink: 0 }}>{m.time}</span>
+                          <span style={{ fontSize: 12, color: '#334155', lineHeight: 1.4 }}>{m.label}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action buttons */}
+                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', borderTop: '1px solid #F1F5F9', paddingTop: 14 }}>
+                  <button style={actionBtnStyle('#1578F7', '#EFF6FF', '#BFDBFE')}>
+                    <CalendarPlus size={13} /> Schedule Follow-up
+                  </button>
+                  <button style={actionBtnStyle('#059669', '#ECFDF5', '#A7F3D0')}>
+                    <PlusCircle size={13} /> Add to Pipeline
+                  </button>
+                  <button style={actionBtnStyle('#64748B', '#F8FAFC', '#E2E8F0')}>
+                    <Ban size={13} /> Mark as Not Interested
+                  </button>
+                </div>
+              </div>
+            </Card>
+          ) : (
+            <Card>
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 300, color: '#94A3B8' }}>
+                <ScrollText size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
+                <span style={{ fontSize: 13, fontWeight: 500 }}>Select a call to view details</span>
+              </div>
+            </Card>
+          )}
+        </div>
       </div>
     </>
   )
