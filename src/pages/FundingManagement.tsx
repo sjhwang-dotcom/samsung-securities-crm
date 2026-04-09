@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import {
   Banknote, DollarSign, TrendingUp, AlertTriangle, CheckCircle,
-  XCircle, Clock, ChevronRight, Search, FileText, BarChart3,
-  Activity, Shield, Brain, Percent,
+  XCircle, Clock, Search, FileText, BarChart3,
+  Activity, Brain, Percent,
 } from 'lucide-react'
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
