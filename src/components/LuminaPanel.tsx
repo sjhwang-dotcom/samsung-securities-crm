@@ -1,7 +1,12 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Send, Bot, FileText, MessageSquare, Loader2 } from 'lucide-react'
+import { Send, FileText, MessageSquare, Loader2 } from 'lucide-react'
 import Markdown from 'react-markdown'
+import luminaIcon from '../assets/lumina-icon.svg'
+
+function LuminaIcon({ size = 14 }: { size?: number }) {
+  return <img src={luminaIcon} alt="Lumina" width={size} height={size} style={{ display: 'block' }} />
+}
 
 interface LuminaPanelProps {
   onClose?: () => void
@@ -68,7 +73,7 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
       <div className="lumina-header">
         <div className="lumina-title-row">
           <div className="lumina-logo">
-            <Bot size={14} className="text-white" />
+            <LuminaIcon size={18} />
           </div>
           <div className="lumina-title-text">
             <span className="lumina-title">Lumina</span>
@@ -275,7 +280,7 @@ function ChatTab() {
           <div key={i} className={`lumina-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
             {msg.role === 'assistant' && (
               <div className="lumina-msg-avatar">
-                <Bot size={12} className="text-white" />
+                <LuminaIcon size={16} />
               </div>
             )}
             <div>

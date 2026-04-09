@@ -58,7 +58,7 @@ export default function Statements() {
             <div>
               <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{selected.month}</div>
               <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 2, fontWeight: 500 }}>
-                Generated {selected.date} &middot; {selected.pages} pages &middot; Source: DuckDB
+                Generated {selected.date} &middot; {selected.pages} pages
               </div>
             </div>
             <button style={{
@@ -179,7 +179,7 @@ export default function Statements() {
                 {[
                   { label: 'Bank', value: 'Chase ****8834' },
                   { label: 'Settlement', value: 'Same-day' },
-                  { label: 'Data Source', value: 'DuckDB' },
+                  { label: 'Processor', value: 'Harlow Payments' },
                 ].map(item => (
                   <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
                     <span style={{ color: '#64748B' }}>{item.label}</span>
