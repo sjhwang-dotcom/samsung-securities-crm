@@ -18,6 +18,7 @@ import PCI from './pages/merchant/PCI'
 import Equipment from './pages/merchant/Equipment'
 import Support from './pages/merchant/Support'
 import ProductsServices from './pages/merchant/ProductsServices'
+import AIAssistant from './pages/merchant/AIAssistant'
 
 export default function App() {
   return (
@@ -49,6 +50,7 @@ export default function App() {
           <Route path="/portal/equipment" element={<Equipment />} />
           <Route path="/portal/support" element={<Support />} />
           <Route path="/portal/products" element={<ProductsServices />} />
+          <Route path="/portal/lumina" element={<AIAssistant />} />
         </Route>
       </Routes>
     </BrowserRouter>
