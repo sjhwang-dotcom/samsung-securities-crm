@@ -1,5 +1,5 @@
 import { Card, CardHeader, StatusBadge } from '../../components/ui'
-import { Shield, Building2, HardHat, Phone } from 'lucide-react'
+import { Shield, Building2, HardHat, Phone, DollarSign, CalendarDays, FileWarning, CheckCircle } from 'lucide-react'
 
 const coverageTypes = [
   {
@@ -34,25 +34,41 @@ const claimsSteps = [
 export default function BizInsurance() {
   return (
     <div className="dashboard-grid">
+      {/* KPI Cards */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
+        {[
+          { icon: DollarSign, label: 'Total Coverage', value: '$1.2M', sub: 'Combined policy limit' },
+          { icon: Shield, label: 'Monthly Premium', value: '$165/mo', sub: 'Standard Bundle plan' },
+          { icon: CalendarDays, label: 'Next Renewal', value: 'Oct 1, 2026', sub: '175 days remaining' },
+          { icon: FileWarning, label: 'Claims Filed', value: '0', sub: 'No open claims' },
+        ].map(k => (
+          <div key={k.label} className="kpi-card">
+            <div className="kpi-label">{k.label}</div>
+            <div className="kpi-value" style={{ fontSize: 20 }}>{k.value}</div>
+            <div className="kpi-sub">{k.sub}</div>
+          </div>
+        ))}
+      </div>
+
       {/* Status Banner */}
       <Card>
         <div style={{ padding: 20, display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-            <div style={{ width: 48, height: 48, borderRadius: 12, background: '#FEF3C7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <Shield size={24} color="#D97706" />
+            <div style={{ width: 48, height: 48, borderRadius: 12, background: '#F0FDF4', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <CheckCircle size={24} color="#16A34A" />
             </div>
             <div>
               <div style={{ fontSize: 16, fontWeight: 700, color: '#0F172A' }}>Business Insurance</div>
-              <div style={{ fontSize: 13, color: '#64748B', marginTop: 2 }}>Protect your business from unexpected costs and liabilities</div>
+              <div style={{ fontSize: 13, color: '#64748B', marginTop: 2 }}>Standard Bundle: General Liability + Property Coverage</div>
             </div>
           </div>
-          <StatusBadge variant="amber" size="md">Not Enrolled</StatusBadge>
+          <StatusBadge variant="emerald" size="md" dot pulse>Active Policy</StatusBadge>
         </div>
       </Card>
 
       {/* Coverage Types */}
       <Card>
-        <CardHeader title="Available Coverage" subtitle="Choose the protection your business needs" />
+        <CardHeader title="Your Coverage" subtitle="Active and available coverage types" />
         <div style={{ padding: '0 20px 20px' }}>
           {coverageTypes.map((c, i) => (
             <div key={c.name} style={{ display: 'flex', alignItems: 'flex-start', gap: 16, padding: '16px 0', borderTop: i > 0 ? '1px solid #F1F5F9' : 'none' }}>
@@ -91,7 +107,7 @@ export default function BizInsurance() {
               }}>
                 {tier.recommended && (
                   <div style={{ marginBottom: 8 }}>
-                    <StatusBadge variant="teal">Recommended</StatusBadge>
+                    <StatusBadge variant="teal">Current Plan</StatusBadge>
                   </div>
                 )}
                 <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 4 }}>{tier.label}</div>
@@ -102,7 +118,7 @@ export default function BizInsurance() {
           </div>
           <div style={{ textAlign: 'center', marginTop: 20 }}>
             <button style={{ padding: '12px 32px', background: '#1578F7', color: 'white', border: 'none', borderRadius: 8, fontWeight: 600, fontSize: 14, cursor: 'pointer' }}>
-              Get a Personalized Quote
+              Upgrade Coverage
             </button>
           </div>
         </div>

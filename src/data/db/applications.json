@@ -1,43 +1,43 @@
 [
   {
-    "merchant": "Elite Phoenix",
+    "merchant": "Bella's Bistro LLC",
     "bank": "Esquire Bank",
-    "submitted": "2026-03-30T00:00:00",
-    "stage": "Withdrawn",
+    "submitted": "2026-04-02T00:00:00",
+    "stage": "KYB/KYC Verification",
     "riskScore": 72,
-    "riskLabel": "Low",
-    "status": "Declined",
-    "assigned": "Casey Rivera"
-  },
-  {
-    "merchant": "Anne's Salon",
-    "bank": "Esquire Bank",
-    "submitted": "2026-03-27T00:00:00",
-    "stage": "Document Collection",
-    "riskScore": 56,
-    "riskLabel": "Medium",
-    "status": "In Review",
+    "riskLabel": "Low Risk",
+    "status": "In Progress",
     "assigned": "Alex Park"
   },
   {
-    "merchant": "Peter's Grill",
+    "merchant": "Queens Auto Repair",
     "bank": "Esquire Bank",
-    "submitted": "2026-03-26T00:00:00",
-    "stage": "Declined",
-    "riskScore": 53,
-    "riskLabel": "Medium",
-    "status": "Declined",
-    "assigned": "Taylor Kim"
+    "submitted": "2026-04-05T00:00:00",
+    "stage": "E-Sign",
+    "riskScore": null,
+    "riskLabel": "Pending",
+    "status": "Awaiting Signature",
+    "assigned": "Casey Rivera"
   },
   {
-    "merchant": "Kew Gardens Gas",
+    "merchant": "Harlem Grocery #2",
     "bank": "Esquire Bank",
-    "submitted": "2026-03-23T00:00:00",
-    "stage": "Declined",
-    "riskScore": 80,
-    "riskLabel": "Low",
+    "submitted": "2026-03-28T00:00:00",
+    "stage": "Underwriting Review",
+    "riskScore": 58,
+    "riskLabel": "Medium",
     "status": "In Review",
-    "assigned": "Casey Rivera"
+    "assigned": "Jordan Lee"
+  },
+  {
+    "merchant": "King's Crown Jewelry",
+    "bank": "Esquire Bank",
+    "submitted": "2026-03-25T00:00:00",
+    "stage": "High Risk Review",
+    "riskScore": 34,
+    "riskLabel": "High Risk",
+    "status": "Needs Action",
+    "assigned": "Morgan Chen"
   },
   {
     "merchant": "Lisa's Grill",

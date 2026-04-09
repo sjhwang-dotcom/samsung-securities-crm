@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import {
   Plus, Search, CheckCircle, AlertTriangle, FileText, Upload, ChevronRight,
   Kanban, Store, DollarSign, TicketCheck, ClipboardList, Phone,
+  Clock, ChevronDown, XCircle, Shield,
 } from 'lucide-react'
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area } from 'recharts'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
@@ -490,38 +491,213 @@ function OnboardingMasterDetail() {
   const apps = onboardingApps
   const [selectedIdx, setSelectedIdx] = useState(0)
   const selected = apps[selectedIdx]
+  const [mpaOpen, setMpaOpen] = useState(false)
 
   const statusColor = (s: string) => s === 'In Progress' ? '#3B82F6' : s === 'In Review' ? '#4F46E5' : s.includes('Needs') || s.includes('Awaiting') ? '#F59E0B' : '#94A3B8'
   const riskColor = (label: string) => label === 'Low Risk' ? '#10B981' : label === 'Medium' ? '#F59E0B' : label === 'High Risk' ? '#EF4444' : '#94A3B8'
 
-  const steps = [
+  /* ── Per-application data ── */
+  const applicationDetails: Record<string, {
+    steps: { label: string; done: boolean; current?: boolean }[];
+    mpa: { legalName: string; dba: string; ein: string; mcc: string; address: string; owner: string; ownerTitle: string; phone: string; email: string; bankName: string; bankAccount: string; estVolume: string };
+    kybResults: { title: string; sub: string; status: 'pass' | 'flag' | 'pending' }[];
+    docs: { name: string; status: string; extracted: string }[];
+    riskScore: number | null;
+    riskLabel: string;
+    pricingOffer: { rate: string; perTxn: string; monthly: string; tier: string } | null;
+    timeline: { time: string; action: string; by: string }[];
+  }> = {
+    "Bella's Bistro LLC": {
+      steps: [
+        { label: 'Application', done: true },
+        { label: 'Documents', done: true },
+        { label: 'KYB/KYC', done: false, current: true },
+        { label: 'Risk Assessment', done: false },
+        { label: 'Pricing', done: false },
+        { label: 'Boarding', done: false },
+      ],
+      mpa: { legalName: "Bella's Bistro LLC", dba: "Bella's Bistro", ein: '82-4937261', mcc: '5812', address: '142 Atlantic Ave, Brooklyn, NY 11201', owner: 'Isabella Moretti', ownerTitle: 'Owner / CEO', phone: '(718) 555-0142', email: 'bella@bellasbistro.com', bankName: 'Chase Business', bankAccount: '****7832', estVolume: '$85,000/mo' },
+      kybResults: [
+        { title: 'Business Entity Verified', sub: 'Delaware Corp, EIN validated', status: 'pass' },
+        { title: 'Beneficial Ownership Confirmed', sub: '100% owner verified', status: 'pass' },
+        { title: 'Sanctions & PEP Screening', sub: 'Clear — no matches', status: 'pass' },
+        { title: 'Adverse Media Check', sub: '1 result flagged — low relevance', status: 'flag' },
+        { title: 'Identity Verification', sub: 'Passport OCR + liveness passed', status: 'pass' },
+      ],
+      docs: [
+        { name: 'Articles of Incorporation', status: 'Verified', extracted: 'Entity, State, EIN' },
+        { name: 'Driver License', status: 'Verified', extracted: 'Name, DOB, Address' },
+        { name: 'Bank Statements (3mo)', status: 'Verified', extracted: 'Avg balance $47.2K' },
+        { name: 'Voided Check', status: 'Verified', extracted: 'Routing #, Account #' },
+        { name: 'Processing Statements', status: 'Verified', extracted: 'Vol $89K | CB 0.3%' },
+      ],
+      riskScore: 72,
+      riskLabel: 'Low Risk',
+      pricingOffer: { rate: '2.69%', perTxn: '$0.10', monthly: '$9.95', tier: 'Tier 2' },
+      timeline: [
+        { time: 'Apr 2, 9:14 AM', action: 'Application submitted via online portal', by: 'System' },
+        { time: 'Apr 2, 10:02 AM', action: 'Documents uploaded (5 files)', by: 'Isabella Moretti' },
+        { time: 'Apr 2, 10:05 AM', action: 'KYB verification initiated', by: 'AI Engine' },
+        { time: 'Apr 2, 10:12 AM', action: 'Business entity verified — Delaware Corp', by: 'AI Engine' },
+        { time: 'Apr 2, 10:18 AM', action: 'Beneficial ownership confirmed', by: 'AI Engine' },
+      ],
+    },
+    "Queens Auto Repair": {
+      steps: [
+        { label: 'Application', done: false, current: true },
+        { label: 'Documents', done: false },
+        { label: 'KYB/KYC', done: false },
+        { label: 'Risk Assessment', done: false },
+        { label: 'Pricing', done: false },
+        { label: 'Boarding', done: false },
+      ],
+      mpa: { legalName: 'Queens Auto Repair Inc.', dba: 'Queens Auto Repair', ein: '91-3827461', mcc: '7538', address: '88-12 Queens Blvd, Elmhurst, NY 11373', owner: 'David Nguyen', ownerTitle: 'President', phone: '(718) 555-0288', email: 'david@queensauto.com', bankName: 'TD Bank Business', bankAccount: '****4510', estVolume: '$42,000/mo' },
+      kybResults: [],
+      docs: [
+        { name: 'Merchant Processing Agreement', status: 'Sent', extracted: 'Awaiting e-signature' },
+        { name: 'Driver License', status: 'Uploaded', extracted: 'Pending OCR extraction' },
+      ],
+      riskScore: null,
+      riskLabel: 'Pending',
+      pricingOffer: null,
+      timeline: [
+        { time: 'Apr 5, 2:30 PM', action: 'Application submitted by sales rep', by: 'Casey Rivera' },
+        { time: 'Apr 5, 2:35 PM', action: 'MPA sent for e-signature', by: 'System' },
+        { time: 'Apr 7, 9:00 AM', action: 'E-sign reminder sent (1st)', by: 'System' },
+      ],
+    },
+    "Harlem Grocery #2": {
+      steps: [
+        { label: 'Application', done: true },
+        { label: 'Documents', done: true },
+        { label: 'KYB/KYC', done: true },
+        { label: 'Risk Assessment', done: false, current: true },
+        { label: 'Pricing', done: false },
+        { label: 'Boarding', done: false },
+      ],
+      mpa: { legalName: 'Harlem Fresh Markets LLC', dba: 'Harlem Grocery #2', ein: '73-5928174', mcc: '5411', address: '2847 Frederick Douglass Blvd, New York, NY 10039', owner: 'Marcus Williams', ownerTitle: 'Managing Member', phone: '(212) 555-0391', email: 'marcus@harlemfresh.com', bankName: 'Bank of America', bankAccount: '****9201', estVolume: '$120,000/mo' },
+      kybResults: [
+        { title: 'Business Entity Verified', sub: 'NY LLC, EIN validated', status: 'pass' },
+        { title: 'Beneficial Ownership Confirmed', sub: '75% primary owner verified', status: 'pass' },
+        { title: 'Sanctions & PEP Screening', sub: 'Clear — no matches', status: 'pass' },
+        { title: 'Adverse Media Check', sub: 'No adverse results', status: 'pass' },
+        { title: 'Identity Verification', sub: 'License OCR + liveness passed', status: 'pass' },
+      ],
+      docs: [
+        { name: 'Articles of Organization', status: 'Verified', extracted: 'Entity, State, EIN' },
+        { name: 'Driver License', status: 'Verified', extracted: 'Name, DOB, Address' },
+        { name: 'Bank Statements (3mo)', status: 'Verified', extracted: 'Avg balance $92.1K' },
+        { name: 'Voided Check', status: 'Verified', extracted: 'Routing #, Account #' },
+        { name: 'Processing Statements', status: 'Verified', extracted: 'Vol $115K | CB 0.8%' },
+      ],
+      riskScore: 58,
+      riskLabel: 'Medium',
+      pricingOffer: null,
+      timeline: [
+        { time: 'Mar 28, 11:00 AM', action: 'Application submitted via online portal', by: 'System' },
+        { time: 'Mar 28, 2:15 PM', action: 'All documents uploaded and verified', by: 'AI Engine' },
+        { time: 'Mar 29, 9:30 AM', action: 'KYB/KYC checks completed — all clear', by: 'AI Engine' },
+        { time: 'Mar 29, 9:35 AM', action: 'Risk score 58 — flagged for manual review', by: 'AI Engine' },
+        { time: 'Mar 29, 10:00 AM', action: 'Assigned to underwriter for review', by: 'System' },
+      ],
+    },
+    "King's Crown Jewelry": {
+      steps: [
+        { label: 'Application', done: true },
+        { label: 'Documents', done: true },
+        { label: 'KYB/KYC', done: true },
+        { label: 'Risk Assessment', done: false, current: true },
+        { label: 'Pricing', done: false },
+        { label: 'Boarding', done: false },
+      ],
+      mpa: { legalName: "King's Crown Jewelry LLC", dba: "King's Crown Jewelry", ein: '64-8291037', mcc: '5944', address: '47 W 47th St, New York, NY 10036', owner: 'Solomon Katz', ownerTitle: 'Owner', phone: '(212) 555-0547', email: 'solomon@kingscrown.nyc', bankName: 'Signature Bank', bankAccount: '****6178', estVolume: '$310,000/mo' },
+      kybResults: [
+        { title: 'Business Entity Verified', sub: 'NY LLC, EIN validated', status: 'pass' },
+        { title: 'Beneficial Ownership Confirmed', sub: '100% owner verified', status: 'pass' },
+        { title: 'Adverse Media Check', sub: '3 results — prior dispute coverage', status: 'flag' },
+        { title: 'Sanctions & PEP Screening', sub: 'Clear — no matches', status: 'pass' },
+        { title: 'High-Risk MCC Flag', sub: 'MCC 5944 — Jewelry, elevated CB risk', status: 'flag' },
+      ],
+      docs: [
+        { name: 'Articles of Organization', status: 'Verified', extracted: 'Entity, State, EIN' },
+        { name: 'Driver License', status: 'Verified', extracted: 'Name, DOB, Address' },
+        { name: 'Bank Statements (3mo)', status: 'Pending', extracted: 'Awaiting upload' },
+        { name: 'Processing Statements', status: 'Pending', extracted: 'Requested from merchant' },
+        { name: 'Lease Agreement', status: 'Verified', extracted: '47th St Diamond District' },
+      ],
+      riskScore: 34,
+      riskLabel: 'High Risk',
+      pricingOffer: null,
+      timeline: [
+        { time: 'Mar 25, 3:00 PM', action: 'Application submitted by sales rep', by: 'Morgan Chen' },
+        { time: 'Mar 26, 10:20 AM', action: 'Partial documents uploaded (3 of 5)', by: 'Solomon Katz' },
+        { time: 'Mar 27, 11:00 AM', action: 'KYB flagged — adverse media + high-risk MCC', by: 'AI Engine' },
+        { time: 'Mar 27, 11:15 AM', action: 'Escalated to senior underwriter', by: 'System' },
+        { time: 'Mar 28, 9:00 AM', action: 'Additional documents requested', by: 'Morgan Chen' },
+      ],
+    },
+  }
+
+  const detail = applicationDetails[selected.merchant]
+
+  // Fallback for merchants not in the detailed map
+  const steps = detail?.steps ?? [
     { label: 'Application', done: true },
-    { label: 'Documents', done: true },
-    { label: 'KYB/KYC', current: true },
+    { label: 'Documents', done: false },
+    { label: 'KYB/KYC', done: false },
     { label: 'Risk Assessment', done: false },
     { label: 'Pricing', done: false },
     { label: 'Boarding', done: false },
   ]
+  const kybResults = detail?.kybResults ?? []
+  const docs = detail?.docs ?? []
+  const mpa = detail?.mpa ?? null
+  const timeline = detail?.timeline ?? []
+  const pricingOffer = detail?.pricingOffer ?? null
+  const detailRiskScore = detail?.riskScore ?? selected.riskScore
+  const detailRiskLabel = detail?.riskLabel ?? selected.riskLabel
 
-  const kybResults = [
-    { icon: CheckCircle, color: '#10B981', title: 'Business Entity Verified', sub: 'Delaware Corp, EIN validated' },
-    { icon: CheckCircle, color: '#10B981', title: 'Beneficial Ownership Confirmed', sub: '100% owner verified' },
-    { icon: CheckCircle, color: '#10B981', title: 'Sanctions & PEP Screening', sub: 'Clear — no matches' },
-    { icon: AlertTriangle, color: '#F59E0B', title: 'Adverse Media Check', sub: '1 result flagged — low relevance' },
-    { icon: CheckCircle, color: '#10B981', title: 'Identity Verification', sub: 'Passport OCR + liveness passed' },
-  ]
+  const kybIcon = (status: 'pass' | 'flag' | 'pending') => status === 'pass' ? CheckCircle : status === 'flag' ? AlertTriangle : Clock
+  const kybColor = (status: 'pass' | 'flag' | 'pending') => status === 'pass' ? '#10B981' : status === 'flag' ? '#F59E0B' : '#94A3B8'
+  const riskArcColor = (label: string) => label === 'Low Risk' ? '#10B981' : label === 'Medium' ? '#F59E0B' : label === 'High Risk' ? '#EF4444' : '#CBD5E1'
 
-  const docs = [
-    { name: 'Articles of Incorporation', status: 'Verified', extracted: 'Entity, State, EIN' },
-    { name: 'Driver License', status: 'Verified', extracted: 'Name, DOB, Address' },
-    { name: 'Bank Statements (3mo)', status: 'Verified', extracted: 'Avg balance $47.2K' },
-    { name: 'Voided Check', status: 'Verified', extracted: 'Routing #, Account #' },
-    { name: 'Processing Statements', status: 'Verified', extracted: 'Vol $89K | CB 0.3%' },
-  ]
+  /* ── Action buttons per stage ── */
+  const stageActions: Record<string, { label: string; variant: 'primary' | 'secondary' | 'danger' }[]> = {
+    'E-Sign': [
+      { label: 'Send Reminder', variant: 'primary' },
+      { label: 'Cancel Application', variant: 'danger' },
+    ],
+    'KYB/KYC Verification': [
+      { label: 'Request Additional Docs', variant: 'primary' },
+      { label: 'Override Flag', variant: 'secondary' },
+      { label: 'Escalate', variant: 'secondary' },
+    ],
+    'Underwriting Review': [
+      { label: 'Approve', variant: 'primary' },
+      { label: 'Deny', variant: 'danger' },
+      { label: 'Request More Info', variant: 'secondary' },
+      { label: 'Escalate', variant: 'secondary' },
+    ],
+    'High Risk Review': [
+      { label: 'Approve with Conditions', variant: 'primary' },
+      { label: 'Deny', variant: 'danger' },
+      { label: 'Request Senior Review', variant: 'secondary' },
+    ],
+  }
+  const actions = stageActions[selected.stage] ?? []
+
+  const actionBtnStyle = (variant: 'primary' | 'secondary' | 'danger'): CSSProperties => ({
+    fontSize: 11, fontWeight: 600, padding: '5px 12px', borderRadius: 6, cursor: 'pointer', whiteSpace: 'nowrap',
+    ...(variant === 'primary' ? { background: '#1578F7', color: 'white', border: 'none' } :
+      variant === 'danger' ? { background: 'none', color: '#EF4444', border: '1px solid #FCA5A5' } :
+      { background: 'none', color: '#475569', border: '1px solid #CBD5E1' }),
+  })
+
+  const docBadgeVariant = (status: string) => status === 'Verified' ? 'emerald' as const : status === 'Uploaded' ? 'blue' as const : 'amber' as const
 
   return (
     <div style={{ display: 'flex', gap: 0, margin: '-12px -20px -16px', overflow: 'hidden' }}>
-      {/* ═══ Left: Application List ═══ */}
+      {/* Left: Application List */}
       <div style={{
         width: 300, minWidth: 300, background: 'white',
         borderRight: '1px solid #E5E7EB', display: 'flex', flexDirection: 'column',
@@ -552,7 +728,7 @@ function OnboardingMasterDetail() {
           {apps.map((app, i) => {
             const isActive = selectedIdx === i
             return (
-              <div key={app.merchant} onClick={() => setSelectedIdx(i)}
+              <div key={`${app.merchant}-${i}`} onClick={() => { setSelectedIdx(i); setMpaOpen(false) }}
                 style={{
                   padding: '12px 16px', cursor: 'pointer',
                   borderLeft: isActive ? '3px solid #1578F7' : '3px solid transparent',
@@ -568,7 +744,7 @@ function OnboardingMasterDetail() {
                   <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${statusColor(app.status)}15`, color: statusColor(app.status) }}>
                     {app.status}
                   </span>
-                  {app.riskScore && (
+                  {app.riskScore != null && (
                     <span style={{ fontSize: 9, padding: '1px 6px', borderRadius: 4, fontWeight: 700, background: `${riskColor(app.riskLabel)}15`, color: riskColor(app.riskLabel) }}>
                       Risk: {app.riskScore}
                     </span>
@@ -588,11 +764,11 @@ function OnboardingMasterDetail() {
         </div>
       </div>
 
-      {/* ═══ Right: Detail View ═══ */}
+      {/* Right: Detail View */}
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', height: 'calc(100vh - 160px)' }}>
         <div className="dashboard-grid">
-          {/* Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          {/* Header + Actions */}
+          <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
             <div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
                 <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{selected.merchant}</span>
@@ -602,12 +778,17 @@ function OnboardingMasterDetail() {
                 {selected.bank} · Submitted {selected.submitted} · Assigned to {selected.assigned}
               </div>
             </div>
-            {selected.riskScore && (
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: 28, fontWeight: 800, color: riskColor(selected.riskLabel) }}>{selected.riskScore}</div>
-                <div style={{ fontSize: 10, fontWeight: 600, color: riskColor(selected.riskLabel) }}>{selected.riskLabel}</div>
-              </div>
-            )}
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {actions.map(a => (
+                <button key={a.label} style={actionBtnStyle(a.variant)}>{a.label}</button>
+              ))}
+              {detailRiskScore != null && (
+                <div style={{ textAlign: 'center', marginLeft: 8 }}>
+                  <div style={{ fontSize: 24, fontWeight: 800, color: riskColor(detailRiskLabel), lineHeight: 1 }}>{detailRiskScore}</div>
+                  <div style={{ fontSize: 9, fontWeight: 600, color: riskColor(detailRiskLabel) }}>{detailRiskLabel}</div>
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Progress Steps */}
@@ -631,53 +812,152 @@ function OnboardingMasterDetail() {
             </div>
           </Card>
 
+          {/* MPA (collapsible) */}
+          {mpa && (
+            <Card noPadding>
+              <div
+                onClick={() => setMpaOpen(!mpaOpen)}
+                style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', cursor: 'pointer', userSelect: 'none' }}
+              >
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>Merchant Application</span>
+                <ChevronDown size={14} color="#94A3B8" style={{ transform: mpaOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s' }} />
+              </div>
+              {mpaOpen && (
+                <div style={{ padding: '0 16px 14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px 24px' }}>
+                  {[
+                    { label: 'Legal Name', value: mpa.legalName },
+                    { label: 'Owner', value: `${mpa.owner}, ${mpa.ownerTitle}` },
+                    { label: 'DBA', value: mpa.dba },
+                    { label: 'Phone', value: mpa.phone },
+                    { label: 'EIN', value: mpa.ein },
+                    { label: 'Email', value: mpa.email },
+                    { label: 'MCC', value: mpa.mcc },
+                    { label: 'Bank', value: mpa.bankName },
+                    { label: 'Address', value: mpa.address },
+                    { label: 'Account', value: mpa.bankAccount },
+                    { label: 'Est. Volume', value: mpa.estVolume },
+                  ].map(f => (
+                    <div key={f.label} style={{ display: 'flex', gap: 6, fontSize: 11, padding: '3px 0' }}>
+                      <span style={{ color: '#94A3B8', fontWeight: 500, minWidth: 72 }}>{f.label}</span>
+                      <span style={{ color: '#0F172A', fontWeight: 600 }}>{f.value}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
+          )}
+
           {/* KYB/KYC + Risk side by side */}
           <div style={{ display: 'grid', gridTemplateColumns: '3fr 2fr', gap: 12 }}>
             {/* KYB/KYC */}
             <Card noPadding>
               <CardHeader title="KYB / KYC Verification" />
               <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                {kybResults.map((item, i) => (
-                  <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, border: '1px solid #F1F5F9' }}>
-                    <item.icon size={16} style={{ flexShrink: 0, color: item.color }} />
-                    <div style={{ flex: 1 }}>
-                      <div style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{item.title}</div>
-                      <div style={{ fontSize: 11, color: '#64748B' }}>{item.sub}</div>
-                    </div>
+                {kybResults.length === 0 ? (
+                  <div style={{ padding: '16px 0', textAlign: 'center', color: '#94A3B8', fontSize: 12 }}>
+                    <Clock size={20} style={{ margin: '0 auto 6px', display: 'block', color: '#CBD5E1' }} />
+                    KYB/KYC checks not yet initiated
                   </div>
-                ))}
+                ) : kybResults.map((item, i) => {
+                  const Icon = kybIcon(item.status)
+                  return (
+                    <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '8px 10px', borderRadius: 8, border: '1px solid #F1F5F9' }}>
+                      <Icon size={16} style={{ flexShrink: 0, color: kybColor(item.status) }} />
+                      <div style={{ flex: 1 }}>
+                        <div style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{item.title}</div>
+                        <div style={{ fontSize: 11, color: '#64748B' }}>{item.sub}</div>
+                      </div>
+                    </div>
+                  )
+                })}
               </div>
             </Card>
 
-            {/* Risk + Documents */}
+            {/* Risk + Documents + Timeline */}
             <div className="dashboard-grid">
               {/* AI Risk */}
-              <Card noPadding>
-                <CardHeader title="AI Risk Assessment" />
-                <div style={{ padding: '0 16px 16px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
-                    <div style={{ position: 'relative', width: 80, height: 80 }}>
-                      <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 100 100">
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="#F1F5F9" strokeWidth="8" />
-                        <circle cx="50" cy="50" r="42" fill="none" stroke="#10B981" strokeWidth="8" strokeDasharray={`${72 * 2.64} ${100 * 2.64}`} strokeLinecap="round" />
-                      </svg>
-                      <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>72</span>
-                        <span style={{ fontSize: 9, color: '#059669', fontWeight: 500 }}>LOW RISK</span>
+              {detailRiskScore != null ? (
+                <Card noPadding>
+                  <CardHeader title="AI Risk Assessment" />
+                  <div style={{ padding: '0 16px 16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 12 }}>
+                      <div style={{ position: 'relative', width: 80, height: 80 }}>
+                        <svg style={{ width: '100%', height: '100%', transform: 'rotate(-90deg)' }} viewBox="0 0 100 100">
+                          <circle cx="50" cy="50" r="42" fill="none" stroke="#F1F5F9" strokeWidth="8" />
+                          <circle cx="50" cy="50" r="42" fill="none" stroke={riskArcColor(detailRiskLabel)} strokeWidth="8" strokeDasharray={`${detailRiskScore * 2.64} ${100 * 2.64}`} strokeLinecap="round" />
+                        </svg>
+                        <div style={{ position: 'absolute', inset: 0, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <span style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{detailRiskScore}</span>
+                          <span style={{ fontSize: 9, color: riskArcColor(detailRiskLabel), fontWeight: 500 }}>{detailRiskLabel.toUpperCase()}</span>
+                        </div>
+                      </div>
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11 }}>
+                        {detailRiskLabel === 'Low Risk' && <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> CB Rate: 0.3%</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Volume: stable</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Fraud: clear</div>
+                        </>}
+                        {detailRiskLabel === 'Medium' && <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><AlertTriangle size={12} style={{ color: '#F59E0B' }} /> CB Rate: 0.8%</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Volume: growing</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><AlertTriangle size={12} style={{ color: '#F59E0B' }} /> Manual review</div>
+                        </>}
+                        {detailRiskLabel === 'High Risk' && <>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><XCircle size={12} style={{ color: '#EF4444' }} /> High-risk MCC</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><AlertTriangle size={12} style={{ color: '#F59E0B' }} /> Adverse media</div>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Shield size={12} style={{ color: '#EF4444' }} /> Senior UW required</div>
+                        </>}
                       </div>
                     </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 11 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> CB Rate: 0.3%</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Volume: stable</div>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CheckCircle size={12} style={{ color: '#10B981' }} /> Fraud: clear</div>
-                    </div>
+                    {detailRiskLabel === 'Low Risk' && pricingOffer && (
+                      <div style={{ background: '#F0FDFA', border: '1px solid #99F6E4', borderRadius: 8, padding: 10, fontSize: 11 }}>
+                        <span style={{ fontWeight: 700, color: '#0F766E' }}>AUTO-APPROVE</span>
+                        <span style={{ color: '#64748B' }}> — {pricingOffer.tier} at {pricingOffer.rate} + {pricingOffer.perTxn}</span>
+                      </div>
+                    )}
+                    {detailRiskLabel === 'Medium' && (
+                      <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 8, padding: 10, fontSize: 11 }}>
+                        <span style={{ fontWeight: 700, color: '#92400E' }}>MANUAL REVIEW</span>
+                        <span style={{ color: '#64748B' }}> — Awaiting underwriter decision</span>
+                      </div>
+                    )}
+                    {detailRiskLabel === 'High Risk' && (
+                      <div style={{ background: '#FEF2F2', border: '1px solid #FECACA', borderRadius: 8, padding: 10, fontSize: 11 }}>
+                        <span style={{ fontWeight: 700, color: '#991B1B' }}>ESCALATED</span>
+                        <span style={{ color: '#64748B' }}> — Pending senior underwriter review</span>
+                      </div>
+                    )}
                   </div>
-                  <div style={{ background: '#F0FDFA', border: '1px solid #99F6E4', borderRadius: 8, padding: 10, fontSize: 11 }}>
-                    <span style={{ fontWeight: 700, color: '#0F766E' }}>AUTO-APPROVE</span>
-                    <span style={{ color: '#64748B' }}> — Tier 2 at 2.69% + $0.10</span>
+                </Card>
+              ) : (
+                <Card noPadding>
+                  <CardHeader title="AI Risk Assessment" />
+                  <div style={{ padding: '16px', textAlign: 'center', color: '#94A3B8', fontSize: 12 }}>
+                    <Clock size={20} style={{ margin: '0 auto 6px', display: 'block', color: '#CBD5E1' }} />
+                    Risk assessment pending — awaiting KYB/KYC
                   </div>
-                </div>
-              </Card>
+                </Card>
+              )}
+
+              {/* Pricing Offer */}
+              {pricingOffer && (
+                <Card noPadding>
+                  <CardHeader title="Suggested Pricing" />
+                  <div style={{ padding: '0 16px 14px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 6 }}>
+                    {[
+                      { label: 'Discount Rate', value: pricingOffer.rate },
+                      { label: 'Per Transaction', value: pricingOffer.perTxn },
+                      { label: 'Monthly Fee', value: pricingOffer.monthly },
+                      { label: 'Tier', value: pricingOffer.tier },
+                    ].map(p => (
+                      <div key={p.label} style={{ background: '#F8FAFC', borderRadius: 6, padding: '6px 10px' }}>
+                        <div style={{ fontSize: 9, color: '#94A3B8', fontWeight: 500 }}>{p.label}</div>
+                        <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{p.value}</div>
+                      </div>
+                    ))}
+                  </div>
+                </Card>
+              )}
 
               {/* Documents */}
               <Card noPadding>
@@ -690,7 +970,7 @@ function OnboardingMasterDetail() {
                         <div style={{ fontSize: 11, fontWeight: 600, color: '#0F172A', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{doc.name}</div>
                         <div style={{ fontSize: 10, color: '#94A3B8' }}>{doc.extracted}</div>
                       </div>
-                      <StatusBadge variant="emerald">{doc.status}</StatusBadge>
+                      <StatusBadge variant={docBadgeVariant(doc.status)}>{doc.status}</StatusBadge>
                     </div>
                   ))}
                   <button style={{
@@ -708,6 +988,27 @@ function OnboardingMasterDetail() {
               </div>
             </div>
           </div>
+
+          {/* Review Timeline */}
+          {timeline.length > 0 && (
+            <Card noPadding>
+              <CardHeader title="Review Timeline" />
+              <div style={{ padding: '0 16px 14px' }}>
+                {timeline.map((entry, i) => (
+                  <div key={i} style={{ display: 'flex', gap: 12, padding: '6px 0', borderBottom: i < timeline.length - 1 ? '1px solid #F8FAFC' : 'none' }}>
+                    <div style={{ width: 6, display: 'flex', flexDirection: 'column', alignItems: 'center', paddingTop: 6 }}>
+                      <div style={{ width: 6, height: 6, borderRadius: '50%', background: i === 0 ? '#1578F7' : '#CBD5E1', flexShrink: 0 }} />
+                      {i < timeline.length - 1 && <div style={{ width: 1, flex: 1, background: '#E2E8F0', marginTop: 2 }} />}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontSize: 11, fontWeight: 600, color: '#0F172A' }}>{entry.action}</div>
+                      <div style={{ fontSize: 10, color: '#94A3B8', marginTop: 1 }}>{entry.time} · {entry.by}</div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </Card>
+          )}
         </div>
       </div>
     </div>

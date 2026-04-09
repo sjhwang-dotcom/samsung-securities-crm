@@ -1,11 +1,12 @@
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-  LineChart, Line, BarChart, Bar, Cell, PieChart, Pie, Legend,
+  LineChart, Line, Cell, PieChart, Pie, Legend,
 } from 'recharts'
 import {
   volumeData, categoryMixData, isoPortfolio, processorDistribution,
   productPenetration, chargebackTrendData, riskDistribution, riskByMCC,
 } from '../data/mockData'
+import WaterfallChart from '../components/ui/WaterfallChart'
 import { Card, CardHeader, StatusBadge, KpiCard, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import {
@@ -37,21 +38,15 @@ const healthDimensions = [
 ]
 const overallHealthScore = Math.round(healthDimensions.reduce((s, d) => s + d.score, 0) / healthDimensions.length)
 
-/* ─── Waterfall Data ─── */
-const waterfallData = [
-  { name: 'Starting', base: 0, delta: 28.5, fill: '#94A3B8' },
-  { name: 'Organic', base: 28.5, delta: 1.8, fill: SUCCESS },
-  { name: 'Zenith Acq.', base: 30.3, delta: 1.2, fill: '#3B82F6' },
-  { name: 'Product Rev', base: 31.5, delta: 0.8, fill: '#8B5CF6' },
-  { name: 'Churn Loss', base: 31.9, delta: -0.4, fill: DANGER },
-  { name: 'Current', base: 0, delta: 32.1, fill: BRAND },
+/* ─── Waterfall Data (ApexCharts format) ─── */
+const apexWaterfallData = [
+  { category: 'Starting', value: 28.5, type: 'total' as const },
+  { category: 'Organic', value: 1.8, type: 'delta' as const },
+  { category: 'Zenith Acq.', value: 1.2, type: 'delta' as const },
+  { category: 'Product Rev', value: 0.8, type: 'delta' as const },
+  { category: 'Churn Loss', value: -0.4, type: 'delta' as const },
+  { category: 'Current', value: 32.1, type: 'total' as const },
 ]
-// For churn loss: show the bar starting from 31.5 going up to 31.9
-const waterfallDisplay = waterfallData.map(d => ({
-  ...d,
-  base: d.delta < 0 ? d.base + d.delta : d.base,
-  delta: Math.abs(d.delta),
-}))
 
 /* ─── Processor colors ─── */
 const processorColors = [BRAND, SUCCESS, WARNING, '#8B5CF6', '#64748B']
@@ -156,19 +151,8 @@ export default function PortfolioAnalytics() {
         {/* Volume Waterfall */}
         <Card noPadding>
           <CardHeader title="Portfolio Value Bridge" subtitle="Q4 2025 -> Current" />
-          <div style={{ padding: '0 16px 16px' }}>
-            <ResponsiveContainer width="100%" height={260}>
-              <BarChart data={waterfallDisplay}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
-                <XAxis dataKey="name" tick={{ fontSize: 10, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `$${v}M`} domain={[0, 36]} />
-                <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => `$${v}M`} />
-                <Bar dataKey="base" stackId="waterfall" fill="transparent" barSize={30} />
-                <Bar dataKey="delta" stackId="waterfall" radius={[4, 4, 0, 0]} barSize={30}>
-                  {waterfallDisplay.map((entry, i) => <Cell key={i} fill={entry.fill} />)}
-                </Bar>
-              </BarChart>
-            </ResponsiveContainer>
+          <div style={{ padding: '0 12px 8px' }}>
+            <WaterfallChart data={apexWaterfallData} height={260} />
           </div>
         </Card>
 

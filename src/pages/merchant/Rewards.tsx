@@ -1,6 +1,18 @@
 import { Card, CardHeader, StatusBadge, DataTable } from '../../components/ui'
 import type { Column } from '../../components/ui'
-import { Star, TrendingUp, Gift, Award } from 'lucide-react'
+import { Star, TrendingUp, Gift, Award, Crown, Gem } from 'lucide-react'
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
+
+const tooltipStyle = { borderRadius: 10, fontSize: 11, border: '1px solid #E2E8F0', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }
+
+const pointsTrend = [
+  { month: 'Nov', earned: 2150, redeemed: 0, balance: 7450 },
+  { month: 'Dec', earned: 2840, redeemed: 2500, balance: 7790 },
+  { month: 'Jan', earned: 1980, redeemed: 0, balance: 9770 },
+  { month: 'Feb', earned: 2320, redeemed: 0, balance: 12090 },
+  { month: 'Mar', earned: 2847, redeemed: 5000, balance: 9937 },
+  { month: 'Apr', earned: 2513, redeemed: 0, balance: 12450 },
+]
 
 type EarningRow = { activity: string; points: string; frequency: string; description: string }
 
@@ -22,12 +34,12 @@ const earningCols: Column<EarningRow>[] = [
 type ActivityRow = { date: string; description: string; type: string; points: string }
 
 const recentActivity: ActivityRow[] = [
-  { date: 'Mar 14, 2026', description: 'Card processing - $2,013.90', type: 'Earned', points: '+20' },
-  { date: 'Mar 13, 2026', description: 'Card processing - $1,795.50', type: 'Earned', points: '+18' },
-  { date: 'Mar 13, 2026', description: 'Payroll run completed', type: 'Earned', points: '+200' },
-  { date: 'Mar 12, 2026', description: 'Card processing - $1,496.80', type: 'Earned', points: '+15' },
-  { date: 'Mar 10, 2026', description: 'Statement credit - $50', type: 'Redeemed', points: '-5,000' },
-  { date: 'Mar 1, 2026', description: 'On-time payback bonus', type: 'Earned', points: '+500' },
+  { date: 'Apr 8, 2026', description: 'Card processing - $2,413.60', type: 'Earned', points: '+24' },
+  { date: 'Apr 7, 2026', description: 'Card processing - $1,985.30', type: 'Earned', points: '+20' },
+  { date: 'Apr 6, 2026', description: 'Payroll run completed', type: 'Earned', points: '+200' },
+  { date: 'Apr 5, 2026', description: 'Card processing - $2,751.20', type: 'Earned', points: '+28' },
+  { date: 'Apr 1, 2026', description: 'On-time payback bonus', type: 'Earned', points: '+500' },
+  { date: 'Mar 22, 2026', description: 'Statement credit - $50', type: 'Redeemed', points: '-5,000' },
 ]
 
 const activityCols: Column<ActivityRow>[] = [
@@ -49,6 +61,12 @@ const redemptionOptions = [
   { icon: Award, name: 'Gift Cards', points: '2,500 pts', desc: 'Choose from popular retailers', value: '$25 value' },
 ]
 
+const tiers = [
+  { name: 'Silver', min: '0', max: '9,999', color: '#94A3B8', icon: Award, benefits: ['1x points multiplier', 'Basic rewards access', 'Monthly statements'] },
+  { name: 'Gold', min: '10,000', max: '24,999', color: '#EAB308', icon: Crown, benefits: ['1.5x points multiplier', 'Priority support', 'Rate reduction unlock', 'Quarterly bonus'], current: true },
+  { name: 'Platinum', min: '25,000+', max: '', color: '#4F46E5', icon: Gem, benefits: ['2x points multiplier', 'Dedicated account manager', 'Exclusive rewards', 'Annual appreciation gift'] },
+]
+
 export default function Rewards() {
   return (
     <div className="dashboard-grid">
@@ -56,9 +74,9 @@ export default function Rewards() {
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10 }}>
         {[
           { label: 'Points Balance', value: '12,450', sub: 'Available to redeem' },
-          { label: 'Earned This Month', value: '2,847', sub: '+12% vs last month' },
-          { label: 'Lifetime Points', value: '34,220', sub: 'Since account opened' },
-          { label: 'Redemptions', value: '3', sub: '$150 total value' },
+          { label: 'Earned This Month', value: '2,513', sub: '+8% vs last month' },
+          { label: 'Lifetime Points', value: '37,220', sub: 'Since account opened' },
+          { label: 'Redemptions', value: '4', sub: '$200 total value' },
         ].map(k => (
           <div key={k.label} className="kpi-card">
             <div className="kpi-label">{k.label}</div>
@@ -68,22 +86,76 @@ export default function Rewards() {
         ))}
       </div>
 
-      {/* Points Balance Visual */}
-      <Card>
-        <div style={{ padding: 24, textAlign: 'center' }}>
-          <div style={{ fontSize: 13, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Rewards Balance</div>
-          <div style={{ fontSize: 48, fontWeight: 800, color: '#1578F7', margin: '8px 0' }}>12,450</div>
-          <div style={{ fontSize: 14, color: '#64748B' }}>points available</div>
-          <div style={{ marginTop: 16 }}>
-            <div className="progress-bar">
-              <div className="progress-fill" style={{ width: '49.8%' }} />
-            </div>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 12, color: '#94A3B8' }}>
-              <span>0 pts</span>
-              <span>Next reward at 15,000 pts (Rate Reduction)</span>
-              <span>25,000 pts</span>
+      {/* Points Balance + Tier Status */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <Card>
+          <div style={{ padding: 24, textAlign: 'center' }}>
+            <div style={{ fontSize: 13, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Your Rewards Balance</div>
+            <div style={{ fontSize: 48, fontWeight: 800, color: '#1578F7', margin: '8px 0' }}>12,450</div>
+            <div style={{ fontSize: 14, color: '#64748B' }}>points available</div>
+            <div style={{ marginTop: 16 }}>
+              <div className="progress-bar">
+                <div className="progress-fill" style={{ width: '49.8%' }} />
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 12, color: '#94A3B8' }}>
+                <span>0 pts</span>
+                <span>Next: Rate Reduction (15,000)</span>
+                <span>25,000 pts</span>
+              </div>
             </div>
           </div>
+        </Card>
+
+        <Card>
+          <div style={{ padding: 24 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
+              <div style={{ width: 44, height: 44, borderRadius: 10, background: '#FEFCE8', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <Crown size={22} color="#EAB308" />
+              </div>
+              <div>
+                <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A' }}>Gold Tier</div>
+                <div style={{ fontSize: 12, color: '#64748B' }}>1.5x points multiplier active</div>
+              </div>
+            </div>
+            <div style={{ display: 'flex', gap: 6, marginBottom: 16 }}>
+              {tiers.map(t => (
+                <div key={t.name} style={{ flex: 1, padding: '8px 0', textAlign: 'center', borderRadius: 6, background: t.current ? '#FEFCE8' : '#F8FAFC', border: t.current ? '2px solid #EAB308' : '1px solid #E2E8F0' }}>
+                  <div style={{ fontSize: 10, fontWeight: 700, color: t.color, textTransform: 'uppercase' }}>{t.name}</div>
+                  <div style={{ fontSize: 10, color: '#94A3B8', marginTop: 2 }}>{t.min}{t.max ? ` - ${t.max}` : ''}</div>
+                </div>
+              ))}
+            </div>
+            <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6 }}>
+              Earn <strong>12,550 more points</strong> to reach Platinum tier and unlock 2x multiplier, a dedicated account manager, and exclusive rewards.
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Points Trend Chart */}
+      <Card>
+        <CardHeader title="Points Trend" subtitle="Monthly earned vs balance over 6 months" />
+        <div style={{ padding: '0 20px 20px', height: 240 }}>
+          <ResponsiveContainer width="100%" height="100%">
+            <AreaChart data={pointsTrend}>
+              <defs>
+                <linearGradient id="earnedGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#1578F7" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#1578F7" stopOpacity={0} />
+                </linearGradient>
+                <linearGradient id="balanceGrad" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor="#10B981" stopOpacity={0.15} />
+                  <stop offset="95%" stopColor="#10B981" stopOpacity={0} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+              <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <YAxis tick={{ fontSize: 11, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${(v / 1000).toFixed(0)}k`} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [v.toLocaleString(), '']} />
+              <Area type="monotone" dataKey="balance" stroke="#10B981" strokeWidth={2} fill="url(#balanceGrad)" name="Balance" />
+              <Area type="monotone" dataKey="earned" stroke="#1578F7" strokeWidth={2} fill="url(#earnedGrad)" name="Earned" />
+            </AreaChart>
+          </ResponsiveContainer>
         </div>
       </Card>
 
