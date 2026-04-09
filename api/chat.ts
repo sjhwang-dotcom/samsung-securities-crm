@@ -72,6 +72,15 @@ Open chargebacks: 1 ($487.50 due Mar 26). Effective rate: 2.69%.
 Pre-approved for $25,000 business funding (1.15 factor rate).
 Active products: Business Checking (1.5% APY), Gift Cards, Payroll (3 employees).
 PCI compliant through Dec 2026.`,
+
+  '/partner': `You are on the Partner Portal for Jake Wilson of Acme Financial Partners.
+Partner since October 2024. 34 active merchants. Monthly residuals: $4,218. YTD earnings: $38,420.
+Pipeline: 15 active leads — 4 Lead, 4 Proposal, 3 Application, 1 Boarding, 3 Live.
+Conversion rate: 28% (above network avg 22%). Pipeline value: $285K/mo estimated.
+Top merchants: Harbor Seafood ($32K/mo), Nob Hill Bistro ($28K/mo), Coastal Cafe ($28.4K/mo).
+Residual split: 60/40 (standard). Next payout: Apr 15, est. $4,218.
+Completed 2/5 training courses. Not yet certified (need 3 more courses for 70% split upgrade).
+Strongest vertical: Restaurants (35% conversion). Marketing link: 142 clicks, 18 form completions this month.`,
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {

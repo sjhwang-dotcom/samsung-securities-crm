@@ -188,14 +188,44 @@ const seedConversations: Record<string, ChatMessage[]> = {
     { role: 'user', content: "I need to update my bank account" },
     { role: 'assistant', content: "To update your settlement bank account, I'll need:\n\n1. **Voided check** or bank letter for the new account\n2. **Government-issued ID** (we have yours on file)\n\nThe change takes 2-3 business days to process. During transition, deposits continue to your current Chase ****8834 account. Want me to start the process?" },
   ],
+  '/partner': [
+    { role: 'assistant', content: "Welcome back, Jake. Your portfolio is performing well — **34 active merchants** generating **$4,218/mo** in residuals. Pipeline has 15 leads across all stages." },
+    { role: 'user', content: "How's my conversion rate?" },
+    { role: 'assistant', content: "Your conversion rate is **28%** (lead to go-live), which is above the partner network average of 22%. Your strongest vertical is restaurants at 35% conversion. I'd suggest focusing on the 8 proposals currently pending — 3 of them have been idle for over a week." },
+  ],
+  '/partner/pipeline': [
+    { role: 'assistant', content: "Your pipeline has **15 active leads**: 4 in Lead stage, 4 in Proposal, 3 in Application, 1 Boarding, and 3 Live. Total estimated volume: **$285K/mo**." },
+    { role: 'user', content: "Which leads should I follow up on?" },
+    { role: 'assistant', content: "Priority follow-ups:\n\n1. **Redwood Dental** ($45K/mo est.) — Proposal sent 3 weeks ago, no response. High-value healthcare practice.\n2. **Bay Area HVAC** ($35K/mo) — Application submitted but missing bank statements.\n3. **Bayshore Auto Parts** ($15K/mo) — Proposal stage, expressed interest in rate comparison.\n\nI can generate a follow-up email template for any of these." },
+  ],
+  '/partner/merchants': [
+    { role: 'assistant', content: "You have **34 active merchants** with combined monthly volume of **$618K**. Your average payout per merchant is **$124/mo**." },
+    { role: 'user', content: "Any merchants at risk of churning?" },
+    { role: 'assistant', content: "2 merchants showing warning signs:\n\n1. **Valley Pet Care** — volume dropped 18% last month. May be seasonal but worth a check-in.\n2. **Tech Gadgets Plus** — hasn't processed in 5 days. Could be equipment issue.\n\nI'd recommend calling both this week. Retention saves are worth 10x the effort of new acquisition." },
+  ],
+  '/partner/residuals': [
+    { role: 'assistant', content: "Your March residuals are **$4,218** — up 5.8% from February ($3,985). YTD earnings: **$38,420**. Next payout: April 15." },
+    { role: 'user', content: "Which merchants generate the most?" },
+    { role: 'assistant', content: "Your top 3 earners:\n\n1. **Harbor Seafood** — $320/mo ($32K volume, 60% split)\n2. **Nob Hill Bistro** — $280/mo ($28K volume, 60% split)\n3. **Coastal Cafe** — $284/mo ($28.4K volume, 60% split)\n\nThese 3 restaurants account for 21% of your total residuals. Restaurant vertical is your strongest — consider focusing new leads there." },
+  ],
+  '/partner/marketing': [
+    { role: 'assistant', content: "Your shareable application link has received **142 clicks** this month with **18 form completions** (12.7% conversion). Top downloaded asset: Rate Comparison Sheet (34 downloads)." },
+    { role: 'user', content: "How can I get more leads?" },
+    { role: 'assistant', content: "Based on your profile, I'd recommend:\n\n1. **Share your link on LinkedIn** — partners who do this see 3x more form completions\n2. **Ask your top merchants for referrals** — Harbor Seafood and Nob Hill Bistro could introduce similar restaurants\n3. **Download the co-branded one-pager** — leave it with prospects after meetings\n4. **Complete the Sales Techniques training** — partners who finish it have 40% higher close rates" },
+  ],
+  '/partner/training': [
+    { role: 'assistant', content: "You've completed **2 of 5 courses** (Getting Started + Products Overview). Next recommended: **Compliance Essentials** — required for your Partner Certification." },
+    { role: 'user', content: "What's the certification benefit?" },
+    { role: 'assistant', content: "**Certified Partners** get:\n\n- **10% higher residual split** (60% → 70%)\n- **Priority lead routing** from Harlow's Voice Agent\n- **Co-marketing budget** ($500/quarter)\n- **Dedicated account manager**\n\nYou're 3 courses away. Compliance Essentials takes ~45 minutes. Want to start now?" },
+  ],
 }
 
 /* ═══ Chat Tab with Claude API ═══ */
 function ChatTab() {
   const location = useLocation()
-  // Match exact path first, then fall back to /portal for unknown portal sub-routes
+  // Match exact path first, then fall back to portal/partner defaults
   const path = location.pathname
-  const currentPage = seedConversations[path] ? path : path.startsWith('/portal') ? '/portal' : path
+  const currentPage = seedConversations[path] ? path : path.startsWith('/partner') ? '/partner' : path.startsWith('/portal') ? '/portal' : path
   const seed = seedConversations[currentPage] || seedConversations['/dashboard'] || []
 
   const [messages, setMessages] = useState<ChatMessage[]>(seed)
@@ -298,6 +328,12 @@ function ChatTab() {
     '/portal/products': 'Products & Services',
     '/portal/support': 'Support',
     '/portal/funding': 'Business Funding',
+    '/partner': 'Partner Dashboard',
+    '/partner/pipeline': 'Partner Pipeline',
+    '/partner/merchants': 'My Merchants',
+    '/partner/residuals': 'Residuals & Payouts',
+    '/partner/marketing': 'Marketing Tools',
+    '/partner/training': 'Training & Certification',
   }
 
   return (

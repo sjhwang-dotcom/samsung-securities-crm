@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import {
   Search, Plus, Building2, Calendar, DollarSign,
-  MapPin, Phone, Mail, Link2, TrendingUp, Percent, Clock,
+  MapPin, Phone, Mail, Link2, Percent, Clock,
   PhoneCall, Send, Users, Target, Timer, Rocket,
 } from 'lucide-react'
 import { Card, CardHeader, StatusBadge, KpiCard } from '../../components/ui'
