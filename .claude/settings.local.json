@@ -42,7 +42,10 @@
       "Bash(npm run:*)",
       "Bash(vercel --yes)",
       "Bash(vercel login:*)",
-      "Bash(vercel --yes --prod)"
+      "Bash(vercel --yes --prod)",
+      "Bash(find /Users/sungju -type d -iname *mrc*)",
+      "Bash(find '/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/AIP' -type f \\\\\\(-name *.tsx -o -name *.jsx \\\\\\))",
+      "Bash(find '/Users/sungju/Library/Mobile Documents/com~apple~CloudDocs/AIP' -type f -name *.tsx)"
     ]
   }
 }

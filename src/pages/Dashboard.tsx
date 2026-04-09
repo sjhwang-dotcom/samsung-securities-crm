@@ -2,6 +2,7 @@ import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
 import { Users, DollarSign, TrendingUp, UserMinus, AlertTriangle, Zap, Clock, ShieldCheck, ArrowUpRight, Package } from 'lucide-react'
 import { volumeData, categoryMixData, atRiskMerchants, recentActivity, isoPortfolio } from '../data/mockData'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable, ActivityFeed } from '../components/ui'
+import WaterfallChart from '../components/ui/WaterfallChart'
 import type { Column } from '../components/ui'
 
 /* ─── Static Data ─── */
@@ -20,14 +21,14 @@ const isoVolumeData = [
 
 // Waterfall: each bar has invisible base + visible delta
 // Starting=28.5, +1.8 Organic, +1.2 Zenith, +0.8 Products, -0.2 Churn, =32.1 Current
-// Waterfall: proper floating bars. Churn goes DOWN (top=32.3, bottom=32.1)
+// Waterfall data for ApexCharts rangeBar
 const waterfallData = [
-  { name: 'Starting', bottom: 0, top: 28.5, color: '#94A3B8', label: '$28.5M' },
-  { name: 'Organic', bottom: 28.5, top: 30.3, color: '#10B981', label: '+$1.8M' },
-  { name: 'Zenith Acq.', bottom: 30.3, top: 31.5, color: '#3B82F6', label: '+$1.2M' },
-  { name: 'Products', bottom: 31.5, top: 32.3, color: '#8B5CF6', label: '+$0.8M' },
-  { name: 'Churn', bottom: 32.1, top: 32.3, color: '#EF4444', label: '-$0.2M' },
-  { name: 'Current', bottom: 0, top: 32.1, color: '#1578F7', label: '$32.1M' },
+  { category: 'Starting', value: 28.5, type: 'total' as const },
+  { category: 'Organic', value: 1.8, type: 'delta' as const },
+  { category: 'Zenith Acq.', value: 1.2, type: 'delta' as const },
+  { category: 'Products', value: 0.8, type: 'delta' as const },
+  { category: 'Churn', value: -0.2, type: 'delta' as const },
+  { category: 'Current', value: 32.1, type: 'total' as const },
 ]
 
 const tooltipStyle = {
@@ -38,60 +39,6 @@ const tooltipStyle = {
   backdropFilter: 'blur(8px)',
 }
 
-/* ─── Waterfall Chart (pure SVG) ─── */
-function WaterfallChart({ data, height, maxY }: { data: typeof waterfallData; height: number; maxY: number }) {
-  const padding = { top: 16, right: 16, bottom: 28, left: 44 }
-  const chartW = 100 // will be stretched by viewBox
-  const chartH = height - padding.top - padding.bottom
-  const barCount = data.length
-  const barW = (chartW - padding.left - padding.right) / barCount
-  const gap = barW * 0.2
-  const bW = barW - gap
-
-  const yScale = (v: number) => padding.top + chartH - (v / maxY) * chartH
-
-  return (
-    <svg viewBox={`0 0 ${chartW + padding.left} ${height}`} width="100%" height={height} style={{ overflow: 'visible' }}>
-      {/* Grid lines */}
-      {[0, 10, 20, 30].map(v => (
-        <g key={v}>
-          <line x1={padding.left} x2={chartW + padding.left} y1={yScale(v)} y2={yScale(v)} stroke="#F1F5F9" strokeDasharray="3 3" />
-          <text x={padding.left - 4} y={yScale(v) + 3} textAnchor="end" fontSize={7} fill="#94A3B8" fontWeight={500}>${v}M</text>
-        </g>
-      ))}
-      {/* Bars + connectors + labels */}
-      {data.map((d, i) => {
-        const x = padding.left + i * barW + gap / 2
-        const yTop = yScale(d.top)
-        const yBot = yScale(d.bottom)
-        const barH = yBot - yTop
-        // Connector line from previous bar's top to this bar's bottom (skip first and last)
-        const prevD = i > 0 && i < data.length - 1 ? data[i - 1] : null
-        return (
-          <g key={d.name}>
-            {/* Connector dashed line */}
-            {prevD && i < data.length - 1 && (
-              <line
-                x1={x - gap / 2} y1={yScale(prevD.top)} x2={x + bW + gap / 2} y2={yScale(prevD.top)}
-                stroke="#CBD5E1" strokeDasharray="2 2" strokeWidth={0.5}
-              />
-            )}
-            {/* Bar */}
-            <rect x={x} y={yTop} width={bW} height={Math.max(barH, 1)} rx={2} fill={d.color} />
-            {/* Value label on bar */}
-            <text x={x + bW / 2} y={yTop - 3} textAnchor="middle" fontSize={6} fontWeight={700} fill={d.color}>
-              {d.label}
-            </text>
-            {/* X-axis label */}
-            <text x={x + bW / 2} y={height - 4} textAnchor="middle" fontSize={6} fill="#94A3B8" fontWeight={500}>
-              {d.name}
-            </text>
-          </g>
-        )
-      })}
-    </svg>
-  )
-}
 
 type HealthLevel = 'Strong' | 'Good' | 'Watch' | 'Weak'
 const healthVariant: Record<HealthLevel, 'emerald' | 'teal' | 'amber' | 'rose'> = {
@@ -248,11 +195,11 @@ export default function Dashboard() {
           </div>
         </Card>
 
-        {/* Portfolio Value Bridge — True Waterfall */}
+        {/* Portfolio Value Bridge — ApexCharts Waterfall */}
         <Card>
           <CardHeader title="Portfolio Value Bridge" subtitle="Q1 2026 → Q2 2026" menu />
-          <div style={{ padding: '0 16px 16px' }}>
-            <WaterfallChart data={waterfallData} height={200} maxY={36} />
+          <div style={{ padding: '0 12px 8px' }}>
+            <WaterfallChart data={waterfallData} height={200} />
           </div>
         </Card>
 
