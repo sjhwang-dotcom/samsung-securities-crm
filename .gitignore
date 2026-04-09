@@ -24,6 +24,10 @@ dist-ssr
 *.sw?
 .vercel
 
+# Environment
+.env
+.env.local
+
 # DuckDB
 *.duckdb
 *.duckdb.wal

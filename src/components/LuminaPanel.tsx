@@ -1,9 +1,17 @@
-import { useState, useEffect, useCallback } from 'react'
-import { Send, Bot, AlertTriangle, FileText, MessageSquare, BarChart3 } from 'lucide-react'
+import { useState, useEffect, useCallback, useRef } from 'react'
+import { useLocation } from 'react-router-dom'
+import { Send, Bot, FileText, MessageSquare, BarChart3, Loader2 } from 'lucide-react'
 
 interface LuminaPanelProps {
   onClose?: () => void
 }
+
+interface ChatMessage {
+  role: 'user' | 'assistant'
+  content: string
+}
+
+const API_URL = '/api/chat'
 
 export default function LuminaPanel({ onClose }: LuminaPanelProps) {
   const [activeTab, setActiveTab] = useState<'chat' | 'reports'>('chat')
@@ -15,7 +23,6 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
     { id: 'reports' as const, label: 'Reports', Icon: BarChart3 },
   ]
 
-  // ═══ Resize ═══
   const startResizing = useCallback(() => setIsResizing(true), [])
 
   useEffect(() => {
@@ -93,91 +100,164 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         {activeTab === 'chat' && <ChatTab />}
         {activeTab === 'reports' && <ReportsTab />}
       </div>
-
-      {/* Input (chat only) */}
-      {activeTab === 'chat' && <ChatInput />}
     </aside>
   )
 }
 
-function ChatInput() {
-  const [input, setInput] = useState('')
-  return (
-    <div className="lumina-input-area">
-      <div className="lumina-input-wrapper">
-        <input
-          value={input}
-          onChange={e => setInput(e.target.value)}
-          placeholder="Ask Lumina anything..."
-          className="lumina-input"
-        />
-        <button className="lumina-send-btn">
-          <Send size={16} />
-        </button>
-      </div>
-    </div>
-  )
-}
-
+/* ═══ Chat Tab with Claude API ═══ */
 function ChatTab() {
+  const location = useLocation()
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'assistant', content: "Hi, I'm Lumina — your AI portfolio analyst. I have context on the page you're viewing. Ask me anything about your merchants, volume, risk, or pipeline." },
+  ])
+  const [input, setInput] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
+  const chatEndRef = useRef<HTMLDivElement>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  // Get the base path for context (e.g., /portal/transactions → /portal)
+  const currentPage = location.pathname.startsWith('/portal') ? '/portal' : location.pathname
+
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [messages])
+
+  const sendMessage = async () => {
+    const text = input.trim()
+    if (!text || isLoading) return
+
+    const userMsg: ChatMessage = { role: 'user', content: text }
+    const newMessages = [...messages, userMsg]
+    setMessages(newMessages)
+    setInput('')
+    setIsLoading(true)
+
+    try {
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages.map(m => ({ role: m.role, content: m.content })),
+          currentPage,
+        }),
+      })
+
+      if (!res.ok) {
+        throw new Error(`API error: ${res.status}`)
+      }
+
+      // Stream the response
+      const reader = res.body?.getReader()
+      const decoder = new TextDecoder()
+      let assistantText = ''
+
+      setMessages(prev => [...prev, { role: 'assistant', content: '' }])
+
+      if (reader) {
+        while (true) {
+          const { done, value } = await reader.read()
+          if (done) break
+          const chunk = decoder.decode(value, { stream: true })
+          assistantText += chunk
+          setMessages(prev => {
+            const updated = [...prev]
+            updated[updated.length - 1] = { role: 'assistant', content: assistantText }
+            return updated
+          })
+        }
+      }
+    } catch (err: any) {
+      console.error('Lumina chat error:', err)
+      setMessages(prev => [
+        ...prev,
+        { role: 'assistant', content: `I'm having trouble connecting right now. Error: ${err.message}. Please try again.` },
+      ])
+    } finally {
+      setIsLoading(false)
+      inputRef.current?.focus()
+    }
+  }
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault()
+      sendMessage()
+    }
+  }
+
+  // Page context indicator
+  const pageLabels: Record<string, string> = {
+    '/dashboard': 'Portfolio Command Center',
+    '/crm': 'Agentic CRM',
+    '/voice': 'Voice Agent',
+    '/iso': 'ISO Management',
+    '/analytics': 'Portfolio Intelligence',
+    '/risk': 'Risk & Underwriting',
+    '/compliance': 'Compliance',
+    '/portal': 'Merchant Portal',
+  }
+
   return (
-    <div className="lumina-chat">
-      <div className="lumina-msg ai">
-        <div className="lumina-msg-avatar"><Bot size={12} className="text-white" /></div>
-        <div>
-          <div className="lumina-msg-bubble ai">
-            Good morning, Sarah. I've completed my overnight analysis across all 3 ISOs. Three items require your attention.
-          </div>
-        </div>
+    <>
+      {/* Context indicator */}
+      <div style={{
+        padding: '8px 16px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9',
+        fontSize: 11, color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6,
+      }}>
+        <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
+        Viewing: {pageLabels[currentPage] || currentPage}
       </div>
 
-      <div className="lumina-msg ai">
-        <div className="lumina-msg-avatar" style={{ background: '#EF4444' }}>
-          <AlertTriangle size={11} className="text-white" />
-        </div>
-        <div>
-          <div className="lumina-msg-bubble ai">
-            <strong>URGENT:</strong> Sunrise Deli churn probability hit 87%. Volume down 42% in 30 days, two chargebacks filed this week.
-            <br /><br />
-            I've prepared a retention offer: rate reduction to 2.49% + free PAX A920 upgrade. Estimated retention value: $97K annual residuals.
+      {/* Messages */}
+      <div className="lumina-chat" style={{ flex: 1, overflowY: 'auto' }}>
+        {messages.map((msg, i) => (
+          <div key={i} className={`lumina-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
+            {msg.role === 'assistant' && (
+              <div className="lumina-msg-avatar">
+                <Bot size={12} className="text-white" />
+              </div>
+            )}
+            <div>
+              <div className={`lumina-msg-bubble ${msg.role === 'user' ? 'user' : 'ai'}`}>
+                {msg.content || (isLoading && i === messages.length - 1 ? (
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94A3B8' }}>
+                    <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Thinking...
+                  </span>
+                ) : '')}
+              </div>
+            </div>
           </div>
-          <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-            <button className="lumina-action-btn">Schedule Agent Call</button>
-            <button className="lumina-action-btn">Review Offer Details</button>
-          </div>
-        </div>
+        ))}
+        <div ref={chatEndRef} />
       </div>
 
-      <div className="lumina-msg ai">
-        <div className="lumina-msg-avatar"><Bot size={12} className="text-white" /></div>
-        <div>
-          <div className="lumina-msg-bubble ai">
-            Liberty Processing migration is at 92%. 12 merchants have incomplete bank info. I've drafted follow-up emails. Send them now, or review drafts?
-          </div>
-          <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap' }}>
-            <button className="lumina-action-btn">Send All 12</button>
-            <button className="lumina-action-btn">Review Drafts</button>
-          </div>
+      {/* Input */}
+      <div className="lumina-input-area">
+        <div className="lumina-input-wrapper">
+          <input
+            ref={inputRef}
+            value={input}
+            onChange={e => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Lumina anything..."
+            className="lumina-input"
+            disabled={isLoading}
+          />
+          <button
+            className="lumina-send-btn"
+            onClick={sendMessage}
+            disabled={isLoading || !input.trim()}
+            style={{ opacity: isLoading || !input.trim() ? 0.4 : 1 }}
+          >
+            {isLoading ? <Loader2 size={16} style={{ animation: 'spin 1s linear infinite' }} /> : <Send size={16} />}
+          </button>
         </div>
       </div>
-
-      <div className="lumina-msg user">
-        <div className="lumina-msg-bubble user">What's driving the Sunrise Deli decline?</div>
-      </div>
-
-      <div className="lumina-msg ai">
-        <div className="lumina-msg-avatar"><Bot size={12} className="text-white" /></div>
-        <div>
-          <div className="lumina-msg-bubble ai">
-            Three factors: (1) PCI non-compliant for 94 days — they may be shopping processors, (2) a new competing deli opened 2 blocks away in January, (3) average ticket dropped from $18 to $11 suggesting menu changes. I'd recommend calling with a retention package.
-          </div>
-        </div>
-      </div>
-    </div>
+    </>
   )
 }
 
-
+/* ═══ Reports Tab ═══ */
 function ReportsTab() {
   const reports = [
     { title: 'Portfolio Intelligence Report', date: 'Mar 28, 2026', pages: '12 pages' },
