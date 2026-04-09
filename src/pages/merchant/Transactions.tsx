@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { ArrowLeftRight, Landmark, AlertTriangle, CreditCard, DollarSign, TrendingUp, ChevronLeft, ChevronRight, Search } from 'lucide-react'
+import { ArrowLeftRight, Landmark, AlertTriangle, CreditCard, DollarSign, TrendingUp, Search } from 'lucide-react'
 import { Card, CardHeader, StatusBadge, DataTable } from '../../components/ui'
 import type { Column } from '../../components/ui'
 
@@ -45,7 +45,6 @@ export default function Transactions() {
 /* ═══ Transactions Tab ═══ */
 function TransactionsTab() {
   const [filter, setFilter] = useState('All')
-  const [page, setPage] = useState(0)
 
   type TxnRow = { id: string; date: string; type: string; card: string; amount: string; tip: string; total: string; status: string; auth: string }
 
@@ -73,9 +72,6 @@ function TransactionsTab() {
   })
 
   const filtered = filter === 'All' ? allTxns : allTxns.filter(t => t.type === filter)
-  const PAGE_SIZE = 15
-  const totalPages = Math.ceil(filtered.length / PAGE_SIZE)
-  const pageData = filtered.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE)
 
   const cols: Column<TxnRow>[] = [
     { key: 'id', header: 'Txn ID', render: (r) => <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#64748B' }}>{r.id}</span> },
@@ -115,7 +111,7 @@ function TransactionsTab() {
             <input placeholder="Search transactions..." style={{ width: '100%', background: '#FAFBFC', border: '1px solid #E5E7EB', borderRadius: 8, paddingLeft: 30, paddingRight: 10, paddingTop: 7, paddingBottom: 7, fontSize: 12, outline: 'none', color: '#334155' }} />
           </div>
           {['All', 'Sale', 'Refund', 'Void'].map(f => (
-            <button key={f} onClick={() => { setFilter(f); setPage(0) }} style={{
+            <button key={f} onClick={() => setFilter(f)} style={{
               padding: '6px 12px', fontSize: 11, fontWeight: 600, borderRadius: 6, cursor: 'pointer',
               background: filter === f ? '#1578F7' : 'white', color: filter === f ? 'white' : '#64748B',
               border: filter === f ? 'none' : '1px solid #E5E7EB',
@@ -123,21 +119,9 @@ function TransactionsTab() {
           ))}
           <span style={{ fontSize: 11, color: '#94A3B8', marginLeft: 'auto' }}>{filtered.length} results</span>
         </div>
-        <DataTable columns={cols} data={pageData} hoverable compact />
-        {totalPages > 1 && (
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '10px 16px', borderTop: '1px solid #F1F5F9', fontSize: 12, color: '#64748B' }}>
-            <span>Showing {page * PAGE_SIZE + 1}–{Math.min((page + 1) * PAGE_SIZE, filtered.length)} of {filtered.length}</span>
-            <div style={{ display: 'flex', gap: 4 }}>
-              <button disabled={page === 0} onClick={() => setPage(p => p - 1)} style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #E5E7EB', background: 'white', cursor: page === 0 ? 'default' : 'pointer', opacity: page === 0 ? 0.4 : 1, fontSize: 12 }}>
-                <ChevronLeft size={14} />
-              </button>
-              <span style={{ padding: '5px 8px', fontSize: 12, fontWeight: 600 }}>{page + 1} / {totalPages}</span>
-              <button disabled={page >= totalPages - 1} onClick={() => setPage(p => p + 1)} style={{ padding: '5px 10px', borderRadius: 6, border: '1px solid #E5E7EB', background: 'white', cursor: page >= totalPages - 1 ? 'default' : 'pointer', opacity: page >= totalPages - 1 ? 0.4 : 1, fontSize: 12 }}>
-                <ChevronRight size={14} />
-              </button>
-            </div>
-          </div>
-        )}
+        <div style={{ maxHeight: 'calc(100vh - 380px)', overflowY: 'auto' }}>
+          <DataTable columns={cols} data={filtered} hoverable compact />
+        </div>
       </Card>
     </>
   )
