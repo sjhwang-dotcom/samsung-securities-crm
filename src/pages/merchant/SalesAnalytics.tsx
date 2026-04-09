@@ -98,7 +98,7 @@ export default function SalesAnalytics() {
       </div>
 
       {/* KPI Row */}
-      <div className="kpi-row">
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, minmax(0, 1fr))', gap: 12 }}>
         <KpiCard label="Items Sold (30d)" value={totalItemsSold.toLocaleString()} icon={ShoppingCart} color="blue" sub="across all categories" />
         <KpiCard label="Total Revenue" value={`$${totalRevenue.toLocaleString(undefined, { minimumFractionDigits: 2 })}`} icon={DollarSign} color="emerald" sub="30-day period" />
         <KpiCard label="Avg Basket Size" value={`$${avgBasket.toFixed(2)}`} icon={TrendingUp} color="indigo" sub={`${totalOrders.toLocaleString()} orders`} />
