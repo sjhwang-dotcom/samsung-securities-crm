@@ -7,7 +7,7 @@ import {
   Target, ArrowUpRight, Award, Activity, Zap,
   AlertCircle, CheckCircle, XCircle, Layers,
   GitBranch, Gauge, CalendarClock, Hash,
-  CalendarPlus, PlusCircle, Ban, PlayCircle,
+  CalendarPlus, PlusCircle, Ban,
 } from 'lucide-react'
 import {
   Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -398,8 +398,8 @@ function LiveCallsView() {
               <ComposedChart data={voiceHourlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis dataKey="hour" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} />
+                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} domain={['dataMin - 20', 'dataMax + 20']} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} domain={['dataMin - 2', 'dataMax + 2']} />
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => [name === 'Transfer Rate' ? `${v}%` : v, name]} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, fontWeight: 500, paddingTop: 8 }} />
                 <Line yAxisId="left" type="monotone" dataKey="calls" stroke="#1578F7" strokeWidth={2} dot={{ r: 4, fill: '#1578F7', stroke: 'white', strokeWidth: 2 }} activeDot={{ r: 6 }} name="Calls" />
@@ -902,9 +902,9 @@ function CallLogView() {
       </div>
 
       {/* Master-Detail layout */}
-      <div style={{ display: 'flex', gap: 16, minHeight: 520 }}>
-        {/* Left: Call log table */}
-        <div style={{ flex: '0 0 56%', display: 'flex', flexDirection: 'column', gap: 8 }}>
+      <div style={{ display: 'flex', gap: 0, margin: '-12px -20px -16px', overflow: 'hidden' }}>
+        {/* Left: Call log list */}
+        <div style={{ width: 300, minWidth: 300, display: 'flex', flexDirection: 'column', borderRight: '1px solid #E5E7EB', height: 'calc(100vh - 280px)', background: 'white' }}>
           <Card noPadding>
             <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
               <thead>
@@ -989,103 +989,136 @@ function CallLogView() {
         </div>
 
         {/* Right: Call detail panel */}
-        <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ flex: 1, overflowY: 'auto', height: 'calc(100vh - 280px)', padding: '16px 20px' }}>
           {selectedCall ? (
-            <Card noPadding>
-              {/* Call header */}
-              <CardHeader title={selectedCall.business} badge={
-                <span style={{ fontFamily: 'monospace', fontSize: 11, color: '#94A3B8' }}>{selectedCall.phone}</span>
-              } />
-              <div style={{ padding: '0 20px 20px', display: 'flex', flexDirection: 'column', gap: 18 }}>
-                {/* Date / Duration row */}
-                <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', alignItems: 'center' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <CalendarClock size={13} color="#94A3B8" />
-                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.date}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <Clock size={13} color="#94A3B8" />
-                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.duration}</span>
-                  </div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-                    <DollarSign size={13} color="#94A3B8" />
-                    <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{selectedCall.cost}</span>
-                  </div>
+            <div className="dashboard-grid">
+              {/* Header */}
+              <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between' }}>
+                <div>
+                  <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{selectedCall.business}</div>
+                  <div style={{ fontSize: 12, color: '#94A3B8', marginTop: 3, fontFamily: 'monospace' }}>{selectedCall.phone}</div>
                 </div>
-
-                {/* Outcome + Sentiment badges */}
-                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                <div style={{ display: 'flex', gap: 6 }}>
                   <StatusBadge variant={outcomeVariant(selectedCall.outcome)}>{selectedCall.outcome}</StatusBadge>
                   {sentimentBadge(selectedCall.sentiment)}
-                  <span style={{ fontSize: 11, color: '#94A3B8', fontWeight: 500, marginLeft: 4 }}>Stage: {selectedCall.stage}</span>
                 </div>
+              </div>
 
-                {/* AI Summary */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
-                    <Sparkles size={13} color="#1578F7" />
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>AI Call Summary</span>
+              {/* Meta row */}
+              <div style={{ display: 'flex', gap: 20, fontSize: 12, color: '#64748B', fontWeight: 500 }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><CalendarClock size={12} color="#94A3B8" /> {selectedCall.date}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><Clock size={12} color="#94A3B8" /> {selectedCall.duration}</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}><DollarSign size={12} color="#94A3B8" /> {selectedCall.cost}</span>
+                <span>Stage: {selectedCall.stage}</span>
+              </div>
+
+              {/* Script Used + AI Analysis — 2 columns */}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+                {/* Script / Opener Used */}
+                <Card noPadding>
+                  <CardHeader title="Script & Opener Used" />
+                  <div style={{ padding: '0 16px 16px' }}>
+                    <div style={{ background: '#EFF6FF', borderRadius: 8, padding: '10px 12px', marginBottom: 10 }}>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: '#1578F7', marginBottom: 4 }}>
+                        {scriptsData[selectedCall.id % scriptsData.length]?.name || 'Restaurant Savings Hook'}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#64748B' }}>
+                        {scriptsData[selectedCall.id % scriptsData.length]?.industry || '5812 - Restaurants'}
+                      </div>
+                    </div>
+                    <div style={{ fontSize: 12, color: '#334155', lineHeight: 1.6, fontStyle: 'italic', background: '#F8FAFC', borderRadius: 8, padding: '10px 12px', border: '1px solid #F1F5F9' }}>
+                      "{scriptsData[selectedCall.id % scriptsData.length]?.script.slice(0, 180) || 'Hi, this is Sarah from Harlow Processing...'}..."
+                    </div>
+                    <div style={{ display: 'flex', gap: 12, marginTop: 10 }}>
+                      <div style={{ fontSize: 11, color: '#64748B' }}>Win Rate: <span style={{ fontWeight: 700, color: '#10B981' }}>{scriptsData[selectedCall.id % scriptsData.length]?.winRate || 41.2}%</span></div>
+                      <div style={{ fontSize: 11, color: '#64748B' }}>Calls Used: <span style={{ fontWeight: 600 }}>{(scriptsData[selectedCall.id % scriptsData.length]?.callsUsed || 3420).toLocaleString()}</span></div>
+                    </div>
                   </div>
-                  <div style={{
-                    background: '#F8FAFC', borderRadius: 10, padding: '12px 14px',
-                    fontSize: 12, lineHeight: 1.6, color: '#334155', border: '1px solid #F1F5F9',
-                  }}>
+                </Card>
+
+                {/* AI Sales Analysis */}
+                <Card noPadding>
+                  <CardHeader title="AI Sales Analysis" />
+                  <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                    {[
+                      { label: 'Opener Effectiveness', value: selectedCall.outcome === 'Transferred' ? 'High' : selectedCall.outcome === 'Completed' ? 'Medium' : 'Low', color: selectedCall.outcome === 'Transferred' ? '#10B981' : selectedCall.outcome === 'Completed' ? '#F59E0B' : '#F43F5E' },
+                      { label: 'Objection Handling', value: selectedCall.sentiment === 'Positive' ? 'Strong' : selectedCall.sentiment === 'Neutral' ? 'Adequate' : 'Needs Work', color: selectedCall.sentiment === 'Positive' ? '#10B981' : selectedCall.sentiment === 'Neutral' ? '#F59E0B' : '#F43F5E' },
+                      { label: 'Talk-Listen Ratio', value: '42/58%', color: '#1578F7' },
+                      { label: 'Pace', value: 'Natural (1.05x)', color: '#10B981' },
+                    ].map(item => (
+                      <div key={item.label} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12 }}>
+                        <span style={{ color: '#64748B' }}>{item.label}</span>
+                        <span style={{ fontWeight: 700, color: item.color }}>{item.value}</span>
+                      </div>
+                    ))}
+                    <div style={{ marginTop: 4, padding: '8px 10px', background: '#F0FDFA', borderRadius: 8, border: '1px solid #D1FAE5', fontSize: 11, color: '#065F46', lineHeight: 1.5 }}>
+                      <strong>AI Recommendation:</strong> {selectedCall.outcome === 'Transferred' ? 'Excellent call. The savings-focused opener resonated well. Consider using this approach for similar MCC businesses.' : selectedCall.sentiment === 'Positive' ? 'Good engagement but did not convert. Try a more direct rate comparison next time.' : 'Consider switching to the PCI Compliance Angle for this business type. The current opener did not generate enough interest.'}
+                    </div>
+                  </div>
+                </Card>
+              </div>
+
+              {/* AI Call Summary — full width */}
+              <Card noPadding>
+                <CardHeader title="AI Call Summary" />
+                <div style={{ padding: '0 16px 16px' }}>
+                  <div style={{ fontSize: 13, lineHeight: 1.7, color: '#334155' }}>
                     {selectedCall.summary}
+                    {selectedCall.outcome === 'Transferred' && ' The business owner showed strong buying signals when discussing current processing costs. Sentiment remained positive throughout, with particular interest in the same-day deposit feature. This lead has been warm-transferred to closer David Goldfarb with full call context pre-populated in CRM.'}
+                    {selectedCall.outcome === 'Completed' && ' While the conversation was productive, the prospect requested time to review their current contract terms. The AI agent noted specific objection points around contract termination fees that can be addressed in the follow-up call.'}
+                    {selectedCall.outcome === 'No Answer' && ' Voicemail was left with a brief savings hook and callback number. This is the second attempt — recommend trying at a different time of day based on business hours.'}
                   </div>
                 </div>
+              </Card>
 
-                {/* Key Moments timeline */}
-                <div>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 10 }}>
-                    <PlayCircle size={13} color="#1578F7" />
-                    <span style={{ fontSize: 12, fontWeight: 700, color: '#0F172A' }}>Key Moments</span>
-                  </div>
-                  <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+              {/* Key Moments + Actions */}
+              <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 12 }}>
+                <Card noPadding>
+                  <CardHeader title="Key Moments" />
+                  <div style={{ padding: '0 16px 16px' }}>
                     {selectedCall.keyMoments.map((m, idx) => (
-                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, position: 'relative', paddingBottom: idx < selectedCall.keyMoments.length - 1 ? 12 : 0, paddingLeft: 2 }}>
-                        {/* Vertical line connector */}
+                      <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', gap: 10, position: 'relative', paddingBottom: idx < selectedCall.keyMoments.length - 1 ? 14 : 0 }}>
                         {idx < selectedCall.keyMoments.length - 1 && (
-                          <div style={{ position: 'absolute', left: 9, top: 14, width: 2, height: 'calc(100% - 6px)', background: '#E5E7EB', borderRadius: 1 }} />
+                          <div style={{ position: 'absolute', left: 9, top: 16, width: 2, height: 'calc(100% - 8px)', background: '#E5E7EB', borderRadius: 1 }} />
                         )}
-                        {/* Dot */}
                         <div style={{
                           width: 18, height: 18, borderRadius: '50%', flexShrink: 0,
                           background: idx === 0 ? '#DBEAFE' : idx === selectedCall.keyMoments.length - 1 ? '#D1FAE5' : '#F1F5F9',
                           border: `2px solid ${idx === 0 ? '#1578F7' : idx === selectedCall.keyMoments.length - 1 ? '#10B981' : '#CBD5E1'}`,
-                          display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 1,
+                          display: 'flex', alignItems: 'center', justifyContent: 'center', marginTop: 2,
                         }}>
                           <div style={{ width: 6, height: 6, borderRadius: '50%', background: idx === 0 ? '#1578F7' : idx === selectedCall.keyMoments.length - 1 ? '#10B981' : '#94A3B8' }} />
                         </div>
-                        <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, minWidth: 0 }}>
-                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1578F7', fontFamily: 'monospace', flexShrink: 0 }}>{m.time}</span>
-                          <span style={{ fontSize: 12, color: '#334155', lineHeight: 1.4 }}>{m.label}</span>
+                        <div>
+                          <span style={{ fontSize: 11, fontWeight: 700, color: '#1578F7', fontFamily: 'monospace' }}>{m.time}</span>
+                          <span style={{ fontSize: 12, color: '#334155', marginLeft: 8 }}>{m.label}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
+                </Card>
 
-                {/* Action buttons */}
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', borderTop: '1px solid #F1F5F9', paddingTop: 14 }}>
-                  <button style={actionBtnStyle('#1578F7', '#EFF6FF', '#BFDBFE')}>
-                    <CalendarPlus size={13} /> Schedule Follow-up
-                  </button>
-                  <button style={actionBtnStyle('#059669', '#ECFDF5', '#A7F3D0')}>
-                    <PlusCircle size={13} /> Add to Pipeline
-                  </button>
-                  <button style={actionBtnStyle('#64748B', '#F8FAFC', '#E2E8F0')}>
-                    <Ban size={13} /> Mark as Not Interested
-                  </button>
-                </div>
+                <Card noPadding>
+                  <CardHeader title="Actions" />
+                  <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+                    <button style={actionBtnStyle('#1578F7', '#EFF6FF', '#BFDBFE')}>
+                      <CalendarPlus size={13} /> Schedule Follow-up
+                    </button>
+                    <button style={actionBtnStyle('#059669', '#ECFDF5', '#A7F3D0')}>
+                      <PlusCircle size={13} /> Add to Pipeline
+                    </button>
+                    <button style={actionBtnStyle('#64748B', '#F8FAFC', '#E2E8F0')}>
+                      <Ban size={13} /> Not Interested
+                    </button>
+                  </div>
+                </Card>
               </div>
-            </Card>
+            </div>
           ) : (
-            <Card>
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 300, color: '#94A3B8' }}>
-                <ScrollText size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
-                <span style={{ fontSize: 13, fontWeight: 500 }}>Select a call to view details</span>
-              </div>
-            </Card>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: 300, color: '#94A3B8' }}>
+              <ScrollText size={32} style={{ marginBottom: 12, opacity: 0.4 }} />
+              <span style={{ fontSize: 13, fontWeight: 500 }}>Select a call to view details</span>
+            </div>
           )}
         </div>
       </div>
