@@ -257,10 +257,11 @@ export default function Dashboard() {
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#f1f5f9" vertical={false} />
                 <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={v => `$${v}M`} width={45} />
+                <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `$${v}M`} width={45} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#94a3b8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `$${v}M`} width={45} />
                 <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => [`$${v}M`, name]} />
-                <Area type="monotone" dataKey="volume" stroke="#1578F7" fill="url(#vgd)" strokeWidth={2.5} name="Volume" dot={false} />
-                <Area type="monotone" dataKey="residuals" stroke="#10B981" fill="url(#rgd)" strokeWidth={2} name="Residuals" dot={false} />
+                <Area yAxisId="left" type="monotone" dataKey="volume" stroke="#1578F7" fill="url(#vgd)" strokeWidth={2.5} name="Volume" dot={false} />
+                <Area yAxisId="right" type="monotone" dataKey="residuals" stroke="#10B981" fill="url(#rgd)" strokeWidth={2} name="Residuals" dot={false} />
               </AreaChart>
             </ResponsiveContainer>
           </div>
