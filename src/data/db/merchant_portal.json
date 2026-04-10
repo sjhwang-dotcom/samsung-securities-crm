@@ -1101,11 +1101,11 @@
     }
   ],
   "equipment": {
-    "deviceType": "POS Terminal",
+    "deviceType": "P Line",
     "makeModel": "PAX A920",
     "serialNumber": "PAX52530754",
     "firmwareVersion": "3.8.8",
-    "connectionType": "WiFi",
+    "connectionType": "Ethernet + WiFi",
     "p2peCertified": true,
     "status": "Active",
     "deployedDate": "2022-06-17",
@@ -1745,6 +1745,359 @@
       "method": "Card",
       "count": 2619,
       "revenue": 19841.13
+    }
+  ],
+  "terminalCatalog": [
+    {
+      "series": "Clover",
+      "model": "Dock",
+      "type": "Dock",
+      "description": "Charging dock with receipt printer",
+      "features": "N/A",
+      "connection": "USB",
+      "p2pe": false,
+      "nfc": false,
+      "printer": true
+    },
+    {
+      "series": "Clover",
+      "model": "Flex 3",
+      "type": "Mobile",
+      "description": "Handheld POS with full OS",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Clover",
+      "model": "Flex Pocket",
+      "type": "Mini Mobile",
+      "description": "Pocket-sized mobile reader",
+      "features": "Chip/NFC",
+      "connection": "Bluetooth",
+      "p2pe": false,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "Clover",
+      "model": "Go",
+      "type": "Card Reader",
+      "description": "Bluetooth card reader",
+      "features": "Chip/NFC",
+      "connection": "Bluetooth",
+      "p2pe": false,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "Clover",
+      "model": "Kiosk",
+      "type": "Self-Service",
+      "description": "Self-service ordering kiosk",
+      "features": "Chip/NFC/QR",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Clover",
+      "model": "Mini",
+      "type": "Compact POS",
+      "description": "Compact countertop POS",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Clover",
+      "model": "Station Duo",
+      "type": "Full POS",
+      "description": "Dual-screen full POS system",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Clover",
+      "model": "Station Solo",
+      "type": "Full POS",
+      "description": "Single-screen POS system",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Fiserv",
+      "model": "FD150",
+      "type": "Countertop",
+      "description": "Reliable countertop terminal",
+      "features": "Chip/Swipe/NFC",
+      "connection": "Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "Ingenico",
+      "model": "Lane 7000",
+      "type": "PIN Pad",
+      "description": "Busy retail environments",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "USB + Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "P Line",
+      "model": "P1",
+      "type": "Countertop",
+      "description": "Fast high-volume countertop terminal",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "P Line",
+      "model": "P12",
+      "type": "Mini POS",
+      "description": "Pocket-sized mini POS device",
+      "features": "Chip/NFC/QR",
+      "connection": "Bluetooth + WiFi",
+      "p2pe": false,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "P Line",
+      "model": "P17",
+      "type": "Large Screen",
+      "description": "Large screen with signature capture",
+      "features": "Chip/Swipe/NFC/PIN/Signature",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "P Line",
+      "model": "P18",
+      "type": "Multi-Lane",
+      "description": "Flip-screen multi-lane capable",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "P Line",
+      "model": "P3",
+      "type": "Wireless",
+      "description": "Wireless mobile with keyboard and printer",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "P Line",
+      "model": "P5",
+      "type": "Touchscreen",
+      "description": "Compact touchscreen for all payment methods",
+      "features": "Chip/Swipe/NFC/PIN/QR",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "P Line",
+      "model": "P8",
+      "type": "Portable",
+      "description": "Portable standalone or gateway-connected",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "WiFi + 4G + Bluetooth",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "PAX",
+      "model": "A80",
+      "type": "Countertop",
+      "description": "Countertop Android terminal",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "PAX",
+      "model": "A920",
+      "type": "Mobile",
+      "description": "Android SmartPOS terminal",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "PAX",
+      "model": "Aries 8",
+      "type": "PIN Pad",
+      "description": "Premium touchscreen PIN pad",
+      "features": "Chip/NFC/PIN",
+      "connection": "USB + Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "QD Line",
+      "model": "QD1",
+      "type": "Wireless",
+      "description": "Rugged and dependable wireless",
+      "features": "Chip/Swipe/NFC/PIN",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "QD Line",
+      "model": "QD2",
+      "type": "Mobile",
+      "description": "Fine dining and upscale retail",
+      "features": "Chip/NFC/PIN",
+      "connection": "WiFi + 4G",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "QD Line",
+      "model": "QD3 Mobile",
+      "type": "Mobile POS",
+      "description": "Mobile POS variant",
+      "features": "Chip/NFC/QR",
+      "connection": "WiFi + 4G + Bluetooth",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "QD Line",
+      "model": "QD3 PIN Pad",
+      "type": "PIN Pad",
+      "description": "PIN Pad variant",
+      "features": "Chip/NFC/PIN",
+      "connection": "USB + Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "QD Line",
+      "model": "QD4",
+      "type": "Countertop",
+      "description": "Lightning fast omni payments",
+      "features": "Chip/Swipe/NFC/PIN/QR",
+      "connection": "Ethernet + WiFi",
+      "p2pe": true,
+      "nfc": true,
+      "printer": true
+    },
+    {
+      "series": "QD Line",
+      "model": "QD5",
+      "type": "PIN Pad",
+      "description": "Multi-payment acceptance PIN pad",
+      "features": "Chip/NFC/PIN",
+      "connection": "USB + Ethernet",
+      "p2pe": true,
+      "nfc": true,
+      "printer": false
+    },
+    {
+      "series": "Virtual",
+      "model": "Virtual Terminal",
+      "type": "Software",
+      "description": "Browser-based payment processing",
+      "features": "Keyed Entry/Card-Not-Present",
+      "connection": "Internet",
+      "p2pe": false,
+      "nfc": false,
+      "printer": false
+    }
+  ],
+  "equipmentDistribution": [
+    {
+      "model": "PAX A920",
+      "count": 964
+    },
+    {
+      "model": "Clover Flex 3",
+      "count": 539
+    },
+    {
+      "model": "Virtual Terminal",
+      "count": 454
+    },
+    {
+      "model": "P1",
+      "count": 415
+    },
+    {
+      "model": "Clover Mini",
+      "count": 368
+    },
+    {
+      "model": "P3",
+      "count": 270
+    },
+    {
+      "model": "QD1",
+      "count": 239
+    },
+    {
+      "model": "P5",
+      "count": 229
+    },
+    {
+      "model": "PAX A80",
+      "count": 226
+    },
+    {
+      "model": "QD4",
+      "count": 196
+    },
+    {
+      "model": "P8",
+      "count": 187
+    },
+    {
+      "model": "Clover Station Duo",
+      "count": 159
+    },
+    {
+      "model": "QD2",
+      "count": 123
     }
   ]
 }
