@@ -791,17 +791,17 @@ body {
   width: 32px;
   height: 32px;
   border-radius: 10px;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  background: #1E293B;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 2px 8px rgba(99,102,241,0.25);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   flex-shrink: 0;
 }
 
 .lumina-title-text { display: flex; flex-direction: column; flex: 1; }
 .lumina-title { font-size: 16px; font-weight: 800; color: #0F172A; letter-spacing: -0.02em; line-height: 1.2; }
-.lumina-badge { font-size: 9px; font-weight: 800; color: #6366F1; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.06em; }
+.lumina-badge { font-size: 9px; font-weight: 800; color: #D97706; margin-top: 1px; text-transform: uppercase; letter-spacing: 0.06em; }
 
 .lumina-close-btn {
   width: 30px;
@@ -864,7 +864,7 @@ body {
   width: 26px;
   height: 26px;
   border-radius: 8px;
-  background: linear-gradient(135deg, #6366F1, #8B5CF6);
+  background: #1E293B;
   display: flex;
   align-items: center;
   justify-content: center;

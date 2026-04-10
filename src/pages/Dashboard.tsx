@@ -5,19 +5,26 @@ import { KpiCard, Card, CardHeader, StatusBadge, DataTable, ActivityFeed } from 
 import WaterfallChart from '../components/ui/WaterfallChart'
 import type { Column } from '../components/ui'
 
-/* ─── Static Data ─── */
+/* ─── Data from DB ─── */
 
-const healthMatrix = [
-  { iso: 'Harlow Direct', revenue: 'Strong', margin: 'Strong', churn: 'Strong', volume: 'Strong', compliance: 'Strong' },
-  { iso: 'Zenith Payments', revenue: 'Good', margin: 'Strong', churn: 'Good', volume: 'Strong', compliance: 'Strong' },
-  { iso: 'Liberty Processing', revenue: 'Good', margin: 'Good', churn: 'Watch', volume: 'Good', compliance: 'Good' },
-]
+// Health matrix derived from ISO portfolio data
+const healthMatrix = isoPortfolio.map(iso => {
+  const churnVal = parseFloat(iso.churn)
+  return {
+    iso: iso.name,
+    revenue: 'Strong',
+    margin: 'Strong',
+    churn: churnVal > 2.5 ? 'Watch' : churnVal > 1.5 ? 'Good' : 'Strong',
+    volume: 'Strong',
+    compliance: churnVal > 3 ? 'Good' : 'Strong',
+  }
+})
 
-const isoVolumeData = [
-  { name: 'Harlow Direct', value: 18.4 },
-  { name: 'Zenith', value: 8.9 },
-  { name: 'Liberty', value: 4.8 },
-]
+// ISO volume from portfolio
+const isoVolumeData = isoPortfolio.map(iso => ({
+  name: iso.name.replace(' Payments', '').replace(' Processing', ''),
+  value: parseFloat(iso.volume.replace(/[$M]/g, '')),
+}))
 
 // Waterfall: each bar has invisible base + visible delta
 // Starting=28.5, +1.8 Organic, +1.2 Zenith, +0.8 Products, -0.2 Churn, =32.1 Current
