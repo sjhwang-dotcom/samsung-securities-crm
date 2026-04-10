@@ -1822,801 +1822,801 @@
       "merchant": "Elite Phoenix",
       "bank": "Esquire Bank",
       "submitted": "2026-03-30",
-      "stage": "Withdrawn",
-      "riskScore": 72,
-      "riskLabel": "Low",
-      "status": "Declined",
-      "assigned": "Casey Rivera"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Anne's Salon",
       "bank": "Esquire Bank",
       "submitted": "2026-03-27",
-      "stage": "Document Collection",
+      "stage": "Risk Assessment",
       "riskScore": 56,
       "riskLabel": "Medium",
       "status": "In Review",
-      "assigned": "Alex Park"
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Peter's Grill",
       "bank": "Esquire Bank",
       "submitted": "2026-03-26",
-      "stage": "Declined",
+      "stage": "Underwriting Review",
       "riskScore": 53,
       "riskLabel": "Medium",
-      "status": "Declined",
-      "assigned": "Taylor Kim"
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Kew Gardens Gas",
       "bank": "Esquire Bank",
       "submitted": "2026-03-23",
-      "stage": "Declined",
-      "riskScore": 80,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Casey Rivera"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Lisa's Grill",
       "bank": "Esquire Bank",
       "submitted": "2026-03-18",
-      "stage": "Final Approval",
-      "riskScore": 78,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Kate Palmarini"
     },
     {
-      "merchant": "Midtown Jewelers",
+      "merchant": "Bella's Bistro LLC",
       "bank": "Esquire Bank",
       "submitted": "2026-03-17",
-      "stage": "Final Approval",
-      "riskScore": 31,
-      "riskLabel": "High",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "stage": "KYB/KYC Verification",
+      "riskScore": 72,
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Tyler's Grill",
       "bank": "Esquire Bank",
       "submitted": "2026-03-16",
-      "stage": "Document Collection",
+      "stage": "KYB/KYC Verification",
       "riskScore": 33,
-      "riskLabel": "High",
-      "status": "Approved",
-      "assigned": "Alex Park"
+      "riskLabel": "High Risk",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Forest Hills Inn",
       "bank": "Esquire Bank",
       "submitted": "2026-03-14",
-      "stage": "Final Approval",
-      "riskScore": 91,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Morgan Chen"
+      "stage": "E-Sign",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Signature",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Lindsay's Grocery",
       "bank": "Esquire Bank",
       "submitted": "2026-03-14",
-      "stage": "Declined",
-      "riskScore": 93,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Alex Park"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Tammy's Bistro",
       "bank": "Esquire Bank",
       "submitted": "2026-03-11",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 76,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Zachary's Electric",
       "bank": "Esquire Bank",
       "submitted": "2026-03-09",
-      "stage": "Declined",
+      "stage": "Boarding Complete",
       "riskScore": 74,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Golden Lotus",
       "bank": "Esquire Bank",
       "submitted": "2026-03-08",
-      "stage": "Document Collection",
+      "stage": "Pricing & Terms",
       "riskScore": 39,
-      "riskLabel": "High",
+      "riskLabel": "High Risk",
       "status": "Approved",
-      "assigned": "Casey Rivera"
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Taste of Flatbush",
       "bank": "Esquire Bank",
       "submitted": "2026-03-01",
-      "stage": "Risk Assessment",
+      "stage": "Underwriting Review",
       "riskScore": 85,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Greenwich Village Dental",
       "bank": "Esquire Bank",
       "submitted": "2026-03-01",
-      "stage": "Declined",
+      "stage": "High Risk Review",
       "riskScore": 77,
-      "riskLabel": "Low",
-      "status": "Approved",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "Needs Docs",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Thomas's Auto Parts",
       "bank": "Esquire Bank",
       "submitted": "2026-02-25",
-      "stage": "Bank Review",
-      "riskScore": 60,
-      "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Jordan Lee"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Matthew's Variety",
       "bank": "Esquire Bank",
       "submitted": "2026-02-25",
-      "stage": "Bank Review",
+      "stage": "Boarding Complete",
       "riskScore": 91,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Ashley's Bistro",
       "bank": "Esquire Bank",
       "submitted": "2026-02-18",
-      "stage": "Bank Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 80,
-      "riskLabel": "Low",
-      "status": "Declined",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Lee's Barbershop",
       "bank": "Esquire Bank",
       "submitted": "2026-02-18",
-      "stage": "Document Collection",
+      "stage": "KYB/KYC Verification",
       "riskScore": 68,
-      "riskLabel": "Medium",
-      "status": "Approved",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Golden Summit",
       "bank": "Esquire Bank",
       "submitted": "2026-02-16",
-      "stage": "Risk Assessment",
-      "riskScore": 69,
-      "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Taylor Kim"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Lance's Salon",
       "bank": "Esquire Bank",
       "submitted": "2026-02-16",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 94,
-      "riskLabel": "Low",
-      "status": "Approved",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Dr. Curry, DPM",
       "bank": "Esquire Bank",
       "submitted": "2026-02-15",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 95,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Taste of Red Hook",
       "bank": "Esquire Bank",
       "submitted": "2026-02-14",
-      "stage": "Underwriting Review",
+      "stage": "Pricing & Terms",
       "riskScore": 53,
       "riskLabel": "Medium",
       "status": "Approved",
-      "assigned": "Alex Park"
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Holmes Medical",
       "bank": "Esquire Bank",
       "submitted": "2026-02-12",
-      "stage": "Bank Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 47,
       "riskLabel": "Medium",
-      "status": "Approved",
-      "assigned": "Casey Rivera"
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Greenwich Village Pharmacy",
       "bank": "Esquire Bank",
       "submitted": "2026-02-10",
-      "stage": "Final Approval",
-      "riskScore": 70,
-      "riskLabel": "Low",
-      "status": "Declined",
-      "assigned": "Alex Park"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Washington Heights Deli",
       "bank": "Esquire Bank",
       "submitted": "2026-02-10",
-      "stage": "Underwriting Review",
+      "stage": "Boarding Complete",
       "riskScore": 78,
-      "riskLabel": "Low",
+      "riskLabel": "Low Risk",
       "status": "Approved",
-      "assigned": "Alex Park"
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Jeremy's Barbershop",
       "bank": "Esquire Bank",
       "submitted": "2026-02-05",
-      "stage": "Final Approval",
+      "stage": "Underwriting Review",
       "riskScore": 90,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "SoHo Auto Repair",
       "bank": "Esquire Bank",
       "submitted": "2026-02-04",
-      "stage": "Bank Review",
-      "riskScore": 92,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Casey Rivera"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Docs",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Pamela's Auto Parts",
       "bank": "Esquire Bank",
       "submitted": "2026-02-01",
-      "stage": "Document Collection",
-      "riskScore": 82,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Casey Rivera"
+      "stage": "E-Sign",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Signature",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Bobby's Salon",
       "bank": "Esquire Bank",
       "submitted": "2026-02-01",
-      "stage": "Final Approval",
-      "riskScore": 52,
-      "riskLabel": "Medium",
-      "status": "Approved",
-      "assigned": "Morgan Chen"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Golden Summit",
       "bank": "Esquire Bank",
       "submitted": "2026-01-24",
-      "stage": "Final Approval",
+      "stage": "KYB/KYC Verification",
       "riskScore": 61,
-      "riskLabel": "Medium",
-      "status": "Declined",
-      "assigned": "Taylor Kim"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Washington Heights Pharmacy",
       "bank": "Esquire Bank",
       "submitted": "2026-01-23",
-      "stage": "Underwriting Review",
+      "stage": "Pricing & Terms",
       "riskScore": 82,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Taylor Kim"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Bensonhurst Jewelers",
       "bank": "Esquire Bank",
       "submitted": "2026-01-22",
-      "stage": "Final Approval",
+      "stage": "Pricing & Terms",
       "riskScore": 86,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Taylor Kim"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Long Island City Deli",
       "bank": "Esquire Bank",
       "submitted": "2026-01-17",
-      "stage": "Risk Assessment",
-      "riskScore": 62,
-      "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Alex Park"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
-      "merchant": "Taste of Crown Heights",
+      "merchant": "King's Crown Jewelry",
       "bank": "Esquire Bank",
       "submitted": "2026-01-16",
-      "stage": "Document Collection",
-      "riskScore": 87,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Taylor Kim"
+      "stage": "High Risk Review",
+      "riskScore": 34,
+      "riskLabel": "High Risk",
+      "status": "Needs Docs",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Taste of Washington Heights",
       "bank": "Esquire Bank",
       "submitted": "2026-01-13",
-      "stage": "Withdrawn",
+      "stage": "High Risk Review",
       "riskScore": 91,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Taylor Kim"
+      "riskLabel": "Low Risk",
+      "status": "Needs Docs",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Melissa's Grocery",
       "bank": "Esquire Bank",
       "submitted": "2026-01-12",
-      "stage": "Declined",
+      "stage": "Risk Assessment",
       "riskScore": 82,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Riverdale Kitchen",
       "bank": "Esquire Bank",
       "submitted": "2026-01-08",
-      "stage": "Final Approval",
-      "riskScore": 47,
-      "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Jordan Lee"
+      "stage": "E-Sign",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Signature",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Chelsea Market",
       "bank": "Esquire Bank",
       "submitted": "2026-01-08",
-      "stage": "Underwriting Review",
-      "riskScore": 81,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Taylor Kim"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Taste of Bay Ridge",
       "bank": "Esquire Bank",
       "submitted": "2026-01-02",
-      "stage": "Document Collection",
+      "stage": "KYB/KYC Verification",
       "riskScore": 36,
-      "riskLabel": "High",
-      "status": "Pending",
-      "assigned": "Taylor Kim"
+      "riskLabel": "High Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Flushing Deli",
       "bank": "Esquire Bank",
       "submitted": "2025-12-28",
-      "stage": "Underwriting Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 59,
       "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Morgan Chen"
+      "status": "In Progress",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Express Car Wash",
       "bank": "Esquire Bank",
       "submitted": "2025-12-25",
-      "stage": "Document Collection",
+      "stage": "Underwriting Review",
       "riskScore": 55,
       "riskLabel": "Medium",
       "status": "In Review",
-      "assigned": "Casey Rivera"
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Kimberly's Pizzeria",
       "bank": "Esquire Bank",
       "submitted": "2025-12-24",
-      "stage": "Withdrawn",
+      "stage": "Pricing & Terms",
       "riskScore": 43,
       "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Casey Rivera"
+      "status": "Approved",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Mike's Salon",
       "bank": "Esquire Bank",
       "submitted": "2025-12-23",
-      "stage": "Withdrawn",
+      "stage": "Underwriting Review",
       "riskScore": 92,
-      "riskLabel": "Low",
+      "riskLabel": "Low Risk",
       "status": "In Review",
-      "assigned": "Alex Park"
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Monica's Hardware",
       "bank": "Esquire Bank",
       "submitted": "2025-12-21",
-      "stage": "Underwriting Review",
+      "stage": "Pricing & Terms",
       "riskScore": 78,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Elite Crown",
       "bank": "Esquire Bank",
       "submitted": "2025-12-21",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 31,
-      "riskLabel": "High",
-      "status": "Pending",
-      "assigned": "Alex Park"
+      "riskLabel": "High Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Riverdale Inn",
       "bank": "Esquire Bank",
       "submitted": "2025-12-19",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 62,
-      "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Bensonhurst Jewelers",
       "bank": "Esquire Bank",
       "submitted": "2025-12-14",
       "stage": "Document Collection",
-      "riskScore": 67,
-      "riskLabel": "Medium",
-      "status": "Approved",
-      "assigned": "Alex Park"
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Docs",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Fashion Ocean",
       "bank": "Esquire Bank",
       "submitted": "2025-12-02",
-      "stage": "Withdrawn",
+      "stage": "Boarding Complete",
       "riskScore": 58,
       "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "status": "Approved",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Nicole's Barbershop",
       "bank": "Esquire Bank",
       "submitted": "2025-12-02",
-      "stage": "Final Approval",
+      "stage": "Underwriting Review",
       "riskScore": 64,
-      "riskLabel": "Medium",
-      "status": "Approved",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Upper West Side Cleaners",
       "bank": "Esquire Bank",
       "submitted": "2025-11-30",
-      "stage": "Final Approval",
+      "stage": "Boarding Complete",
       "riskScore": 95,
-      "riskLabel": "Low",
+      "riskLabel": "Low Risk",
       "status": "Approved",
-      "assigned": "Morgan Chen"
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Elite Phoenix",
       "bank": "Esquire Bank",
       "submitted": "2025-11-29",
-      "stage": "Risk Assessment",
-      "riskScore": 76,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Alex Park"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Darrell's Salon",
       "bank": "Esquire Bank",
       "submitted": "2025-11-28",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 62,
-      "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Golden Moon",
       "bank": "Esquire Bank",
       "submitted": "2025-11-27",
-      "stage": "Underwriting Review",
-      "riskScore": 81,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Jordan Lee"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Docs",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Greenwich Village Jewelers",
       "bank": "Esquire Bank",
       "submitted": "2025-11-24",
-      "stage": "Withdrawn",
+      "stage": "Pricing & Terms",
       "riskScore": 41,
       "riskLabel": "Medium",
       "status": "Approved",
-      "assigned": "Taylor Kim"
+      "assigned": "Kate Palmarini"
     },
     {
-      "merchant": "Crown Heights Gas",
+      "merchant": "Queens Auto Repair",
       "bank": "Esquire Bank",
       "submitted": "2025-11-20",
-      "stage": "Declined",
-      "riskScore": 88,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Morgan Chen"
+      "stage": "E-Sign",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Signature",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Fashion Palace",
       "bank": "Esquire Bank",
       "submitted": "2025-11-18",
-      "stage": "Bank Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 71,
-      "riskLabel": "Low",
-      "status": "Approved",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Bay Ridge Deli",
       "bank": "Esquire Bank",
       "submitted": "2025-11-18",
-      "stage": "Bank Review",
+      "stage": "High Risk Review",
       "riskScore": 90,
-      "riskLabel": "Low",
-      "status": "Approved",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "Needs Docs",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Washington Heights Florist",
       "bank": "Esquire Bank",
       "submitted": "2025-11-17",
-      "stage": "Underwriting Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 40,
       "riskLabel": "Medium",
-      "status": "Declined",
-      "assigned": "Casey Rivera"
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
-      "merchant": "SoHo Cafe",
+      "merchant": "Harlem Grocery #2",
       "bank": "Esquire Bank",
       "submitted": "2025-11-10",
-      "stage": "Withdrawn",
-      "riskScore": 83,
-      "riskLabel": "Low",
-      "status": "Approved",
-      "assigned": "Casey Rivera"
+      "stage": "Underwriting Review",
+      "riskScore": 58,
+      "riskLabel": "Medium",
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Red Hook Market",
       "bank": "Esquire Bank",
       "submitted": "2025-11-09",
-      "stage": "Bank Review",
+      "stage": "Pricing & Terms",
       "riskScore": 76,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Golden Crown",
       "bank": "Esquire Bank",
       "submitted": "2025-11-02",
-      "stage": "Bank Review",
+      "stage": "Underwriting Review",
       "riskScore": 67,
-      "riskLabel": "Medium",
-      "status": "Pending",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Forest Hills Spa",
       "bank": "Esquire Bank",
       "submitted": "2025-10-31",
-      "stage": "Withdrawn",
+      "stage": "KYB/KYC Verification",
       "riskScore": 78,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "Williamsburg Florist",
       "bank": "Esquire Bank",
       "submitted": "2025-10-30",
-      "stage": "Bank Review",
+      "stage": "Underwriting Review",
       "riskScore": 50,
       "riskLabel": "Medium",
-      "status": "Declined",
-      "assigned": "Alex Park"
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Henry's Auto Parts",
       "bank": "Esquire Bank",
       "submitted": "2025-10-26",
-      "stage": "Declined",
+      "stage": "High Risk Review",
       "riskScore": 76,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Needs Docs",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Fashion Crown",
       "bank": "Esquire Bank",
       "submitted": "2025-10-25",
-      "stage": "Underwriting Review",
+      "stage": "KYB/KYC Verification",
       "riskScore": 95,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Jordan Lee"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Douglas's Auto Body",
       "bank": "Esquire Bank",
       "submitted": "2025-10-20",
-      "stage": "Underwriting Review",
-      "riskScore": 67,
-      "riskLabel": "Medium",
-      "status": "In Review",
-      "assigned": "Jordan Lee"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Midtown Gas",
       "bank": "Esquire Bank",
       "submitted": "2025-10-17",
-      "stage": "Final Approval",
+      "stage": "Pricing & Terms",
       "riskScore": 76,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "SoHo Pharmacy",
       "bank": "Esquire Bank",
       "submitted": "2025-10-17",
-      "stage": "Declined",
+      "stage": "Underwriting Review",
       "riskScore": 52,
       "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Taylor Kim"
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Express Car Wash",
       "bank": "Esquire Bank",
       "submitted": "2025-10-16",
-      "stage": "Bank Review",
+      "stage": "Pricing & Terms",
       "riskScore": 74,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Elite Moon",
       "bank": "Esquire Bank",
       "submitted": "2025-10-16",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 79,
-      "riskLabel": "Low",
-      "status": "Declined",
-      "assigned": "Taylor Kim"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Mike Rodriguez"
     },
     {
       "merchant": "York Medical",
       "bank": "Esquire Bank",
       "submitted": "2025-10-15",
-      "stage": "Final Approval",
-      "riskScore": 74,
-      "riskLabel": "Low",
-      "status": "In Review",
-      "assigned": "Casey Rivera"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Tribeca Kitchen",
       "bank": "Esquire Bank",
       "submitted": "2025-10-14",
-      "stage": "Final Approval",
-      "riskScore": 88,
-      "riskLabel": "Low",
-      "status": "Withdrawn",
-      "assigned": "Casey Rivera"
+      "stage": "Document Collection",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Flatbush Gas",
       "bank": "Esquire Bank",
       "submitted": "2025-10-13",
-      "stage": "Declined",
-      "riskScore": 80,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Taylor Kim"
+      "stage": "Application Received",
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "In Progress",
+      "assigned": "David Goldfarb"
     },
     {
       "merchant": "Harold's Auto Parts",
       "bank": "Esquire Bank",
       "submitted": "2025-10-11",
       "stage": "Document Collection",
-      "riskScore": 44,
-      "riskLabel": "Medium",
-      "status": "Declined",
-      "assigned": "Casey Rivera"
+      "riskScore": null,
+      "riskLabel": "Pending",
+      "status": "Awaiting Docs",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Riverdale Gas",
       "bank": "Esquire Bank",
       "submitted": "2025-10-09",
-      "stage": "Withdrawn",
+      "stage": "Pricing & Terms",
       "riskScore": 44,
       "riskLabel": "Medium",
-      "status": "Pending",
-      "assigned": "Morgan Chen"
+      "status": "Approved",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Angela's Bistro",
       "bank": "Esquire Bank",
       "submitted": "2025-10-09",
-      "stage": "Declined",
+      "stage": "Boarding Complete",
       "riskScore": 61,
-      "riskLabel": "Medium",
-      "status": "Pending",
-      "assigned": "Morgan Chen"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Jamaica Auto Repair",
       "bank": "Esquire Bank",
       "submitted": "2025-10-07",
-      "stage": "Risk Assessment",
+      "stage": "KYB/KYC Verification",
       "riskScore": 65,
-      "riskLabel": "Medium",
-      "status": "Pending",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "In Progress",
+      "assigned": "Sarah Chen"
     },
     {
       "merchant": "Robert's Grill",
       "bank": "Esquire Bank",
       "submitted": "2025-10-06",
-      "stage": "Underwriting Review",
+      "stage": "Pricing & Terms",
       "riskScore": 94,
-      "riskLabel": "Low",
-      "status": "Pending",
-      "assigned": "Alex Park"
+      "riskLabel": "Low Risk",
+      "status": "Approved",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Lower East Side Deli",
       "bank": "Esquire Bank",
       "submitted": "2025-10-06",
-      "stage": "Underwriting Review",
+      "stage": "Risk Assessment",
       "riskScore": 88,
-      "riskLabel": "Low",
-      "status": "Declined",
-      "assigned": "Casey Rivera"
+      "riskLabel": "Low Risk",
+      "status": "In Review",
+      "assigned": "Kate Palmarini"
     },
     {
       "merchant": "Emily's Salon",
       "bank": "Esquire Bank",
       "submitted": "2025-10-02",
-      "stage": "Declined",
+      "stage": "Risk Assessment",
       "riskScore": 59,
       "riskLabel": "Medium",
-      "status": "Withdrawn",
-      "assigned": "Jordan Lee"
+      "status": "In Review",
+      "assigned": "Sarah Chen"
     }
   ]
 }

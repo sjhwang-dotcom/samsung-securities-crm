@@ -640,20 +640,50 @@ function OnboardingMasterDetail() {
 
   const detail = applicationDetails[selected.merchant]
 
-  // Fallback for merchants not in the detailed map
-  const steps = detail?.steps ?? [
-    { label: 'Application', done: true },
-    { label: 'Documents', done: false },
-    { label: 'KYB/KYC', done: false },
-    { label: 'Risk Assessment', done: false },
-    { label: 'Pricing', done: false },
-    { label: 'Boarding', done: false },
-  ]
-  const kybResults = detail?.kybResults ?? []
-  const docs = detail?.docs ?? []
+  // Auto-generate steps from stage
+  const stageOrder = ['Application Received', 'Document Collection', 'E-Sign', 'KYB/KYC Verification', 'Risk Assessment', 'Underwriting Review', 'High Risk Review', 'Pricing & Terms', 'Boarding Complete']
+  const stepLabels = ['Application', 'Documents', 'KYB/KYC', 'Risk Assessment', 'Pricing', 'Boarding']
+  const stageToStep: Record<string, number> = {
+    'Application Received': 0, 'Document Collection': 1, 'E-Sign': 1,
+    'KYB/KYC Verification': 2, 'Risk Assessment': 3, 'Underwriting Review': 3, 'High Risk Review': 3,
+    'Pricing & Terms': 4, 'Boarding Complete': 5,
+  }
+  const currentStepIdx = stageToStep[selected.stage] ?? 0
+  const autoSteps = stepLabels.map((label, i) => ({
+    label,
+    done: i < currentStepIdx,
+    current: i === currentStepIdx,
+  }))
+
+  const steps = detail?.steps ?? autoSteps
+
+  // Auto-generate KYB results based on stage
+  const autoKyb = currentStepIdx >= 2 ? [
+    { title: 'Business Entity Verified', sub: 'EIN validated, state filing confirmed', status: 'pass' as const },
+    { title: 'Beneficial Ownership', sub: 'Ownership chain verified', status: 'pass' as const },
+    { title: 'Sanctions & PEP Screening', sub: 'OFAC/EU/UN — no matches', status: 'pass' as const },
+    { title: 'Adverse Media Check', sub: selected.riskScore && selected.riskScore < 50 ? 'Flagged — review required' : 'Clear', status: (selected.riskScore && selected.riskScore < 50 ? 'flag' : 'pass') as 'pass' | 'flag' },
+    { title: 'Identity Verification', sub: 'Document OCR + liveness check', status: 'pass' as const },
+  ] : []
+
+  const autoDocs = currentStepIdx >= 1 ? [
+    { name: 'Merchant Application (MPA)', status: 'Verified', extracted: 'Business info extracted' },
+    { name: 'Driver License', status: currentStepIdx >= 2 ? 'Verified' : 'Uploaded', extracted: 'Name, DOB, Address' },
+    { name: 'Bank Statements (3mo)', status: currentStepIdx >= 2 ? 'Verified' : 'Pending', extracted: currentStepIdx >= 2 ? 'Avg balance analyzed' : 'Awaiting upload' },
+    { name: 'Voided Check', status: currentStepIdx >= 2 ? 'Verified' : 'Pending', extracted: 'Routing + Account' },
+  ] : []
+
+  const kybResults = detail?.kybResults ?? autoKyb
+  const docs = detail?.docs ?? autoDocs
   const mpa = detail?.mpa ?? null
-  const timeline = detail?.timeline ?? []
-  const pricingOffer = detail?.pricingOffer ?? null
+  const timeline = detail?.timeline ?? [
+    { time: selected.submitted, action: 'Application submitted', by: selected.assigned },
+    ...(currentStepIdx >= 1 ? [{ time: 'Next day', action: 'Documents requested', by: 'System' }] : []),
+    ...(currentStepIdx >= 2 ? [{ time: '2 days later', action: 'KYB/KYC verification initiated', by: selected.assigned }] : []),
+    ...(currentStepIdx >= 3 ? [{ time: '3 days later', action: 'Risk assessment completed', by: 'AI Engine' }] : []),
+    ...(currentStepIdx >= 4 ? [{ time: '4 days later', action: 'Pricing terms generated', by: 'AI Engine' }] : []),
+  ]
+  const pricingOffer = detail?.pricingOffer ?? (currentStepIdx >= 4 ? { rate: '2.69%', perTxn: '$0.10', monthly: '$9.95', tier: 'Tier 2' } : null)
   const detailRiskScore = detail?.riskScore ?? selected.riskScore
   const detailRiskLabel = detail?.riskLabel ?? selected.riskLabel
 

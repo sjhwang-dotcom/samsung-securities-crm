@@ -55,7 +55,8 @@
       "Bash(sed -i '' \"82s/display: ''flex'', flexDirection: ''column'', gap: 20//\" src/pages/partner/PartnerMarketing.tsx)",
       "Bash(sed -i '' '82s/style={{ }}/className=\"\"dashboard-grid\"\"/' src/pages/partner/PartnerMarketing.tsx)",
       "Bash(sed -i '' \"60s/display: ''flex'', flexDirection: ''column'', gap: 20//\" src/pages/partner/PartnerTraining.tsx)",
-      "Bash(sed -i '' '60s/style={{ }}/className=\"\"dashboard-grid\"\"/' src/pages/partner/PartnerTraining.tsx)"
+      "Bash(sed -i '' '60s/style={{ }}/className=\"\"dashboard-grid\"\"/' src/pages/partner/PartnerTraining.tsx)",
+      "Bash(python3:*)"
     ]
   }
 }
