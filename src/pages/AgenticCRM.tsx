@@ -641,7 +641,6 @@ function OnboardingMasterDetail() {
   const detail = applicationDetails[selected.merchant]
 
   // Auto-generate steps from stage
-  const stageOrder = ['Application Received', 'Document Collection', 'E-Sign', 'KYB/KYC Verification', 'Risk Assessment', 'Underwriting Review', 'High Risk Review', 'Pricing & Terms', 'Boarding Complete']
   const stepLabels = ['Application', 'Documents', 'KYB/KYC', 'Risk Assessment', 'Pricing', 'Boarding']
   const stageToStep: Record<string, number> = {
     'Application Received': 0, 'Document Collection': 1, 'E-Sign': 1,
