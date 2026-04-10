@@ -25,7 +25,7 @@ const isoVolumeData = [
 const waterfallData = [
   { category: 'Starting', value: 28.5, type: 'total' as const },
   { category: 'Organic', value: 1.8, type: 'delta' as const },
-  { category: 'Zenith Acq.', value: 1.2, type: 'delta' as const },
+  { category: 'ISO Acquisition', value: 1.2, type: 'delta' as const },
   { category: 'Products', value: 0.8, type: 'delta' as const },
   { category: 'Churn', value: -0.2, type: 'delta' as const },
   { category: 'Current', value: 32.1, type: 'total' as const },
