@@ -183,6 +183,47 @@ export default function SalesAnalytics() {
         <DataTable columns={topItemCols} data={topItemRows} />
       </Card>
 
+      {/* AI Sales Insights */}
+      <Card noPadding>
+        <CardHeader title="AI Sales Insights" subtitle="Recommendations based on your POS data" />
+        <div style={{ padding: '0 16px 16px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+          {[
+            {
+              title: 'Peak Hour Opportunity',
+              insight: `Your busiest hour is 7-8pm with ${hourlyData.find(h => h.hour === '7pm')?.orders || 0} orders. Consider adding a "Happy Hour" deal at 4-5pm to boost the slower afternoon period — currently only ${hourlyData.find(h => h.hour === '4pm')?.orders || 0} orders.`,
+              metric: `${Math.round(((hourlyData.find(h => h.hour === '7pm')?.orders || 1) / Math.max(hourlyData.find(h => h.hour === '4pm')?.orders || 1, 1) - 1) * 100)}% gap`,
+              color: '#1578F7',
+            },
+            {
+              title: 'Top Seller Margin',
+              insight: `Pepperoni Pizza is your #1 seller but has a ${topItemRows[0]?.margin || '0%'} margin. Consider promoting Supreme Pizza ($18.99) which has higher margin and average ticket.`,
+              metric: `$${((topItemRows[2]?.profit || 0) / Math.max(topItemRows[2]?.qtySold || 1, 1)).toFixed(2)}/unit profit`,
+              color: '#10B981',
+            },
+            {
+              title: 'Cross-Sell Opportunity',
+              insight: `Only ${Math.round((portalData.categorySales.find(c => c.category === 'Beverages')?.qty || 0) / totalOrders * 100)}% of orders include a beverage. Training staff to suggest drinks could add $${Math.round(totalOrders * 0.3 * 3.5)} monthly revenue.`,
+              metric: `+$${Math.round(totalOrders * 0.3 * 3.5).toLocaleString()} potential`,
+              color: '#8B5CF6',
+            },
+            {
+              title: 'Weekend vs Weekday',
+              insight: `Weekend revenue is ~40% higher than weekdays. Consider adding weekend-only specials like family meal deals to further capitalize on this traffic.`,
+              metric: '+40% weekend lift',
+              color: '#F59E0B',
+            },
+          ].map(item => (
+            <div key={item.title} style={{ padding: 14, borderRadius: 10, border: '1px solid #F1F5F9' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 6 }}>
+                <span style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{item.title}</span>
+                <span style={{ fontSize: 10, fontWeight: 700, padding: '2px 8px', borderRadius: 4, background: `${item.color}15`, color: item.color }}>{item.metric}</span>
+              </div>
+              <div style={{ fontSize: 12, color: '#64748B', lineHeight: 1.6 }}>{item.insight}</div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
       {/* Product Catalog (expandable) */}
       <Card>
         <div
