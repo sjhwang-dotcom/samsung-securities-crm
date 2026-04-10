@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
+import harlowLogo from '../assets/harlow-logo.svg'
 import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, ClipboardList, Phone,
@@ -42,7 +43,7 @@ export default function Layout() {
       {/* ═══ NavRail — Icon-only dark sidebar ═══ */}
       <nav className="icon-rail">
         <div className="icon-rail-logo">
-          <div className="logo-mark">H</div>
+          <img src={harlowLogo} alt="Harlow" style={{ width: 32, height: 32, borderRadius: 8 }} />
         </div>
 
         <div className="icon-rail-nav">

@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom'
+import harlowLogo from '../assets/harlow-logo.svg'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -8,7 +9,7 @@ export default function Login() {
       {/* Left — Branding */}
       <div style={s.left}>
         <div style={s.brandTop}>
-          <div style={s.logoMark}>H</div>
+          <img src={harlowLogo} alt="Harlow" style={{ width: 40, height: 40, borderRadius: 10 }} />
           <span style={s.brandName}>Harlow Payments</span>
         </div>
         <div style={s.hero}>
