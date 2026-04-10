@@ -398,12 +398,12 @@ function LiveCallsView() {
               <ComposedChart data={voiceHourlyData}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" vertical={false} />
                 <XAxis dataKey="hour" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
-                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} label={{ value: 'Calls', angle: -90, position: 'insideLeft', style: { fontSize: 10, fill: '#94A3B8' } }} />
-                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} label={{ value: 'Transfer %', angle: 90, position: 'insideRight', style: { fontSize: 10, fill: '#94A3B8' } }} />
-                <Tooltip contentStyle={tooltipStyle} />
+                <YAxis yAxisId="left" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} />
+                <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 11, fill: '#94A3B8', fontWeight: 500 }} axisLine={false} tickLine={false} tickFormatter={(v: any) => `${v}%`} />
+                <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => [name === 'Transfer Rate' ? `${v}%` : v, name]} />
                 <Legend iconType="circle" iconSize={8} wrapperStyle={{ fontSize: 11, fontWeight: 500, paddingTop: 8 }} />
-                <Bar yAxisId="left" dataKey="calls" fill="#0891B2" radius={[6, 6, 0, 0]} name="Calls" opacity={0.85} />
-                <Line yAxisId="right" type="monotone" dataKey="transferRate" stroke="#10B981" strokeWidth={2.5} dot={{ r: 3, fill: '#10B981', stroke: 'white', strokeWidth: 2 }} name="Transfer Rate %" />
+                <Line yAxisId="left" type="monotone" dataKey="calls" stroke="#1578F7" strokeWidth={2} dot={{ r: 4, fill: '#1578F7', stroke: 'white', strokeWidth: 2 }} activeDot={{ r: 6 }} name="Calls" />
+                <Line yAxisId="right" type="monotone" dataKey="transferRate" stroke="#10B981" strokeWidth={2} dot={{ r: 4, fill: '#10B981', stroke: 'white', strokeWidth: 2 }} activeDot={{ r: 6 }} name="Transfer Rate" />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
