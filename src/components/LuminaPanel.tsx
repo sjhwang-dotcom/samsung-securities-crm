@@ -188,6 +188,13 @@ const seedConversations: Record<string, ChatMessage[]> = {
     { role: 'user', content: "I need to update my bank account" },
     { role: 'assistant', content: "To update your settlement bank account, I'll need:\n\n1. **Voided check** or bank letter for the new account\n2. **Government-issued ID** (we have yours on file)\n\nThe change takes 2-3 business days to process. During transition, deposits continue to your current Chase ****8834 account. Want me to start the process?" },
   ],
+  '/portal/sales': [
+    { role: 'assistant', content: "Your POS data shows **4,364 items sold** in the last 30 days generating **$51K+ revenue**. Pepperoni Pizza is your #1 seller at 568 units ($9.6K)." },
+    { role: 'user', content: "What should I focus on to increase revenue?" },
+    { role: 'assistant', content: "Three opportunities from your data:\n\n1. **Cross-sell beverages** — only 15% of orders include a drink. If staff suggests a drink on every order, that's an extra **$3,500/month**.\n\n2. **Promote Supreme Pizza** — it has a higher margin ($5.10 cost vs $18.99 price = 73% margin) compared to Pepperoni (75% margin but lower ticket). Moving 10% of Pepperoni orders to Supreme adds ~$600/month.\n\n3. **4-5pm happy hour** — your slowest window. A pizza + drink combo deal could lift that hour by 40%." },
+    { role: 'user', content: "What's my best day of the week?" },
+    { role: 'assistant', content: "**Friday and Saturday** are your strongest days — about 40% more orders than weekdays. Saturday peaks at 7-8pm. Consider launching a **weekend family deal** (large pizza + salad + 2L soda) to increase average ticket on your busiest days." },
+  ],
   '/partner': [
     { role: 'assistant', content: "Welcome back, Jake. Your portfolio is performing well — **34 active merchants** generating **$4,218/mo** in residuals. Pipeline has 15 leads across all stages." },
     { role: 'user', content: "How's my conversion rate?" },
@@ -327,6 +334,7 @@ function ChatTab() {
     '/portal/equipment': 'Equipment',
     '/portal/products': 'Products & Services',
     '/portal/support': 'Support',
+    '/portal/sales': 'POS Sales Analytics',
     '/portal/funding': 'Business Funding',
     '/partner': 'Partner Dashboard',
     '/partner/pipeline': 'Partner Pipeline',

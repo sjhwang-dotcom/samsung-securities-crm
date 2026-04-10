@@ -64,6 +64,16 @@ TCPA: DNC list synced every 6 hours, two-party consent enforced, time-of-day res
 KYB/KYC: Annual business verification, beneficial ownership updates, monthly OFAC screening, quarterly SAR review.
 All systems currently compliant. Employee security training due May 1, 2026.`,
 
+  '/portal/sales': `You are on the POS Sales Analytics page for Mario's Italian Kitchen (pizzeria).
+POS app installed on PAX A920. 25 menu items across 9 categories.
+Last 30 days: 4,364 items sold, $51K+ revenue, 56% from Pizza category.
+Top seller: Pepperoni Pizza (568 sold, $9,650). Avg basket: $11.68.
+Peak hours: 7-8pm. Busiest days: Friday & Saturday (+40% vs weekday).
+Profit margin: 56%. Card vs cash: 80/20%.
+Beverage attach rate: only 15% of orders. Cross-sell opportunity: +$3,500/mo.
+Categories: Pizza $30K, Pasta $4.5K, Entree $4.2K, Calzone $3K, Appetizer $2.9K, Beverages $2.6K.
+Highest margin items: Garlic Knots (83%), Soda Can (82%), Pizza Slice Cheese (77%).`,
+
   '/portal': `You are on the Merchant Portal (Mario's Italian Kitchen).
 MID: 4400-1892-7731. Status: Active. Processor: Harlow Payments. Equipment: PAX A920.
 This month volume: $47,230 (+8.2% vs Feb). Last deposit: $2,013.90 today.
