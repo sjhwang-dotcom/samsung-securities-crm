@@ -72,8 +72,8 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         onMouseLeave={e => { if (!isResizing) (e.target as HTMLElement).style.background = 'transparent' }}
       />
 
-      {/* Header — hidden during PDF preview */}
-      <div className="lumina-header" style={activeTab === 'pdf-preview' ? { display: 'none' } : {}}>
+      {/* Header */}
+      <div className="lumina-header">
         <div className="lumina-title-row">
           <div className="lumina-logo" style={{ background: 'linear-gradient(135deg, #034EA2, #2B7DE9)' }}>
             <Sparkles size={16} color="white" />
@@ -90,30 +90,31 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
             </button>
           )}
         </div>
-        <div className="lumina-tabs">
-          {tabs.map(t => (
-            <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id)}
-              className={`lumina-tab ${activeTab === t.id ? 'active' : ''}`}
-            >
-              <t.Icon size={13} strokeWidth={2} />
-              {t.label}
-            </button>
-          ))}
-        </div>
+        {activeTab !== 'pdf-preview' ? (
+          <div className="lumina-tabs">
+            {tabs.map(t => (
+              <button
+                key={t.id}
+                onClick={() => setActiveTab(t.id)}
+                className={`lumina-tab ${activeTab === t.id ? 'active' : ''}`}
+              >
+                <t.Icon size={13} strokeWidth={2} />
+                {t.label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 12px', borderTop: '1px solid rgba(0,0,0,0.06)' }}>
+            <button onClick={() => setActiveTab('documents')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 12, color: '#034EA2', fontWeight: 600 }}>← 목록으로</button>
+            <span style={{ fontSize: 11, color: '#64748B', flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfTitle}</span>
+          </div>
+        )}
       </div>
 
-      {activeTab !== 'pdf-preview' && activeTab === 'chat' && <ChatTab />}
-      {activeTab !== 'pdf-preview' && activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
+      {activeTab === 'chat' && <ChatTab />}
+      {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
       {activeTab === 'pdf-preview' && pdfUrl && (
-        <>
-          <div style={{ padding: '4px 8px', background: '#0A1628', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <button onClick={() => setActiveTab('documents')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', fontSize: 11, color: 'white', fontWeight: 600, padding: '4px 10px', borderRadius: 4 }}>← 목록</button>
-            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfTitle}</span>
-          </div>
-          <iframe src={pdfUrl} style={{ flex: 1, border: 'none', width: '100%', background: 'white' }} title={pdfTitle} />
-        </>
+        <iframe src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} style={{ flex: 1, border: 'none', width: '100%', background: 'white' }} title={pdfTitle} />
       )}
     </aside>
   )

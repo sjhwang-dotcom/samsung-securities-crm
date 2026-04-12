@@ -1,5 +1,5 @@
 import { Award, TrendingUp, TrendingDown, CheckCircle, Clock } from 'lucide-react'
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts'
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell, Legend } from 'recharts'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import { brokerVotes, brokerVoteCategoryAvg, interactions } from '../data/mockData'
@@ -12,6 +12,39 @@ const tooltipStyle = {
 }
 
 const categoryColors = ['#034EA2', '#2B7DE9', '#10B981', '#F59E0B', '#F43F5E']
+
+// Build trend comparison data: previous period vs current period per category
+const trendData = (() => {
+  const cats = {
+    research: { cur: 0, prev: 0 },
+    sales: { cur: 0, prev: 0 },
+    trading: { cur: 0, prev: 0 },
+    corporateAccess: { cur: 0, prev: 0 },
+    events: { cur: 0, prev: 0 },
+  }
+  const count = brokerVotes.length || 1
+  brokerVotes.forEach(v => {
+    cats.research.cur += v.categories.research
+    cats.sales.cur += v.categories.sales
+    cats.trading.cur += v.categories.trading
+    cats.corporateAccess.cur += v.categories.corporateAccess
+    cats.events.cur += v.categories.events
+    // simulate previous from previousScore ratio
+    const ratio = v.previousScore / (v.overallScore || 1)
+    cats.research.prev += v.categories.research * ratio
+    cats.sales.prev += v.categories.sales * ratio
+    cats.trading.prev += v.categories.trading * ratio
+    cats.corporateAccess.prev += v.categories.corporateAccess * ratio
+    cats.events.prev += v.categories.events * ratio
+  })
+  return [
+    { category: '리서치', prev: +(cats.research.prev / count).toFixed(1), cur: +(cats.research.cur / count).toFixed(1) },
+    { category: '세일즈', prev: +(cats.sales.prev / count).toFixed(1), cur: +(cats.sales.cur / count).toFixed(1) },
+    { category: '트레이딩', prev: +(cats.trading.prev / count).toFixed(1), cur: +(cats.trading.cur / count).toFixed(1) },
+    { category: '기업탐방', prev: +(cats.corporateAccess.prev / count).toFixed(1), cur: +(cats.corporateAccess.cur / count).toFixed(1) },
+    { category: '이벤트', prev: +(cats.events.prev / count).toFixed(1), cur: +(cats.events.cur / count).toFixed(1) },
+  ]
+})()
 
 const voteColumns: Column<BrokerVoteType>[] = [
   { key: 'rank', header: '순위', width: '50px', align: 'center', render: (r) => (
@@ -55,24 +88,24 @@ export default function BrokerVote() {
 
   return (
     <div className="dashboard-grid">
-      {/* KPI Row — spans all 3 columns */}
+      {/* KPI Row */}
       <div className="kpi-row">
         <KpiCard icon={Award} label="평균 보트 점수" value={avgScore} color="indigo" trend={`전기 대비 ${parseFloat(change) >= 0 ? '+' : ''}${change}`} trendDirection={parseFloat(change) >= 0 ? 'up' : 'down'} trendPositive={parseFloat(change) >= 0} />
         <KpiCard icon={TrendingUp} label="Top 고객" value={topClient?.institutionName ?? '-'} color="emerald" trend={`${topClient?.overallScore.toFixed(1) ?? '-'}점`} trendDirection="up" trendPositive />
         <KpiCard icon={TrendingDown} label="Bottom 고객" value={bottomClient?.institutionName ?? '-'} color="amber" trend={`${bottomClient?.overallScore.toFixed(1) ?? '-'}점`} trendDirection="down" trendPositive={false} />
       </div>
 
-      {/* Category Scores Bar Chart */}
+      {/* Row 2: Category Bar Chart (horizontal) + Trend Comparison */}
       <Card style={{ gridColumn: 'span 2' }}>
         <CardHeader title="카테고리별 평균 점수" subtitle="리서치 / 세일즈 / 트레이딩 / 기업탐방 / 이벤트" />
-        <div style={{ height: 200 }}>
+        <div style={{ height: 220 }}>
           <ResponsiveContainer>
-            <BarChart data={brokerVoteCategoryAvg} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
-              <XAxis dataKey="category" tick={{ fontSize: 11, fill: '#334155', fontWeight: 600 }} axisLine={false} tickLine={false} />
-              <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+            <BarChart data={brokerVoteCategoryAvg} layout="vertical" margin={{ top: 5, right: 30, left: 60, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" horizontal={false} />
+              <XAxis type="number" domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <YAxis type="category" dataKey="category" tick={{ fontSize: 12, fill: '#334155', fontWeight: 600 }} axisLine={false} tickLine={false} width={55} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${v.toFixed(1)}점`, '점수']} />
-              <Bar dataKey="score" radius={[4, 4, 0, 0]} barSize={36}>
+              <Bar dataKey="score" radius={[0, 4, 4, 0]} barSize={24}>
                 {brokerVoteCategoryAvg.map((_, i) => (
                   <Cell key={i} fill={categoryColors[i % categoryColors.length]} />
                 ))}
@@ -82,36 +115,30 @@ export default function BrokerVote() {
         </div>
       </Card>
 
-      {/* Score Distribution */}
       <Card>
-        <CardHeader title="점수대별 분포" subtitle="고객수 기준" />
-        <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-          {[
-            { range: '9.0 이상', count: sortedByScore.filter(v => v.overallScore >= 9.0).length, color: '#034EA2' },
-            { range: '8.0 ~ 8.9', count: sortedByScore.filter(v => v.overallScore >= 8.0 && v.overallScore < 9.0).length, color: '#2B7DE9' },
-            { range: '7.0 ~ 7.9', count: sortedByScore.filter(v => v.overallScore >= 7.0 && v.overallScore < 8.0).length, color: '#10B981' },
-            { range: '6.0 ~ 6.9', count: sortedByScore.filter(v => v.overallScore >= 6.0 && v.overallScore < 7.0).length, color: '#F59E0B' },
-            { range: '6.0 미만', count: sortedByScore.filter(v => v.overallScore < 6.0).length, color: '#F43F5E' },
-          ].map((b, i) => (
-            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <span style={{ fontSize: 11, color: '#475569', width: 65, fontWeight: 500 }}>{b.range}</span>
-              <div style={{ flex: 1, height: 18, background: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
-                <div style={{ width: `${(b.count / sortedByScore.length) * 100}%`, height: '100%', background: b.color, borderRadius: 4, minWidth: b.count > 0 ? 20 : 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6 }}>
-                  <span style={{ fontSize: 10, color: 'white', fontWeight: 700 }}>{b.count}</span>
-                </div>
-              </div>
-            </div>
-          ))}
+        <CardHeader title="보트 점수 추이" subtitle="전기 vs 이번기 비교" />
+        <div style={{ height: 220 }}>
+          <ResponsiveContainer>
+            <BarChart data={trendData} margin={{ top: 5, right: 10, left: -5, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
+              <XAxis dataKey="category" tick={{ fontSize: 10, fill: '#334155', fontWeight: 500 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v: any, name: any) => [`${Number(v).toFixed(1)}점`, name === 'prev' ? '전기' : '이번기']} />
+              <Legend formatter={(value: string) => value === 'prev' ? '전기 (2025 H1)' : '이번기 (2025 H2)'} wrapperStyle={{ fontSize: 11 }} />
+              <Bar dataKey="prev" fill="#94A3B8" radius={[4, 4, 0, 0]} barSize={14} />
+              <Bar dataKey="cur" fill="#034EA2" radius={[4, 4, 0, 0]} barSize={14} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </Card>
 
-      {/* Client Vote Scores Table — full width */}
+      {/* Row 3: Client Vote Scores Table */}
       <Card noPadding style={{ gridColumn: 'span 3' }}>
         <CardHeader title="고객별 보트 점수" subtitle={`총 ${brokerVotes.length}곳`} />
         <DataTable columns={voteColumns} data={sortedByScore} compact hoverable />
       </Card>
 
-      {/* Vote Preparation Checklist — span all 3 columns */}
+      {/* Row 4: Vote Preparation Checklist */}
       <Card style={{ gridColumn: 'span 3' }}>
         <CardHeader title="보트 시즌 준비 체크리스트" subtitle="상위 10개 고객 서비스 현황" />
         <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 18px 18px' }}>

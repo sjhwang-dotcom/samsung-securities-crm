@@ -1,16 +1,17 @@
 import { useState } from 'react'
 import {
   Search, Building2, User, MessageSquare, Lightbulb, CheckSquare,
-  Phone, Mail, Star,
+  Phone, Mail, Star, Clock, Filter,
 } from 'lucide-react'
 import { Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
 import {
   institutions, keyPersons, interactions, clientNeeds, actionItems,
 } from '../data/mockData'
-import type { KeyPerson, Interaction, ClientNeed, ActionItem } from '../types'
+import type { Interaction, ActionItem } from '../types'
 
-type Tab = 'profile' | 'persons' | 'interactions' | 'needs' | 'actions'
+type Tab = 'profile' | 'timeline' | 'needs-actions'
+type TimelineFilter = 'all' | 'byPerson' | 'byTime' | 'byType'
 
 const tierVariant: Record<string, 'purple' | 'amber' | 'gray' | 'rose'> = {
   Platinum: 'purple',
@@ -21,64 +22,16 @@ const tierVariant: Record<string, 'purple' | 'amber' | 'gray' | 'rose'> = {
 
 const tabs: { id: Tab; label: string; icon: typeof Building2 }[] = [
   { id: 'profile', label: '프로필', icon: Building2 },
-  { id: 'persons', label: '핵심인물', icon: User },
-  { id: 'interactions', label: '인터랙션', icon: MessageSquare },
-  { id: 'needs', label: '니즈', icon: Lightbulb },
-  { id: 'actions', label: '액션', icon: CheckSquare },
+  { id: 'timeline', label: '활동 타임라인', icon: MessageSquare },
+  { id: 'needs-actions', label: '니즈/액션', icon: Lightbulb },
 ]
 
-const personColumns: Column<KeyPerson>[] = [
-  { key: 'name', header: '이름', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.name}</span> },
-  { key: 'role', header: '직책' },
-  { key: 'department', header: '부서' },
-  { key: 'decisionAuthority', header: '의사결정권한', render: (r) => (
-    <StatusBadge variant={r.decisionAuthority === 'High' ? 'rose' : r.decisionAuthority === 'Medium' ? 'amber' : 'gray'}>
-      {r.decisionAuthority}
-    </StatusBadge>
-  )},
-  { key: 'influenceScore', header: '영향력', render: (r) => (
-    <span style={{ fontWeight: 700, color: '#034EA2' }}>{r.influenceScore}</span>
-  )},
-  { key: 'contactPreference', header: '선호채널' },
-]
+const typeVariant = (type: string) =>
+  type === '통화' ? 'blue' : type === '미팅' ? 'emerald' :
+  type === '블룸버그' ? 'amber' : type === '이메일' ? 'purple' :
+  type === '기업탐방' ? 'rose' : type === '리서치배포' ? 'indigo' as any : 'gray'
 
-const interactionColumns: Column<Interaction>[] = [
-  { key: 'date', header: '날짜' },
-  { key: 'type', header: '유형', render: (r) => (
-    <StatusBadge variant={r.type === '통화' ? 'blue' : r.type === '미팅' ? 'emerald' : r.type === '블룸버그' ? 'amber' : 'gray'}>
-      {r.type}
-    </StatusBadge>
-  )},
-  { key: 'keyPersonName', header: '담당자' },
-  { key: 'summary', header: '요약', render: (r) => (
-    <span style={{ fontSize: 12, color: '#475569' }}>{r.summary.length > 60 ? r.summary.slice(0, 60) + '...' : r.summary}</span>
-  )},
-  { key: 'sentiment', header: '감성', render: (r) => (
-    <StatusBadge variant={r.sentiment === 'Positive' ? 'emerald' : r.sentiment === 'Negative' ? 'rose' : 'gray'}>
-      {r.sentiment === 'Positive' ? '긍정' : r.sentiment === 'Negative' ? '부정' : '중립'}
-    </StatusBadge>
-  )},
-]
-
-const needColumns: Column<ClientNeed>[] = [
-  { key: 'category', header: '카테고리', render: (r) => <StatusBadge variant="blue">{r.category}</StatusBadge> },
-  { key: 'description', header: '설명', render: (r) => (
-    <span style={{ fontSize: 12, color: '#334155' }}>{r.description.length > 80 ? r.description.slice(0, 80) + '...' : r.description}</span>
-  )},
-  { key: 'urgency', header: '긴급도', render: (r) => (
-    <StatusBadge variant={r.urgency === 'HIGH' ? 'rose' : r.urgency === 'MEDIUM' ? 'amber' : 'gray'}>
-      {r.urgency}
-    </StatusBadge>
-  )},
-  { key: 'confidence', header: '신뢰도', render: (r) => (
-    <span style={{ fontWeight: 600, color: r.confidence >= 0.8 ? '#059669' : '#64748B' }}>{(r.confidence * 100).toFixed(0)}%</span>
-  )},
-  { key: 'status', header: '상태', render: (r) => (
-    <StatusBadge variant={r.status === 'New' ? 'blue' : r.status === 'In Progress' ? 'amber' : r.status === 'Resolved' ? 'emerald' : 'gray'}>
-      {r.status}
-    </StatusBadge>
-  )},
-]
+// needColumns removed — needs are rendered inline in 니즈/액션 tab
 
 const actionColumns: Column<ActionItem>[] = [
   { key: 'description', header: '액션', render: (r) => (
@@ -98,11 +51,59 @@ const actionColumns: Column<ActionItem>[] = [
   { key: 'assignee', header: '담당' },
 ]
 
+function TimelineItem({ interaction }: { interaction: Interaction }) {
+  return (
+    <div style={{ display: 'flex', gap: 12, position: 'relative' }}>
+      {/* Timeline dot and line */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: 20, flexShrink: 0 }}>
+        <div style={{
+          width: 10, height: 10, borderRadius: '50%', marginTop: 4,
+          background: interaction.sentiment === 'Positive' ? '#10B981' :
+                     interaction.sentiment === 'Negative' ? '#F43F5E' : '#94A3B8',
+          border: '2px solid white',
+          boxShadow: '0 0 0 2px ' + (interaction.sentiment === 'Positive' ? '#D1FAE5' :
+                     interaction.sentiment === 'Negative' ? '#FFE4E6' : '#F1F5F9'),
+        }} />
+        <div style={{ width: 2, flex: 1, background: '#E5E7EB', marginTop: 4 }} />
+      </div>
+
+      {/* Content */}
+      <div style={{
+        flex: 1, padding: '10px 14px', background: '#FAFBFC', borderRadius: 10,
+        border: '1px solid #F1F5F9', marginBottom: 8,
+      }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 4, flexWrap: 'wrap' }}>
+          <span style={{ fontSize: 11, color: '#94A3B8', fontFamily: 'monospace', display: 'flex', alignItems: 'center', gap: 3 }}>
+            <Clock size={10} /> {interaction.date} {interaction.time}
+          </span>
+          <StatusBadge variant={typeVariant(interaction.type)} size="sm">{interaction.type}</StatusBadge>
+          <span style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>
+            <User size={10} style={{ display: 'inline', marginRight: 3, verticalAlign: 'middle' }} />
+            {interaction.keyPersonName}
+          </span>
+          {interaction.needsCount > 0 && (
+            <span style={{ fontSize: 10, fontWeight: 700, color: '#034EA2', background: '#EFF6FF', padding: '1px 6px', borderRadius: 10 }}>
+              니즈 {interaction.needsCount}건
+            </span>
+          )}
+          <StatusBadge variant={interaction.sentiment === 'Positive' ? 'emerald' : interaction.sentiment === 'Negative' ? 'rose' : 'gray'} size="sm">
+            {interaction.sentiment === 'Positive' ? '긍정' : interaction.sentiment === 'Negative' ? '부정' : '중립'}
+          </StatusBadge>
+        </div>
+        <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.5 }}>
+          {interaction.summary}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function ClientManagement() {
   const [selectedInstitution, setSelectedInstitution] = useState(institutions[0])
   const [activeTab, setActiveTab] = useState<Tab>('profile')
   const [searchQuery, setSearchQuery] = useState('')
   const [tierFilter, setTierFilter] = useState<string | null>(null)
+  const [timelineFilter, setTimelineFilter] = useState<TimelineFilter>('byTime')
 
   const filteredInstitutions = institutions.filter(inst => {
     const matchesSearch = inst.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -117,6 +118,34 @@ export default function ClientManagement() {
   const instActions = actionItems.filter(a => a.institutionId === selectedInstitution.id)
 
   const tiers = ['Platinum', 'Gold', 'Silver', 'Bronze'] as const
+
+  const sortedInteractions = [...instInteractions].sort((a, b) => {
+    const dateA = new Date(`${a.date}T${a.time}`)
+    const dateB = new Date(`${b.date}T${b.time}`)
+    return dateB.getTime() - dateA.getTime()
+  })
+
+  // Group by person
+  const byPerson: Record<string, Interaction[]> = {}
+  instInteractions.forEach(i => {
+    if (!byPerson[i.keyPersonName]) byPerson[i.keyPersonName] = []
+    byPerson[i.keyPersonName].push(i)
+  })
+
+  // Group by type
+  const byType: Record<string, Interaction[]> = {}
+  instInteractions.forEach(i => {
+    if (!byType[i.type]) byType[i.type] = []
+    byType[i.type].push(i)
+  })
+
+  const filterBtnStyle = (active: boolean) => ({
+    padding: '5px 12px', fontSize: 11, fontWeight: active ? 700 : 500,
+    color: active ? '#034EA2' : '#64748B',
+    background: active ? '#EFF6FF' : '#F8FAFC',
+    border: active ? '1px solid #BFDBFE' : '1px solid #E5E7EB',
+    borderRadius: 6, cursor: 'pointer' as const,
+  })
 
   return (
     <div className="dashboard-grid" style={{ display: 'flex', gap: 16, height: 'calc(100vh - 120px)' }}>
@@ -237,68 +266,255 @@ export default function ClientManagement() {
 
         {/* Tab Content */}
         <div style={{ flex: 1, overflow: 'auto' }}>
+          {/* Profile Tab */}
           {activeTab === 'profile' && (
-            <Card>
-              <CardHeader title="기관 프로필" subtitle={selectedInstitution.nameEn} />
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: '0 18px 18px' }}>
-                {[
-                  { label: '기관유형', value: selectedInstitution.type },
-                  { label: 'AUM', value: selectedInstitution.aum },
-                  { label: '투자스타일', value: selectedInstitution.style },
-                  { label: '벤치마크', value: selectedInstitution.benchmark },
-                  { label: '리밸런싱 주기', value: selectedInstitution.rebalancingCycle },
-                  { label: '수수료 예산', value: selectedInstitution.commissionBudget },
-                  { label: '연간 수수료', value: `${selectedInstitution.annualCommission}억원` },
-                  { label: '보트 점수', value: String(selectedInstitution.brokerVoteScore) },
-                  { label: '담당 세일즈', value: selectedInstitution.salesperson },
-                  { label: '위험 점수', value: String(selectedInstitution.riskScore) },
-                ].map(item => (
-                  <div key={item.label} style={{ padding: 12, background: '#FAFBFC', borderRadius: 10 }}>
-                    <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, marginBottom: 4 }}>{item.label}</div>
-                    <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{item.value}</div>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              <Card>
+                <CardHeader title="기관 프로필" subtitle={selectedInstitution.nameEn} />
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, padding: '0 18px 18px' }}>
+                  {[
+                    { label: '기관유형', value: selectedInstitution.type },
+                    { label: 'AUM', value: selectedInstitution.aum },
+                    { label: '투자스타일', value: selectedInstitution.style },
+                    { label: '벤치마크', value: selectedInstitution.benchmark },
+                    { label: '리밸런싱 주기', value: selectedInstitution.rebalancingCycle },
+                    { label: '수수료 예산', value: selectedInstitution.commissionBudget },
+                    { label: '연간 수수료', value: `${selectedInstitution.annualCommission}억원` },
+                    { label: '보트 점수', value: String(selectedInstitution.brokerVoteScore) },
+                    { label: '담당 세일즈', value: selectedInstitution.salesperson },
+                    { label: '위험 점수', value: String(selectedInstitution.riskScore) },
+                  ].map(item => (
+                    <div key={item.label} style={{ padding: 12, background: '#FAFBFC', borderRadius: 10 }}>
+                      <div style={{ fontSize: 11, color: '#94A3B8', fontWeight: 600, marginBottom: 4 }}>{item.label}</div>
+                      <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A' }}>{item.value}</div>
+                    </div>
+                  ))}
+                </div>
+                <div style={{ padding: '0 18px 18px', display: 'flex', gap: 8 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
+                    <Phone size={12} /> 주요 연락처 {instPersons.length}명
                   </div>
-                ))}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
+                    <Mail size={12} /> 최근 인터랙션 {instInteractions.length}건
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
+                    <Star size={12} /> 니즈 {instNeeds.length}건
+                  </div>
+                </div>
+              </Card>
+
+              {/* Key Persons inline */}
+              <Card>
+                <CardHeader title="핵심인물" subtitle={`${instPersons.length}명`} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8, padding: '0 18px 18px' }}>
+                  {instPersons.map(person => (
+                    <div key={person.id} style={{
+                      padding: '12px 14px', background: '#FAFBFC', borderRadius: 10,
+                      border: '1px solid #F1F5F9',
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 6 }}>
+                        <div style={{
+                          width: 32, height: 32, borderRadius: 8,
+                          background: 'linear-gradient(135deg, #034EA2, #2B7DE9)',
+                          display: 'flex', alignItems: 'center', justifyContent: 'center',
+                          fontSize: 13, fontWeight: 700, color: 'white',
+                        }}>
+                          {person.name.charAt(0)}
+                        </div>
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: 13, fontWeight: 700, color: '#0F172A' }}>{person.name}</div>
+                          <div style={{ fontSize: 11, color: '#64748B' }}>{person.role} | {person.department}</div>
+                        </div>
+                        <StatusBadge variant={person.decisionAuthority === 'High' ? 'rose' : person.decisionAuthority === 'Medium' ? 'amber' : 'gray'} size="sm">
+                          의사결정: {person.decisionAuthority}
+                        </StatusBadge>
+                        <span style={{ fontSize: 12, fontWeight: 700, color: '#034EA2' }}>영향력 {person.influenceScore}</span>
+                      </div>
+                      <div style={{ display: 'flex', gap: 16, fontSize: 11, color: '#64748B', paddingLeft: 42 }}>
+                        {person.phone && (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Phone size={10} /> {person.phone}
+                          </span>
+                        )}
+                        {person.email && (
+                          <span style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+                            <Mail size={10} /> {person.email}
+                          </span>
+                        )}
+                        <span>선호: {person.contactPreference}</span>
+                      </div>
+                      {person.notes && (
+                        <div style={{ fontSize: 11, color: '#475569', marginTop: 4, paddingLeft: 42, lineHeight: 1.4 }}>
+                          {person.notes}
+                        </div>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            </div>
+          )}
+
+          {/* Timeline Tab */}
+          {activeTab === 'timeline' && (
+            <div>
+              {/* Filter bar */}
+              <div style={{ display: 'flex', gap: 6, marginBottom: 16, alignItems: 'center' }}>
+                <Filter size={13} color="#64748B" />
+                <button style={filterBtnStyle(timelineFilter === 'all')} onClick={() => setTimelineFilter('all')}>전체</button>
+                <button style={filterBtnStyle(timelineFilter === 'byPerson')} onClick={() => setTimelineFilter('byPerson')}>인물별</button>
+                <button style={filterBtnStyle(timelineFilter === 'byTime')} onClick={() => setTimelineFilter('byTime')}>시간순</button>
+                <button style={filterBtnStyle(timelineFilter === 'byType')} onClick={() => setTimelineFilter('byType')}>유형별</button>
+                <span style={{ fontSize: 11, color: '#94A3B8', marginLeft: 8 }}>총 {instInteractions.length}건</span>
               </div>
-              <div style={{ padding: '0 18px 18px', display: 'flex', gap: 8 }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
-                  <Phone size={12} /> 주요 연락처 {instPersons.length}명
+
+              {/* Chronological / All */}
+              {(timelineFilter === 'byTime' || timelineFilter === 'all') && (
+                <div>
+                  {sortedInteractions.map(interaction => (
+                    <TimelineItem key={interaction.id} interaction={interaction} />
+                  ))}
+                  {sortedInteractions.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: 40, color: '#94A3B8', fontSize: 13 }}>
+                      인터랙션 이력이 없습니다.
+                    </div>
+                  )}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
-                  <Mail size={12} /> 최근 인터랙션 {instInteractions.length}건
+              )}
+
+              {/* By Person */}
+              {timelineFilter === 'byPerson' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  {Object.entries(byPerson).map(([personName, personInteractions]) => (
+                    <div key={personName}>
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
+                        padding: '8px 12px', background: '#EFF6FF', borderRadius: 8,
+                      }}>
+                        <User size={14} color="#034EA2" />
+                        <span style={{ fontSize: 13, fontWeight: 700, color: '#034EA2' }}>{personName}</span>
+                        <span style={{ fontSize: 11, color: '#64748B' }}>{personInteractions.length}건</span>
+                      </div>
+                      {personInteractions
+                        .sort((a, b) => new Date(`${b.date}T${b.time}`).getTime() - new Date(`${a.date}T${a.time}`).getTime())
+                        .map(interaction => (
+                          <TimelineItem key={interaction.id} interaction={interaction} />
+                        ))
+                      }
+                    </div>
+                  ))}
                 </div>
-                <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12, color: '#64748B' }}>
-                  <Star size={12} /> 니즈 {instNeeds.length}건
+              )}
+
+              {/* By Type */}
+              {timelineFilter === 'byType' && (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 20 }}>
+                  {Object.entries(byType).map(([typeName, typeInteractions]) => (
+                    <div key={typeName}>
+                      <div style={{
+                        display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10,
+                        padding: '8px 12px', background: '#F8FAFC', borderRadius: 8, border: '1px solid #E5E7EB',
+                      }}>
+                        <StatusBadge variant={typeVariant(typeName)}>{typeName}</StatusBadge>
+                        <span style={{ fontSize: 11, color: '#64748B' }}>{typeInteractions.length}건</span>
+                      </div>
+                      {typeInteractions
+                        .sort((a, b) => new Date(`${b.date}T${b.time}`).getTime() - new Date(`${a.date}T${a.time}`).getTime())
+                        .map(interaction => (
+                          <TimelineItem key={interaction.id} interaction={interaction} />
+                        ))
+                      }
+                    </div>
+                  ))}
                 </div>
-              </div>
-            </Card>
+              )}
+            </div>
           )}
 
-          {activeTab === 'persons' && (
-            <Card noPadding>
-              <CardHeader title="핵심인물" subtitle={`${instPersons.length}명`} />
-              <DataTable columns={personColumns} data={instPersons} hoverable />
-            </Card>
-          )}
+          {/* Needs/Actions Tab */}
+          {activeTab === 'needs-actions' && (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+              {/* Needs with linked actions */}
+              <Card>
+                <CardHeader title="AI 추출 니즈" subtitle={`${instNeeds.length}건`} />
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 10, padding: '0 18px 18px' }}>
+                  {instNeeds.map(need => {
+                    const linkedActions = instActions.filter(a => a.needId === need.id)
+                    return (
+                      <div key={need.id} style={{
+                        padding: '12px 14px', background: '#FAFBFC', borderRadius: 10,
+                        border: '1px solid #F1F5F9',
+                      }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+                          <StatusBadge variant="blue">{need.category}</StatusBadge>
+                          <StatusBadge variant={need.urgency === 'HIGH' ? 'rose' : need.urgency === 'MEDIUM' ? 'amber' : 'gray'} size="sm">
+                            {need.urgency === 'HIGH' ? '긴급' : need.urgency === 'MEDIUM' ? '보통' : '낮음'}
+                          </StatusBadge>
+                          <StatusBadge variant={need.status === 'New' ? 'blue' : need.status === 'In Progress' ? 'amber' : need.status === 'Resolved' ? 'emerald' : 'gray'} size="sm">
+                            {need.status}
+                          </StatusBadge>
+                          <span style={{ fontSize: 10, fontWeight: 600, color: need.confidence >= 0.8 ? '#059669' : '#64748B', marginLeft: 'auto' }}>
+                            신뢰도 {(need.confidence * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                        <div style={{ fontSize: 12, color: '#334155', lineHeight: 1.5, marginBottom: linkedActions.length > 0 ? 8 : 0 }}>
+                          {need.description}
+                        </div>
+                        {need.sector && (
+                          <div style={{ fontSize: 11, color: '#64748B', marginBottom: linkedActions.length > 0 ? 6 : 0 }}>
+                            섹터: {need.sector} {need.stocks && need.stocks.length > 0 && `| 종목: ${need.stocks.join(', ')}`}
+                          </div>
+                        )}
 
-          {activeTab === 'interactions' && (
-            <Card noPadding>
-              <CardHeader title="인터랙션 이력" subtitle={`${instInteractions.length}건`} />
-              <DataTable columns={interactionColumns} data={instInteractions} hoverable />
-            </Card>
-          )}
+                        {/* Linked actions */}
+                        {linkedActions.length > 0 && (
+                          <div style={{
+                            marginTop: 6, paddingTop: 8,
+                            borderTop: '1px dashed #E5E7EB',
+                          }}>
+                            {linkedActions.map(action => (
+                              <div key={action.id} style={{
+                                display: 'flex', alignItems: 'center', gap: 8, padding: '6px 0',
+                              }}>
+                                <CheckSquare size={12} color="#034EA2" />
+                                <span style={{ fontSize: 11, color: '#334155', flex: 1 }}>
+                                  {action.description.length > 60 ? action.description.slice(0, 60) + '...' : action.description}
+                                </span>
+                                <StatusBadge variant={action.priority === 'URGENT' ? 'rose' : action.priority === 'THIS_WEEK' ? 'amber' : 'blue'} size="sm">
+                                  {action.priority === 'URGENT' ? '긴급' : action.priority === 'THIS_WEEK' ? '이번주' : action.priority === 'THIS_MONTH' ? '이번달' : '모니터링'}
+                                </StatusBadge>
+                                <StatusBadge variant={action.status === 'Completed' ? 'emerald' : action.status === 'In Progress' ? 'amber' : action.status === 'Overdue' ? 'rose' : 'gray'} size="sm">
+                                  {action.status}
+                                </StatusBadge>
+                                <span style={{ fontSize: 10, color: '#94A3B8' }}>{action.deadline}</span>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    )
+                  })}
+                  {instNeeds.length === 0 && (
+                    <div style={{ textAlign: 'center', padding: 30, color: '#94A3B8', fontSize: 13 }}>
+                      추출된 니즈가 없습니다.
+                    </div>
+                  )}
+                </div>
+              </Card>
 
-          {activeTab === 'needs' && (
-            <Card noPadding>
-              <CardHeader title="AI 추출 니즈" subtitle={`${instNeeds.length}건`} />
-              <DataTable columns={needColumns} data={instNeeds} hoverable />
-            </Card>
-          )}
-
-          {activeTab === 'actions' && (
-            <Card noPadding>
-              <CardHeader title="추천 액션" subtitle={`${instActions.length}건`} />
-              <DataTable columns={actionColumns} data={instActions} hoverable />
-            </Card>
+              {/* Unlinked actions (those without a needId or whose needId is not in instNeeds) */}
+              {(() => {
+                const linkedNeedIds = new Set(instNeeds.map(n => n.id))
+                const unlinkedActions = instActions.filter(a => !a.needId || !linkedNeedIds.has(a.needId))
+                if (unlinkedActions.length === 0) return null
+                return (
+                  <Card noPadding>
+                    <CardHeader title="추가 액션 아이템" subtitle={`${unlinkedActions.length}건`} />
+                    <DataTable columns={actionColumns} data={unlinkedActions} hoverable />
+                  </Card>
+                )
+              })()}
+            </div>
           )}
         </div>
       </div>
