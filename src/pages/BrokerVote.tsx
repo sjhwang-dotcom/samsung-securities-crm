@@ -63,16 +63,16 @@ export default function BrokerVote() {
       </div>
 
       {/* Category Scores Bar Chart */}
-      <Card>
+      <Card style={{ gridColumn: 'span 2' }}>
         <CardHeader title="카테고리별 평균 점수" subtitle="리서치 / 세일즈 / 트레이딩 / 기업탐방 / 이벤트" />
-        <div style={{ height: 180 }}>
+        <div style={{ height: 200 }}>
           <ResponsiveContainer>
-            <BarChart data={brokerVoteCategoryAvg} layout="vertical" margin={{ top: 10, right: 30, left: 60, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" horizontal={false} />
-              <XAxis type="number" domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-              <YAxis type="category" dataKey="category" tick={{ fontSize: 12, fill: '#334155', fontWeight: 600 }} axisLine={false} tickLine={false} width={70} />
+            <BarChart data={brokerVoteCategoryAvg} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
+              <XAxis dataKey="category" tick={{ fontSize: 11, fill: '#334155', fontWeight: 600 }} axisLine={false} tickLine={false} />
+              <YAxis domain={[0, 10]} tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${v.toFixed(1)}점`, '점수']} />
-              <Bar dataKey="score" radius={[0, 6, 6, 0]} barSize={28}>
+              <Bar dataKey="score" radius={[4, 4, 0, 0]} barSize={36}>
                 {brokerVoteCategoryAvg.map((_, i) => (
                   <Cell key={i} fill={categoryColors[i % categoryColors.length]} />
                 ))}
@@ -82,8 +82,31 @@ export default function BrokerVote() {
         </div>
       </Card>
 
-      {/* Client Vote Scores Table — span 2 columns */}
-      <Card noPadding style={{ gridColumn: 'span 2' }}>
+      {/* Score Distribution */}
+      <Card>
+        <CardHeader title="점수대별 분포" subtitle="고객수 기준" />
+        <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[
+            { range: '9.0 이상', count: sortedByScore.filter(v => v.overallScore >= 9.0).length, color: '#034EA2' },
+            { range: '8.0 ~ 8.9', count: sortedByScore.filter(v => v.overallScore >= 8.0 && v.overallScore < 9.0).length, color: '#2B7DE9' },
+            { range: '7.0 ~ 7.9', count: sortedByScore.filter(v => v.overallScore >= 7.0 && v.overallScore < 8.0).length, color: '#10B981' },
+            { range: '6.0 ~ 6.9', count: sortedByScore.filter(v => v.overallScore >= 6.0 && v.overallScore < 7.0).length, color: '#F59E0B' },
+            { range: '6.0 미만', count: sortedByScore.filter(v => v.overallScore < 6.0).length, color: '#F43F5E' },
+          ].map((b, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 11, color: '#475569', width: 65, fontWeight: 500 }}>{b.range}</span>
+              <div style={{ flex: 1, height: 18, background: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ width: `${(b.count / sortedByScore.length) * 100}%`, height: '100%', background: b.color, borderRadius: 4, minWidth: b.count > 0 ? 20 : 0, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6 }}>
+                  <span style={{ fontSize: 10, color: 'white', fontWeight: 700 }}>{b.count}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* Client Vote Scores Table — full width */}
+      <Card noPadding style={{ gridColumn: 'span 3' }}>
         <CardHeader title="고객별 보트 점수" subtitle={`총 ${brokerVotes.length}곳`} />
         <DataTable columns={voteColumns} data={sortedByScore} compact hoverable />
       </Card>

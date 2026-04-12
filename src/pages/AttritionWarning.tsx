@@ -121,17 +121,17 @@ export default function AttritionWarning() {
         <KpiCard icon={Eye} label="조기 감지율" value="85%" color="emerald" trend="+5% 전분기 대비" trendDirection="up" trendPositive />
       </div>
 
-      {/* Risk Score Distribution */}
-      <Card>
+      {/* Risk Score Distribution — 2 cols */}
+      <Card style={{ gridColumn: 'span 2' }}>
         <CardHeader title="위험 점수 분포" subtitle="이탈 위험 고객 점수대별 분포" />
         <div style={{ height: 180 }}>
           <ResponsiveContainer>
-            <BarChart data={riskHistogram} margin={{ top: 10, right: 20, left: -10, bottom: 10 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" />
+            <BarChart data={riskHistogram} margin={{ top: 10, right: 30, left: 10, bottom: 5 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" vertical={false} />
               <XAxis dataKey="range" tick={{ fontSize: 12, fill: '#334155', fontWeight: 600 }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${v}곳`, '고객수']} />
-              <Bar dataKey="count" radius={[6, 6, 0, 0]} barSize={48}>
+              <Bar dataKey="count" radius={[4, 4, 0, 0]} barSize={48}>
                 {riskHistogram.map((entry, i) => (
                   <Cell key={i} fill={entry.color} />
                 ))}
@@ -141,8 +141,32 @@ export default function AttritionWarning() {
         </div>
       </Card>
 
-      {/* At-Risk Clients Table */}
-      <Card noPadding style={{ gridColumn: 'span 2' }}>
+      {/* Risk Factor Summary — 1 col */}
+      <Card>
+        <CardHeader title="위험 요인 가중치" subtitle="이탈 예측 모델" />
+        <div style={{ padding: '0 16px 16px', display: 'flex', flexDirection: 'column', gap: 8 }}>
+          {[
+            { factor: '참여도 감소', weight: 25, color: '#034EA2' },
+            { factor: '수익 궤적', weight: 25, color: '#2B7DE9' },
+            { factor: '보트 신호', weight: 20, color: '#F59E0B' },
+            { factor: '경쟁 압력', weight: 15, color: '#F43F5E' },
+            { factor: '커버리지 갭', weight: 10, color: '#8B5CF6' },
+            { factor: '인사 변동', weight: 5, color: '#94A3B8' },
+          ].map((f, i) => (
+            <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <span style={{ fontSize: 11, color: '#475569', width: 70, fontWeight: 500 }}>{f.factor}</span>
+              <div style={{ flex: 1, height: 16, background: '#F1F5F9', borderRadius: 4, overflow: 'hidden' }}>
+                <div style={{ width: `${f.weight * 3}%`, height: '100%', background: f.color, borderRadius: 4, display: 'flex', alignItems: 'center', justifyContent: 'flex-end', paddingRight: 6 }}>
+                  <span style={{ fontSize: 10, color: 'white', fontWeight: 700 }}>{f.weight}%</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </Card>
+
+      {/* At-Risk Clients Table — full width */}
+      <Card noPadding style={{ gridColumn: 'span 3' }}>
         <CardHeader
           title="이탈 위험 고객"
           subtitle={`총 ${totalAtRisk}곳`}
