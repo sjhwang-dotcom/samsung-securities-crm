@@ -1,3 +1,5 @@
+// ═══ Core Domain Types — Samsung Securities Agentic CRM ═══
+
 export interface KPI {
   label: string
   value: string
@@ -8,59 +10,191 @@ export interface KPI {
   color: string
 }
 
-export interface Merchant {
+export interface Institution {
+  id: string
   name: string
-  mid: string
-  processor: string
-  equipment: string
-  monthlyVol: string
-  pciStatus: 'Compliant' | 'Non-Compliant' | 'N/A'
-  status: 'Active' | 'Boarding' | 'Inactive'
+  nameEn: string
+  type: '자산운용사' | '연기금' | '보험사' | '은행신탁' | '외국인기관'
+  tier: 'Platinum' | 'Gold' | 'Silver' | 'Bronze'
+  aum: string
+  style: string
+  benchmark: string
+  rebalancingCycle: string
+  commissionBudget: string
+  annualCommission: number
+  brokerVoteScore: number
+  riskScore: number
+  salesperson: string
+  status: 'Active' | 'Watch' | 'At Risk'
 }
 
-export interface Lead {
+export interface KeyPerson {
+  id: string
+  institutionId: string
   name: string
-  location: string
-  mcc: string
-  estVolume: string
-  aiScore: number
-  detail?: string
+  role: string
+  department: string
+  decisionAuthority: 'High' | 'Medium' | 'Low'
+  contactPreference: string
+  communicationStyle: string
+  influenceScore: number
+  phone?: string
+  email?: string
+  notes?: string
 }
 
-export interface AtRiskMerchant {
+export interface Salesperson {
+  id: string
+  name: string
+  team: string
+  clientCount: number
+  monthlyCommission: number
+  needsExtracted: number
+  actionCompletionRate: number
+  avgBrokerVoteScore: number
+}
+
+export interface Interaction {
+  id: string
+  date: string
+  time: string
+  type: '통화' | '미팅' | '블룸버그' | '이메일' | '기업탐방' | '리서치배포'
+  institutionId: string
+  institutionName: string
+  keyPersonName: string
+  salesperson: string
+  summary: string
+  duration?: string
+  needsCount: number
+  sentiment: 'Positive' | 'Neutral' | 'Negative'
+  followUpRequired: boolean
+}
+
+export interface ClientNeed {
+  id: string
+  interactionId: string
+  institutionId: string
+  institutionName: string
+  category: '종목추천' | '리서치요청' | '기업탐방' | '트레이딩' | '딜참여' | 'ESG' | '기타'
+  description: string
+  urgency: 'HIGH' | 'MEDIUM' | 'LOW'
+  confidence: number
+  status: 'New' | 'In Progress' | 'Resolved' | 'Expired'
+  extractedDate: string
+  sector?: string
+  stocks?: string[]
+}
+
+export interface ActionItem {
+  id: string
+  needId?: string
+  institutionId: string
+  institutionName: string
+  description: string
+  priority: 'URGENT' | 'THIS_WEEK' | 'THIS_MONTH' | 'MONITOR'
+  rationale: string
+  assignee: string
+  channel: string
+  deadline: string
+  status: 'Pending' | 'In Progress' | 'Completed' | 'Overdue'
+  revenueImpact?: string
+  completionCriteria?: string
+}
+
+export interface BrokerVote {
+  id: string
+  institutionId: string
+  institutionName: string
+  period: string
+  overallScore: number
+  previousScore: number
+  categories: {
+    research: number
+    sales: number
+    trading: number
+    corporateAccess: number
+    events: number
+  }
+  rank: number
+  previousRank: number
+  estimatedCommission: number
+}
+
+export interface ResearchReport {
+  id: string
+  title: string
+  analyst: string
+  sector: string
+  type: '기업분석' | '산업분석' | '전략' | '매크로' | '퀀트'
+  date: string
+  stocksCovered: string[]
+  recommendation?: 'BUY' | 'HOLD' | 'SELL'
+  targetPrice?: string
+  distributionCount: number
+  openRate: number
+  relevanceScore: number
+}
+
+export interface CorporateAccessEvent {
+  id: string
+  company: string
+  type: 'NDR' | 'Conference' | '1:1 Meeting' | 'Site Visit' | 'Expert Call'
+  date: string
+  status: '예정' | '완료' | '취소'
+  invitedCount: number
+  attendedCount: number
+  feedbackScore?: number
+  cost: number
+  commissionContribution?: number
+}
+
+export interface CommissionData {
+  month: string
+  total: number
+  byType: {
+    highTouch: number
+    dma: number
+    algo: number
+  }
+}
+
+export interface AtRiskClient {
+  id: string
+  institutionId: string
   name: string
   riskScore: number
-  volume: string
+  previousRiskScore: number
+  severity: 'CRITICAL' | 'WARNING' | 'WATCH'
+  factors: {
+    engagement: number
+    revenueTrajectory: number
+    brokerVoteSignal: number
+    competitivePressure: number
+    coverageGap: number
+    personnelChange: number
+  }
+  recommendation: string
   trend: string
-  severity: 'CRITICAL' | 'HIGH' | 'MODERATE' | 'INACTIVE'
+}
+
+export interface ComplianceAlert {
+  id: string
+  type: '정보교류차단' | '고객정보접근' | '거래제한' | '감사요청'
+  severity: 'HIGH' | 'MEDIUM' | 'LOW'
+  description: string
+  date: string
+  status: 'Active' | 'Resolved' | 'Acknowledged'
+  restrictedStock?: string
+  salesperson?: string
 }
 
 export interface ActivityItem {
   text: string
   time: string
+  type?: string
 }
 
 export interface ChatMessage {
   role: 'ai' | 'user'
   text: string
-}
-
-export interface OnboardingApp {
-  merchant: string
-  bank: string
-  submitted: string
-  stage: string
-  riskScore: number | null
-  riskLabel: string
-  status: string
-  assigned: string
-}
-
-export interface VoiceCall {
-  phone: string
-  merchant: string
-  status: string
-  duration: string
-  stage: string
-  sentiment: string
 }

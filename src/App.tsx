@@ -1,31 +1,19 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import Layout from './components/Layout'
-import MerchantLayout from './components/MerchantLayout'
-import PartnerLayout from './components/PartnerLayout'
-import Dashboard from './pages/Dashboard'
-import ISOManagement from './pages/ISOManagement'
-import AgenticCRM from './pages/AgenticCRM'
-import VoiceAgent from './pages/VoiceAgent'
-import MerchantPortal from './pages/MerchantPortal'
-import PortfolioAnalytics from './pages/PortfolioAnalytics'
-import FundingManagement from './pages/FundingManagement'
-import RiskUnderwriting from './pages/RiskUnderwriting'
-import ComplianceCenter from './pages/ComplianceCenter'
+import ResearchLayout from './components/ResearchLayout'
+import ExecLayout from './components/ExecLayout'
 import Login from './pages/Login'
-import Transactions from './pages/merchant/Transactions'
-import Statements from './pages/merchant/Statements'
-import PCI from './pages/merchant/PCI'
-import Equipment from './pages/merchant/Equipment'
-import Support from './pages/merchant/Support'
-import ProductsServices from './pages/merchant/ProductsServices'
-import AIAssistant from './pages/merchant/AIAssistant'
-import SalesAnalytics from './pages/merchant/SalesAnalytics'
-import PartnerDashboard from './pages/partner/PartnerDashboard'
-import PartnerPipeline from './pages/partner/PartnerPipeline'
-import PartnerMerchants from './pages/partner/PartnerMerchants'
-import PartnerResiduals from './pages/partner/PartnerResiduals'
-import PartnerMarketing from './pages/partner/PartnerMarketing'
-import PartnerTraining from './pages/partner/PartnerTraining'
+import Dashboard from './pages/Dashboard'
+import ClientManagement from './pages/ClientManagement'
+import ActivityManagement from './pages/ActivityManagement'
+import BrokerVote from './pages/BrokerVote'
+import RevenueIntelligence from './pages/RevenueIntelligence'
+import ResearchDistribution from './pages/ResearchDistribution'
+import CorporateAccess from './pages/CorporateAccess'
+import AttritionWarning from './pages/AttritionWarning'
+import ComplianceCenter from './pages/ComplianceCenter'
+import ResearchPortal from './pages/ResearchPortal'
+import ExecDashboard from './pages/ExecDashboard'
 
 export default function App() {
   return (
@@ -35,40 +23,31 @@ export default function App() {
         <Route path="/" element={<Login />} />
         <Route path="/login" element={<Login />} />
 
-        {/* Harlow Platform */}
+        {/* 세일즈 플랫폼 (메인) */}
         <Route element={<Layout />}>
           <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/iso" element={<ISOManagement />} />
-          <Route path="/crm" element={<AgenticCRM />} />
-          <Route path="/voice" element={<VoiceAgent />} />
-          <Route path="/analytics" element={<PortfolioAnalytics />} />
-          <Route path="/funding-mgmt" element={<FundingManagement />} />
-          <Route path="/risk" element={<RiskUnderwriting />} />
+          <Route path="/clients" element={<ClientManagement />} />
+          <Route path="/activity" element={<ActivityManagement />} />
+          <Route path="/broker-vote" element={<BrokerVote />} />
+          <Route path="/revenue" element={<RevenueIntelligence />} />
+          <Route path="/research" element={<ResearchDistribution />} />
+          <Route path="/corporate-access" element={<CorporateAccess />} />
+          <Route path="/risk" element={<AttritionWarning />} />
           <Route path="/compliance" element={<ComplianceCenter />} />
         </Route>
 
-        {/* Merchant Portal */}
-        <Route element={<MerchantLayout />}>
-          <Route path="/portal" element={<MerchantPortal />} />
-          <Route path="/portal/transactions" element={<Transactions />} />
-          <Route path="/portal/sales" element={<SalesAnalytics />} />
-          <Route path="/portal/statements" element={<Statements />} />
-          <Route path="/portal/pci" element={<PCI />} />
-          <Route path="/portal/equipment" element={<Equipment />} />
-          <Route path="/portal/support" element={<Support />} />
-          <Route path="/portal/products" element={<ProductsServices />} />
-          <Route path="/portal/lumina" element={<AIAssistant />} />
+        {/* 리서치 포탈 */}
+        <Route element={<ResearchLayout />}>
+          <Route path="/research-portal" element={<ResearchPortal />} />
         </Route>
 
-        {/* Partner Portal */}
-        <Route element={<PartnerLayout />}>
-          <Route path="/partner" element={<PartnerDashboard />} />
-          <Route path="/partner/pipeline" element={<PartnerPipeline />} />
-          <Route path="/partner/merchants" element={<PartnerMerchants />} />
-          <Route path="/partner/residuals" element={<PartnerResiduals />} />
-          <Route path="/partner/marketing" element={<PartnerMarketing />} />
-          <Route path="/partner/training" element={<PartnerTraining />} />
+        {/* 경영진 대시보드 */}
+        <Route element={<ExecLayout />}>
+          <Route path="/exec" element={<ExecDashboard />} />
         </Route>
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   )

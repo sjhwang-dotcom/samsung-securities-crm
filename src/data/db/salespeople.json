@@ -1,0 +1,17 @@
+[
+  { "id": "SP001", "name": "김영호", "team": "Team A", "clientCount": 28, "monthlyCommission": 42500, "needsExtracted": 187, "actionCompletionRate": 88.5, "avgBrokerVoteScore": 7.8 },
+  { "id": "SP002", "name": "박서연", "team": "Team A", "clientCount": 25, "monthlyCommission": 38200, "needsExtracted": 162, "actionCompletionRate": 85.2, "avgBrokerVoteScore": 7.5 },
+  { "id": "SP003", "name": "이준혁", "team": "Team A", "clientCount": 22, "monthlyCommission": 35800, "needsExtracted": 148, "actionCompletionRate": 82.1, "avgBrokerVoteScore": 7.2 },
+  { "id": "SP004", "name": "최민지", "team": "Team B", "clientCount": 20, "monthlyCommission": 31500, "needsExtracted": 135, "actionCompletionRate": 79.8, "avgBrokerVoteScore": 6.9 },
+  { "id": "SP005", "name": "정하늘", "team": "Team B", "clientCount": 18, "monthlyCommission": 27800, "needsExtracted": 118, "actionCompletionRate": 76.5, "avgBrokerVoteScore": 6.5 },
+  { "id": "SP006", "name": "한재원", "team": "Team B", "clientCount": 24, "monthlyCommission": 33200, "needsExtracted": 142, "actionCompletionRate": 81.3, "avgBrokerVoteScore": 7.1 },
+  { "id": "SP007", "name": "윤미래", "team": "Team B", "clientCount": 19, "monthlyCommission": 29100, "needsExtracted": 125, "actionCompletionRate": 78.2, "avgBrokerVoteScore": 6.7 },
+  { "id": "SP008", "name": "장태성", "team": "Team C", "clientCount": 21, "monthlyCommission": 34500, "needsExtracted": 155, "actionCompletionRate": 84.7, "avgBrokerVoteScore": 7.3 },
+  { "id": "SP009", "name": "송지현", "team": "Team C", "clientCount": 17, "monthlyCommission": 26200, "needsExtracted": 108, "actionCompletionRate": 74.5, "avgBrokerVoteScore": 6.3 },
+  { "id": "SP010", "name": "오현수", "team": "Team C", "clientCount": 23, "monthlyCommission": 36900, "needsExtracted": 158, "actionCompletionRate": 83.6, "avgBrokerVoteScore": 7.4 },
+  { "id": "SP011", "name": "배현진", "team": "Team A", "clientCount": 16, "monthlyCommission": 24800, "needsExtracted": 98, "actionCompletionRate": 72.1, "avgBrokerVoteScore": 6.1 },
+  { "id": "SP012", "name": "노승현", "team": "Team C", "clientCount": 15, "monthlyCommission": 22500, "needsExtracted": 92, "actionCompletionRate": 70.8, "avgBrokerVoteScore": 5.9 },
+  { "id": "SP013", "name": "임도현", "team": "Team A", "clientCount": 20, "monthlyCommission": 30800, "needsExtracted": 130, "actionCompletionRate": 77.9, "avgBrokerVoteScore": 6.8 },
+  { "id": "SP014", "name": "고서윤", "team": "Team B", "clientCount": 14, "monthlyCommission": 21200, "needsExtracted": 85, "actionCompletionRate": 68.5, "avgBrokerVoteScore": 5.7 },
+  { "id": "SP015", "name": "유승민", "team": "Team C", "clientCount": 18, "monthlyCommission": 28500, "needsExtracted": 112, "actionCompletionRate": 75.2, "avgBrokerVoteScore": 6.4 }
+]

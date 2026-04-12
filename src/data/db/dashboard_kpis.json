@@ -1,9 +1,16 @@
 {
-  "total_merchants": 4369,
-  "monthly_volume": 31110857.59,
-  "monthly_volume_trend": 3.5,
-  "monthly_residuals": 3210000.18,
-  "monthly_residuals_trend": 3.4,
-  "churn_rate": 3.3,
-  "chargeback_rate": 0.31
+  "total_clients": 300,
+  "active_clients": 287,
+  "monthly_commission": 16.7,
+  "commission_trend": 5.3,
+  "avg_broker_vote": 7.2,
+  "vote_trend": 0.3,
+  "at_risk_count": 12,
+  "risk_trend": -2,
+  "needs_extracted": 847,
+  "needs_trend": 12.5,
+  "action_completion_rate": 82.3,
+  "action_trend": 4.1,
+  "research_open_rate": 0.64,
+  "research_trend": 3.2
 }

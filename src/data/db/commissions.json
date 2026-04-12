@@ -1,0 +1,14 @@
+[
+  { "month": "2025-05", "total": 14.2, "byType": { "highTouch": 8.5, "dma": 3.8, "algo": 1.9 } },
+  { "month": "2025-06", "total": 15.1, "byType": { "highTouch": 9.1, "dma": 3.9, "algo": 2.1 } },
+  { "month": "2025-07", "total": 13.8, "byType": { "highTouch": 8.2, "dma": 3.6, "algo": 2.0 } },
+  { "month": "2025-08", "total": 14.5, "byType": { "highTouch": 8.7, "dma": 3.7, "algo": 2.1 } },
+  { "month": "2025-09", "total": 15.8, "byType": { "highTouch": 9.5, "dma": 4.1, "algo": 2.2 } },
+  { "month": "2025-10", "total": 14.9, "byType": { "highTouch": 8.9, "dma": 3.8, "algo": 2.2 } },
+  { "month": "2025-11", "total": 15.3, "byType": { "highTouch": 9.2, "dma": 4.0, "algo": 2.1 } },
+  { "month": "2025-12", "total": 16.8, "byType": { "highTouch": 10.1, "dma": 4.3, "algo": 2.4 } },
+  { "month": "2026-01", "total": 15.5, "byType": { "highTouch": 9.3, "dma": 4.0, "algo": 2.2 } },
+  { "month": "2026-02", "total": 14.8, "byType": { "highTouch": 8.8, "dma": 3.9, "algo": 2.1 } },
+  { "month": "2026-03", "total": 15.9, "byType": { "highTouch": 9.6, "dma": 4.1, "algo": 2.2 } },
+  { "month": "2026-04", "total": 16.7, "byType": { "highTouch": 10.0, "dma": 4.3, "algo": 2.4 } }
+]

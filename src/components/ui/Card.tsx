@@ -5,6 +5,7 @@ interface CardProps {
   children: ReactNode
   className?: string
   noPadding?: boolean
+  style?: React.CSSProperties
 }
 
 interface CardHeaderProps {
@@ -16,9 +17,9 @@ interface CardHeaderProps {
 }
 
 /** White panel card — the primary container component matching PPTX cards */
-export function Card({ children, className = '', noPadding }: CardProps) {
+export function Card({ children, className = '', noPadding, style }: CardProps) {
   return (
-    <div className={`harlow-card ${className}`} style={noPadding ? { padding: 0 } : {}}>
+    <div className={`harlow-card ${className}`} style={{ ...(noPadding ? { padding: 0 } : {}), ...style }}>
       {children}
     </div>
   )

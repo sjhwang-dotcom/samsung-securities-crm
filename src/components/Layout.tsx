@@ -1,56 +1,56 @@
 import { useState } from 'react'
 import { Outlet, NavLink, useLocation, useNavigate } from 'react-router-dom'
-import harlowLogo from '../assets/harlow-logo.svg'
 import {
   Search, Bell, Settings, RefreshCw, LogOut,
-  LayoutDashboard, Building2, ClipboardList, Phone,
-  TrendingUp, Shield, CheckCircle,
-  Sparkles, Banknote,
+  LayoutDashboard, Building2, MessageSquare, Award,
+  TrendingUp, FileText, Calendar, AlertTriangle, Shield,
+  Sparkles,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
 const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, title: 'Dashboard' },
-  { to: '/crm', icon: ClipboardList, title: 'Agentic CRM' },
-  { to: '/voice', icon: Phone, title: 'Voice Agent', live: true },
-  { to: '/iso', icon: Building2, title: 'ISOs' },
-  { to: '/analytics', icon: TrendingUp, title: 'Analytics' },
-  { to: '/funding-mgmt', icon: Banknote, title: 'Funding' },
-  { to: '/risk', icon: Shield, title: 'Risk & UW' },
-  { to: '/compliance', icon: CheckCircle, title: 'Compliance' },
+  { to: '/dashboard', icon: LayoutDashboard, title: '대시보드' },
+  { to: '/clients', icon: Building2, title: '고객 관리' },
+  { to: '/activity', icon: MessageSquare, title: '활동 관리' },
+  { to: '/broker-vote', icon: Award, title: '브로커 보트' },
+  { to: '/revenue', icon: TrendingUp, title: '수익 분석' },
+  { to: '/research', icon: FileText, title: '리서치' },
+  { to: '/corporate-access', icon: Calendar, title: '기업탐방' },
+  { to: '/risk', icon: AlertTriangle, title: '이탈 경고' },
+  { to: '/compliance', icon: Shield, title: '컴플라이언스' },
 ]
 
 const pageTitles: Record<string, { title: string; sub: string }> = {
-  '/': { title: 'Portfolio Command Center', sub: 'Real-time overview across all portfolio companies' },
-  '/crm': { title: 'Agentic CRM', sub: 'Full merchant lifecycle — lead to go-live' },
-  '/voice': { title: 'Voice Agent Command Center', sub: 'Real-time AI calling operations' },
-  '/risk': { title: 'Agentic Risk Intelligence', sub: 'Transaction-based risk scoring and monitoring' },
-  '/compliance': { title: 'Compliance Intelligence', sub: 'Automated regulatory monitoring' },
-  '/analytics': { title: 'Agentic Portfolio Intelligence', sub: 'Cross-ISO performance analytics' },
-  '/funding-mgmt': { title: 'Funding Management', sub: 'MCA portfolio and merchant cash advance operations' },
-  '/iso': { title: 'ISO Portfolio Companies', sub: 'Manage portfolio companies and integrations' },
-  '/portal': { title: 'Merchant Portal', sub: 'Self-service merchant interface' },
+  '/dashboard': { title: '영업 대시보드', sub: '기관영업 실시간 현황 — 수수료, 고객, 브로커 보트, AI 인사이트' },
+  '/clients': { title: '고객 관리 (Client 360)', sub: '기관 고객 프로필, 니즈 추출, 액션 추천' },
+  '/activity': { title: '활동 관리', sub: '인터랙션 로그, 니즈 추출 파이프라인, 팔로업 큐' },
+  '/broker-vote': { title: '브로커 보트 분석', sub: '카테고리별 점수, 트렌드, 보트 시즌 준비' },
+  '/revenue': { title: '수익 분석', sub: '수수료 트렌드, 고객 수익성, 딜 참여' },
+  '/research': { title: '리서치 배포', sub: '리포트 배포 현황, 고객 관심 매칭, 커버리지 갭' },
+  '/corporate-access': { title: '기업탐방 관리', sub: 'NDR, Conference, 전문가 통화 일정 및 ROI' },
+  '/risk': { title: '이탈 조기 경보', sub: '다중 신호 기반 이탈 위험 감지 및 개입 추천' },
+  '/compliance': { title: '컴플라이언스 센터', sub: '정보교류차단, 고객정보관리, 감사 추적' },
 }
 
 export default function Layout() {
   const [luminaOpen, setLuminaOpen] = useState(true)
   const location = useLocation()
   const navigate = useNavigate()
-  const currentPage = pageTitles[location.pathname] || pageTitles['/']
+  const currentPage = pageTitles[location.pathname] || pageTitles['/dashboard']
 
   return (
     <div className="harlow-shell">
       {/* ═══ NavRail — Icon-only dark sidebar ═══ */}
       <nav className="icon-rail">
         <div className="icon-rail-logo">
-          <img src={harlowLogo} alt="Harlow" style={{ width: 32, height: 32, borderRadius: 8 }} />
+          <div className="logo-mark" style={{ background: 'linear-gradient(135deg, #034EA2 0%, #2B7DE9 100%)' }}>
+            SS
+          </div>
         </div>
 
         <div className="icon-rail-nav">
           {navItems.map(item => {
-            const isActive = item.to === '/'
-              ? location.pathname === '/'
-              : location.pathname.startsWith(item.to)
+            const isActive = location.pathname.startsWith(item.to)
             return (
               <NavLink
                 key={item.to}
@@ -59,21 +59,20 @@ export default function Layout() {
                 className={`icon-rail-item ${isActive ? 'active' : ''}`}
               >
                 <item.icon size={18} strokeWidth={1.8} />
-                {item.live && <span className="icon-rail-badge">LIVE</span>}
               </NavLink>
             )
           })}
         </div>
 
         <div className="icon-rail-bottom">
-          <NavLink to="/settings" title="Settings" className="icon-rail-item">
+          <NavLink to="/settings" title="설정" className="icon-rail-item">
             <Settings size={18} strokeWidth={1.8} />
           </NavLink>
-          <button title="Switch Portal" className="icon-rail-item" onClick={() => navigate('/login')}>
+          <button title="포탈 전환" className="icon-rail-item" onClick={() => navigate('/login')}>
             <LogOut size={18} strokeWidth={1.8} />
           </button>
-          <div className="icon-rail-avatar" title="Sarah Chen">
-            <span>SC</span>
+          <div className="icon-rail-avatar" title="김영호">
+            <span>김</span>
           </div>
         </div>
       </nav>
@@ -88,29 +87,29 @@ export default function Layout() {
           </div>
           <div className="topbar-actions">
             <div className="topbar-time-filters">
-              <button className="time-filter-btn">7d</button>
-              <button className="time-filter-btn active">30d</button>
-              <button className="time-filter-btn">90d</button>
-              <button className="time-filter-btn">12m</button>
+              <button className="time-filter-btn">7일</button>
+              <button className="time-filter-btn active">30일</button>
+              <button className="time-filter-btn">90일</button>
+              <button className="time-filter-btn">12개월</button>
             </div>
-            <button className="topbar-refresh-btn" title="Refresh">
+            <button className="topbar-refresh-btn" title="새로고침">
               <RefreshCw size={14} strokeWidth={2} />
             </button>
-            <button className="topbar-icon-btn" title="Notifications">
+            <button className="topbar-icon-btn" title="알림">
               <Bell size={16} strokeWidth={1.8} />
               <span className="topbar-notif-dot" />
             </button>
-            <button className="topbar-icon-btn" title="Search">
+            <button className="topbar-icon-btn" title="검색">
               <Search size={16} strokeWidth={1.8} />
             </button>
             {!luminaOpen && (
               <button
                 className="topbar-lumina-btn"
                 onClick={() => setLuminaOpen(true)}
-                title="Open Lumina"
+                title="루미나"
               >
                 <Sparkles size={14} strokeWidth={2} />
-                Lumina
+                루미나
               </button>
             )}
           </div>
@@ -123,17 +122,17 @@ export default function Layout() {
 
         {/* Status Bar */}
         <footer className="harlow-statusbar">
-          <span>Last refreshed: 2 min ago</span>
+          <span>마지막 갱신: 2분 전</span>
           <span className="statusbar-sep">|</span>
-          <span>Data across 3 ISOs, 4,612 merchants</span>
+          <span>15명 세일즈 · 300 기관 고객</span>
           <span className="statusbar-sep">|</span>
-          <span>AI insights update every 15 min</span>
+          <span>AI 인사이트 15분마다 갱신</span>
           <span className="statusbar-sep">|</span>
-          <span className="statusbar-auth">Human authority required for all actions</span>
+          <span className="statusbar-auth">모든 액션은 사람의 승인 필요</span>
         </footer>
       </div>
 
-      {/* ═══ Lumina Panel ═══ */}
+      {/* ═══ AI Assistant Panel ═══ */}
       {luminaOpen && <LuminaPanel onClose={() => setLuminaOpen(false)} />}
     </div>
   )

@@ -1,15 +1,19 @@
 import type { ReactNode } from 'react'
 
 /* ── Column definition for DataTable ── */
-export interface Column<T> {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export interface Column<_T = any> {
   key: string
-  header: string
-  render?: (row: T, index: number) => ReactNode
+  /** Column header text (use 'header' or 'label') */
+  header?: string
+  label?: string
+  /** Render function — accepts (value, row, index) or legacy (row, index) */
+  render?: (valueOrRow: any, rowOrIndex?: any, index?: number) => ReactNode
   align?: 'left' | 'center' | 'right'
   width?: string
 }
 
-interface DataTableProps<T> {
+interface DataTableProps<T = any> {
   columns: Column<T>[]
   data: T[]
   compact?: boolean
@@ -18,7 +22,7 @@ interface DataTableProps<T> {
   onRowClick?: (row: T, index: number) => void
 }
 
-/** Reusable data table matching PPTX table style — gray header, clean rows, proper alignment */
+/** Reusable data table — gray header, clean rows, proper alignment */
 export default function DataTable<T>({
   columns,
   data,
@@ -34,7 +38,7 @@ export default function DataTable<T>({
           <tr>
             {columns.map(col => (
               <th key={col.key} style={{ textAlign: col.align || 'left', width: col.width }}>
-                {col.header}
+                {col.header || col.label || col.key}
               </th>
             ))}
           </tr>
@@ -50,11 +54,14 @@ export default function DataTable<T>({
               `}
               onClick={() => onRowClick?.(row, i)}
             >
-              {columns.map(col => (
-                <td key={col.key} style={{ textAlign: col.align || 'left' }}>
-                  {col.render ? col.render(row, i) : String((row as Record<string, unknown>)[col.key] ?? '')}
-                </td>
-              ))}
+              {columns.map(col => {
+                const value = (row as Record<string, unknown>)[col.key]
+                return (
+                  <td key={col.key} style={{ textAlign: col.align || 'left' }}>
+                    {col.render ? col.render(row, i) : String(value ?? '')}
+                  </td>
+                )
+              })}
             </tr>
           ))}
         </tbody>

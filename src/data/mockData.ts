@@ -1,236 +1,169 @@
 /**
- * Data layer — sources from DuckDB-exported JSON files.
- * Re-exports in the same shape as the original hardcoded mock data
- * so all existing component imports continue to work.
+ * Data layer — Samsung Securities Agentic CRM
+ * Sources from JSON files, re-exports typed data for all components.
  */
-import type { Merchant, Lead, AtRiskMerchant, ActivityItem, OnboardingApp, VoiceCall } from '../types'
+import type {
+  Institution, KeyPerson, Salesperson, Interaction, ClientNeed,
+  ActionItem, BrokerVote, ResearchReport, CorporateAccessEvent,
+  CommissionData, AtRiskClient, ComplianceAlert, ActivityItem,
+} from '../types'
 
 // ═══ Raw DB imports ═══
-import _isos from './db/isos.json'
-import _merchants from './db/merchants.json'
+import _institutions from './db/institutions.json'
+import _keyPersons from './db/key_persons.json'
+import _salespeople from './db/salespeople.json'
+import _interactions from './db/interactions.json'
+import _needs from './db/needs.json'
+import _actions from './db/actions.json'
+import _brokerVotes from './db/broker_votes.json'
+import _commissions from './db/commissions.json'
+import _research from './db/research_reports.json'
+import _corporateAccess from './db/corporate_access.json'
 import _kpis from './db/dashboard_kpis.json'
 import _volumeTrend from './db/volume_trend.json'
-import _categoryMix from './db/category_mix.json'
-import _isoPortfolio from './db/iso_portfolio.json'
-import _atRisk from './db/at_risk_merchants.json'
+import _atRisk from './db/at_risk_clients.json'
 import _activity from './db/recent_activity.json'
-import _crm from './db/crm_data.json'
-import _partnerPortal from './db/partner_portal.json'
-import _riskDist from './db/risk_distribution.json'
-import _procDist from './db/processor_distribution.json'
-import _prodPen from './db/product_penetration.json'
-import _cbTrend from './db/chargeback_trend.json'
-import _voiceCalls from './db/voice_calls.json'
-import _voiceHourly from './db/voice_hourly.json'
-import _callOutcomes from './db/call_outcomes.json'
+import _compliance from './db/compliance_alerts.json'
 
 // ═══ Helper ═══
-const fmt = (n: number) => n >= 1e6 ? `$${(n / 1e6).toFixed(1)}M` : `$${(n / 1e3).toFixed(0)}K`
 const fmtPct = (n: number) => `${n.toFixed(1)}%`
 const monthLabel = (iso: string) => {
   const d = new Date(iso)
-  const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+  const months = ["1월", "2월", "3월", "4월", "5월", "6월", "7월", "8월", "9월", "10월", "11월", "12월"]
   return `${months[d.getMonth()]} '${String(d.getFullYear()).slice(2)}`
 }
 
 // ═══ Dashboard KPIs ═══
 const k = _kpis as any
 export const dashboardKPIs = [
-  { label: 'Total Merchants', value: k.total_merchants?.toLocaleString() ?? '4,612', trend: '3.2%', trendDirection: 'up' as const, trendPositive: true, icon: 'Users', color: 'teal' },
-  { label: 'Monthly Volume', value: fmt(k.monthly_volume ?? 32100000), trend: fmtPct(k.monthly_volume_trend ?? 8.4), trendDirection: 'up' as const, trendPositive: true, icon: 'DollarSign', color: 'indigo' },
-  { label: 'Monthly Residuals', value: fmt(k.monthly_residuals ?? 3210000), trend: fmtPct(k.monthly_residuals_trend ?? 5.2), trendDirection: 'up' as const, trendPositive: true, icon: 'TrendingUp', color: 'emerald' },
-  { label: 'Portfolio Churn', value: fmtPct(k.churn_rate ?? 1.4), trend: '0.4%', trendDirection: 'down' as const, trendPositive: true, icon: 'UserMinus', color: 'emerald' },
-  { label: 'Chargeback Rate', value: fmtPct(k.chargeback_rate ?? 0.35), trend: '0.02%', trendDirection: 'down' as const, trendPositive: true, icon: 'AlertTriangle', color: 'amber' },
+  { label: '월간 수수료', value: `${k.monthly_commission ?? 16.7}억원`, trend: fmtPct(k.commission_trend ?? 5.3), trendDirection: 'up' as const, trendPositive: true, icon: 'TrendingUp', color: 'indigo' },
+  { label: '활성 고객', value: `${k.active_clients ?? 287}`, trend: `${k.total_clients ?? 300} 중`, trendDirection: 'up' as const, trendPositive: true, icon: 'Building2', color: 'teal' },
+  { label: '평균 보트 점수', value: `${k.avg_broker_vote ?? 7.2}`, trend: `+${k.vote_trend ?? 0.3}`, trendDirection: 'up' as const, trendPositive: true, icon: 'Award', color: 'emerald' },
+  { label: '이탈 위험 고객', value: `${k.at_risk_count ?? 12}`, trend: `${k.risk_trend ?? -2}`, trendDirection: 'down' as const, trendPositive: true, icon: 'AlertTriangle', color: 'amber' },
+  { label: '니즈 추출', value: `${k.needs_extracted ?? 847}건`, trend: fmtPct(k.needs_trend ?? 12.5), trendDirection: 'up' as const, trendPositive: true, icon: 'Brain', color: 'rose' },
+  { label: '액션 완료율', value: fmtPct(k.action_completion_rate ?? 82.3), trend: `+${fmtPct(k.action_trend ?? 4.1)}`, trendDirection: 'up' as const, trendPositive: true, icon: 'CheckCircle', color: 'emerald' },
 ]
 
 // ═══ Volume Trend ═══
 export const volumeData = (_volumeTrend as any[]).map((r: any) => ({
   month: monthLabel(r.month),
-  volume: r.volume_m,
-  residuals: r.residuals_m,
+  commission: r.commission,
+  interactions: r.interactions,
 }))
 
-// ═══ Category Mix ═══
-export const categoryMixData = (_categoryMix as any[]).map((r: any) => ({
-  name: r.name,
-  value: r.value,
-  color: r.color,
-}))
+// ═══ Institutions ═══
+export const institutions: Institution[] = _institutions as Institution[]
 
-// ═══ ISO Portfolio ═══
-export const isoPortfolio = (_isoPortfolio as any[]).map((r: any) => ({
-  name: r.name,
-  merchants: r.merchants?.toLocaleString() ?? '0',
-  volume: `$${r.volume_m}M`,
-  churn: fmtPct(r.churn_rate ?? 0),
-  penetration: fmtPct(r.penetration ?? 0),
-  status: r.status === 'Primary' ? 'Primary' : `Acquired`,
-  statusColor: r.status === 'Primary' ? 'teal' as const : 'emerald' as const,
-}))
+// ═══ Key Persons ═══
+export const keyPersons: KeyPerson[] = _keyPersons as KeyPerson[]
 
-// ═══ At-Risk Merchants ═══
-export const atRiskMerchants: AtRiskMerchant[] = (_atRisk as any[]).map((r: any) => ({
-  name: r.name,
-  riskScore: r.riskScore,
-  volume: r.volume,
-  trend: r.trend,
-  severity: r.severity as AtRiskMerchant['severity'],
-}))
+// ═══ Salespeople ═══
+export const salespeople: Salesperson[] = _salespeople as Salesperson[]
+
+// ═══ Interactions ═══
+export const interactions: Interaction[] = (_interactions as any[]).map((r: any) => ({
+  ...r,
+  duration: r.duration != null ? String(r.duration) : undefined,
+})) as Interaction[]
+
+// ═══ Client Needs ═══
+export const clientNeeds: ClientNeed[] = _needs as ClientNeed[]
+
+// ═══ Action Items ═══
+export const actionItems: ActionItem[] = _actions as ActionItem[]
+
+// ═══ Broker Votes ═══
+export const brokerVotes: BrokerVote[] = _brokerVotes as BrokerVote[]
+
+// ═══ Commissions ═══
+export const commissions: CommissionData[] = _commissions as CommissionData[]
+
+// ═══ Research Reports ═══
+export const researchReports: ResearchReport[] = (_research as any[]).map((r: any) => ({
+  ...r,
+  recommendation: r.recommendation ?? undefined,
+  targetPrice: r.targetPrice ?? undefined,
+})) as ResearchReport[]
+
+// ═══ Corporate Access ═══
+export const corporateAccessEvents: CorporateAccessEvent[] = _corporateAccess as CorporateAccessEvent[]
+
+// ═══ At-Risk Clients ═══
+export const atRiskClients: AtRiskClient[] = _atRisk as AtRiskClient[]
 
 // ═══ Recent Activity ═══
 export const recentActivity: ActivityItem[] = (_activity as any[]).map((r: any) => ({
   text: r.text,
   time: r.time,
+  type: r.type,
 }))
 
-// ═══ Lead Pipeline ═══
-// ═══ Lead Pipeline (from DuckDB leads table) ═══
-export const leadPipeline: Record<string, Lead[]> = Object.fromEntries(
-  Object.entries((_crm as any).leadPipeline as Record<string, any[]>).map(([stage, leads]) => [
-    stage,
-    leads.map((l: any) => ({
-      name: l.name,
-      location: l.location ?? '',
-      mcc: l.mcc ?? '',
-      estVolume: l.estVolume ?? l.estvolume ?? '',
-      aiScore: l.aiScore ?? l.aiscore ?? 50,
-      detail: l.detail ?? undefined,
-    })),
-  ])
-)
+// ═══ Compliance Alerts ═══
+export const complianceAlerts: ComplianceAlert[] = _compliance as ComplianceAlert[]
 
-// ═══ Merchants (use DB data, map to existing type) ═══
-export const merchants: Merchant[] = (_merchants as any[]).slice(0, 50).map((m: any) => ({
-  name: m.dba_name,
-  mid: m.mid ?? '—',
-  processor: m.processor ?? '—',
-  equipment: 'PAX A920', // equipment is separate table, simplified
-  monthlyVol: fmt((m.annual_volume_estimate ?? 0) / 12),
-  pciStatus: (['Active'].includes(m.status) ? (Math.random() > 0.15 ? 'Compliant' : 'Non-Compliant') : 'N/A') as Merchant['pciStatus'],
-  status: m.status as Merchant['status'],
-}))
-
-// Full merchant list for ISO Management
-export const allMerchants = (_merchants as any[]).map((m: any) => ({
-  merchant_id: m.merchant_id,
-  iso_id: m.iso_id,
-  iso_name: m.iso_name,
-  name: m.dba_name,
-  mid: m.mid,
-  mcc: m.mcc,
-  mcc_desc: m.mcc_desc,
-  category: m.category,
-  processor: m.processor,
-  status: m.status,
-  avg_ticket: m.avg_ticket,
-  risk_score: m.risk_score,
-  city: m.address_city,
-  state: m.address_state,
-  boarding_date: m.boarding_date,
-  annual_volume: m.annual_volume_estimate,
-}))
-
-// ═══ Onboarding Apps ═══
-export const onboardingApps: OnboardingApp[] = ((_crm as any).applications as any[]).map((a: any) => ({
-  merchant: a.merchant,
-  bank: a.bank ?? 'Esquire Bank',
-  submitted: a.submitted ? new Date(a.submitted).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '',
-  stage: a.stage,
-  riskScore: a.riskScore ?? a.riskscore ?? null,
-  riskLabel: a.riskLabel ?? a.risklabel ?? 'Pending',
-  status: a.status,
-  assigned: a.assigned ?? '',
-}))
-
-// ═══ Voice Calls ═══
-export const voiceCalls: VoiceCall[] = (_voiceCalls as any[]).map((c: any) => ({
-  phone: c.phone ?? '',
-  merchant: c.merchant ?? '',
-  status: c.status,
-  duration: c.duration ?? '0:00',
-  stage: c.stage ?? '—',
-  sentiment: c.sentiment ?? 'Neutral',
-}))
-
-export const voiceHourlyData = (_voiceHourly as any[]).map((r: any) => ({
-  hour: r.hour,
-  calls: r.calls,
-  transferRate: r.transferRate ?? r.transferrate ?? 0,
-}))
-
-export const callOutcomeData = (_callOutcomes as any[]).map((r: any) => ({
-  name: r.name,
-  value: r.value,
-  color: r.color,
-}))
-
-// ═══ Risk ═══
-export const riskDistribution = (_riskDist as any[]).map((r: any) => ({
-  range: r.range,
-  label: r.label,
-  pct: r.pct,
-  color: r.color,
-}))
-
-export const riskByMCC = [
-  { mcc: '5944', label: 'Jewelry', avgScore: 42, color: '#F43F5E' },
-  { mcc: '7542', label: 'Car Wash', avgScore: 51, color: '#F59E0B' },
-  { mcc: '7941', label: 'Recreation', avgScore: 58, color: '#EAB308' },
-  { mcc: '5812', label: 'Restaurants', avgScore: 71, color: '#86EFAC' },
-  { mcc: '5411', label: 'Grocery', avgScore: 78, color: '#10B981' },
+// ═══ Tier Distribution (computed) ═══
+export const tierDistribution = [
+  { name: 'Platinum', value: institutions.filter(i => i.tier === 'Platinum').length, color: '#8B5CF6' },
+  { name: 'Gold', value: institutions.filter(i => i.tier === 'Gold').length, color: '#F59E0B' },
+  { name: 'Silver', value: institutions.filter(i => i.tier === 'Silver').length, color: '#94A3B8' },
+  { name: 'Bronze', value: institutions.filter(i => i.tier === 'Bronze').length, color: '#CD7F32' },
 ]
 
-// ═══ Processor ═══
-export const processorDistribution = (_procDist as any[]).map((r: any) => ({
-  name: r.name,
-  volume: r.volume,
-  pct: r.pct,
-}))
+// ═══ Sector Interest (computed from needs) ═══
+export const sectorInterest = (() => {
+  const sectorMap: Record<string, number> = {}
+  clientNeeds.forEach(n => {
+    if (n.sector) {
+      sectorMap[n.sector] = (sectorMap[n.sector] || 0) + 1
+    }
+  })
+  const colors = ['#034EA2', '#2B7DE9', '#10B981', '#F59E0B', '#F43F5E', '#8B5CF6', '#EC4899', '#06B6D4']
+  return Object.entries(sectorMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 8)
+    .map(([name, value], i) => ({ name, value, color: colors[i % colors.length] }))
+})()
 
-// ═══ Products ═══
-export const productPenetration = (_prodPen as any[]).map((r: any) => ({
-  product: r.product,
-  enrolled: r.enrolled,
-  eligible: r.eligible,
-  rate: r.rate,
-  revenue: r.revenue,
-}))
-
-// ═══ Chargebacks ═══
-export const chargebackTrendData = (_cbTrend as any[]).map((r: any) => ({
-  month: monthLabel(r.month),
-  portfolio: r.portfolio,
-  visa: r.visa,
-  mc: r.mc,
-}))
-
-// ═══ Merchant Deposits (keep hardcoded - specific to merchant portal) ═══
-export const merchantDeposits = [
-  { date: 'Mar 14', amount: '$2,013.90', status: 'Deposited' },
-  { date: 'Mar 13', amount: '$1,795.50', status: 'Deposited' },
-  { date: 'Mar 12', amount: '$1,496.80', status: 'Deposited' },
-  { date: 'Mar 11', amount: '$2,155.80', status: 'Deposited' },
+// ═══ AI Assistant pre-seeded conversations ═══
+export const aiChatMessages = [
+  { role: 'ai' as const, text: "안녕하세요, 김영호 차장님. 오늘의 AI 분석 결과를 정리했습니다." },
+  { role: 'ai' as const, text: `월간 수수료가 전월 대비 ${fmtPct(k.commission_trend ?? 5.3)} 증가한 ${k.monthly_commission ?? 16.7}억원입니다. 미래에셋자산운용의 수수료 기여가 특히 늘었습니다.` },
+  { role: 'ai' as const, text: `이탈 위험 고객 ${k.at_risk_count ?? 12}곳 중 3곳이 CRITICAL 등급입니다. 한국밸류자산운용의 참여도가 급감했습니다. 즉시 연락을 권장합니다.` },
+  { role: 'user' as const, text: "한국밸류 이탈 위험 원인이 뭐야?" },
+  { role: 'ai' as const, text: "세 가지 요인입니다: (1) 최근 3개월간 통화 빈도 60% 감소, (2) 브로커 보트 리서치 카테고리 점수 7.2→5.8 하락, (3) 경쟁사(NH투자증권)의 반도체 애널리스트 커버리지가 강화됐습니다. 반도체 섹터 심층 리포트 배포와 SK하이닉스 기업탐방 초대를 추천합니다." },
 ]
 
-// ═══ Lumina (keep hardcoded - AI conversation) ═══
-export const luminaChatMessages = [
-  { role: 'ai' as const, text: "Good morning, Sarah. I've completed my overnight analysis across all 3 ISOs. Key highlights:" },
-  { role: 'ai' as const, text: `Portfolio volume is up ${fmtPct(k.monthly_volume_trend ?? 8.4)} month-over-month to ${fmt(k.monthly_volume ?? 32100000)}. Zenith integration is tracking ahead of schedule — 96% of merchants migrated.` },
-  { role: 'ai' as const, text: `I've flagged ${_atRisk.length} merchants for attrition risk. ${(_atRisk as any[])[0]?.name ?? 'Top merchant'} is the most urgent. Recommend immediate outreach.` },
-  { role: 'user' as const, text: `What's driving the ${(_atRisk as any[])[0]?.name ?? 'merchant'} decline?` },
-  { role: 'ai' as const, text: "Three factors: (1) PCI non-compliant for 94 days — they may be shopping processors, (2) a new competing business opened nearby in January, (3) their average ticket dropped significantly suggesting operational changes. I'd recommend calling with a retention offer — perhaps waive the PCI fee and offer a rate review." },
+export const aiInsights = [
+  { title: '이탈 경고', text: `${k.at_risk_count ?? 12}곳 이탈 위험 — 위험 수수료 ${(k.monthly_commission * 0.15).toFixed(1)}억원`, severity: 'high' as const, time: '2시간 전' },
+  { title: '보트 시즌 준비', text: '2026 H1 보트 시즌 D-45 — 상위 20개 고객 준비 현황 확인', severity: 'medium' as const, time: '오늘' },
+  { title: '니즈 급증', text: '반도체 섹터 관련 니즈 전주 대비 35% 증가 — 리서치 배포 추천', severity: 'info' as const, time: '4시간 전' },
+  { title: '수수료 마일스톤', text: '분기 수수료 50억원 돌파 — 전년 동기 대비 8.2% 성장', severity: 'positive' as const, time: '어제' },
+  { title: '컴플라이언스', text: '정보교류차단 알림 2건 — 자동 차단 처리 완료', severity: 'medium' as const, time: '어제' },
 ]
 
-export const luminaInsights = [
-  { title: 'Attrition Alert', text: `${_atRisk.length} merchants flagged — volume at risk`, severity: 'high' as const, time: '2h ago' },
-  { title: 'Volume Milestone', text: `Portfolio crossed ${fmt(k.monthly_volume ?? 32100000)} monthly volume`, severity: 'positive' as const, time: '4h ago' },
-  { title: 'Compliance Gap', text: `${Math.round((k.total_merchants ?? 4612) * 0.04)} merchants PCI non-compliant — auto-reminders sent`, severity: 'medium' as const, time: 'Today' },
-  { title: 'Migration Update', text: 'Liberty Processing integration at 92% — on track for completion', severity: 'info' as const, time: 'Yesterday' },
-  { title: 'Cost Saving', text: 'Voice Agent saved $498K vs human openers this month', severity: 'positive' as const, time: 'Yesterday' },
+// ═══ Commission by Type (for waterfall chart) ═══
+export const commissionByType = [
+  { name: 'High-touch', value: 9.8, color: '#034EA2' },
+  { name: 'DMA', value: 4.2, color: '#2B7DE9' },
+  { name: 'Algo', value: 2.7, color: '#60A5FA' },
 ]
 
-// ═══ ISO Data (for ISO Management page) ═══
-export const isoData = (_isos as any[])
-
-// ═══ Partner Portal Data (from DuckDB) ═══
-export const partnerData = _partnerPortal as any
+// ═══ Broker Vote Category Averages ═══
+export const brokerVoteCategoryAvg = (() => {
+  const cats = { research: 0, sales: 0, trading: 0, corporateAccess: 0, events: 0 }
+  const count = brokerVotes.length || 1
+  brokerVotes.forEach(v => {
+    cats.research += v.categories.research
+    cats.sales += v.categories.sales
+    cats.trading += v.categories.trading
+    cats.corporateAccess += v.categories.corporateAccess
+    cats.events += v.categories.events
+  })
+  return [
+    { category: '리서치', score: +(cats.research / count).toFixed(1) },
+    { category: '세일즈', score: +(cats.sales / count).toFixed(1) },
+    { category: '트레이딩', score: +(cats.trading / count).toFixed(1) },
+    { category: '기업탐방', score: +(cats.corporateAccess / count).toFixed(1) },
+    { category: '이벤트', score: +(cats.events / count).toFixed(1) },
+  ]
+})()

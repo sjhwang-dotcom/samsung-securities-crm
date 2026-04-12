@@ -1,12 +1,7 @@
 import { useState, useEffect, useCallback, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
-import { Send, FileText, MessageSquare, Loader2 } from 'lucide-react'
+import { Send, FileText, MessageSquare, Loader2, Sparkles } from 'lucide-react'
 import Markdown from 'react-markdown'
-import luminaIcon from '../assets/lumina-icon.svg'
-
-function LuminaIcon({ size = 14 }: { size?: number }) {
-  return <img src={luminaIcon} alt="Lumina" width={size} height={size} style={{ display: 'block' }} />
-}
 
 interface LuminaPanelProps {
   onClose?: () => void
@@ -20,13 +15,21 @@ interface ChatMessage {
 const API_URL = '/api/chat'
 
 export default function LuminaPanel({ onClose }: LuminaPanelProps) {
-  const [activeTab, setActiveTab] = useState<'chat' | 'documents'>('chat')
+  const [activeTab, setActiveTab] = useState<'chat' | 'documents' | 'pdf-preview'>('chat')
   const [panelWidth, setPanelWidth] = useState(() => Math.max(Math.round(window.innerWidth * 0.3), 420))
   const [isResizing, setIsResizing] = useState(false)
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null)
+  const [pdfTitle, setPdfTitle] = useState('')
+
+  const openPdf = (url: string, title: string) => {
+    setPdfUrl(url)
+    setPdfTitle(title)
+    setActiveTab('pdf-preview')
+  }
 
   const tabs = [
-    { id: 'chat' as const, label: 'Chat', Icon: MessageSquare },
-    { id: 'documents' as const, label: 'Documents', Icon: FileText },
+    { id: 'chat' as const, label: '대화', Icon: MessageSquare },
+    { id: 'documents' as const, label: '문서', Icon: FileText },
   ]
 
   const startResizing = useCallback(() => setIsResizing(true), [])
@@ -62,25 +65,25 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         style={{
           position: 'absolute', left: -3, top: 0, bottom: 0, width: 6,
           cursor: 'col-resize', zIndex: 10,
-          background: isResizing ? 'rgba(21,120,247,0.2)' : 'transparent',
+          background: isResizing ? 'rgba(3,78,162,0.2)' : 'transparent',
           transition: 'background 0.15s',
         }}
-        onMouseEnter={e => { if (!isResizing) (e.target as HTMLElement).style.background = 'rgba(21,120,247,0.12)' }}
+        onMouseEnter={e => { if (!isResizing) (e.target as HTMLElement).style.background = 'rgba(3,78,162,0.12)' }}
         onMouseLeave={e => { if (!isResizing) (e.target as HTMLElement).style.background = 'transparent' }}
       />
 
       {/* Header */}
       <div className="lumina-header">
         <div className="lumina-title-row">
-          <div className="lumina-logo">
-            <LuminaIcon size={18} />
+          <div className="lumina-logo" style={{ background: 'linear-gradient(135deg, #034EA2, #2B7DE9)' }}>
+            <Sparkles size={16} color="white" />
           </div>
           <div className="lumina-title-text">
-            <span className="lumina-title">Lumina</span>
-            <span className="lumina-badge">Superagent</span>
+            <span className="lumina-title">루미나</span>
+            <span className="lumina-badge">Deep Agent</span>
           </div>
           {onClose && (
-            <button onClick={onClose} className="lumina-close-btn" title="Close">
+            <button onClick={onClose} className="lumina-close-btn" title="닫기">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -101,138 +104,77 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         </div>
       </div>
 
-      {/* Content — chat uses flex layout for pinned input */}
       {activeTab === 'chat' && <ChatTab />}
-      {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab /></div>}
+      {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
+      {activeTab === 'pdf-preview' && pdfUrl && (
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+          <div style={{ padding: '8px 12px', background: '#F8FAFC', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <button onClick={() => setActiveTab('documents')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#034EA2', fontWeight: 600, padding: '2px 6px' }}>← 목록</button>
+            <span style={{ fontSize: 11, color: '#475569', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfTitle}</span>
+          </div>
+          <iframe src={pdfUrl} style={{ flex: 1, border: 'none', width: '100%' }} title={pdfTitle} />
+        </div>
+      )}
     </aside>
   )
 }
 
-/* ═══ Pre-seeded conversations per page ═══ */
+/* ═══ Pre-seeded conversations per page (Korean) ═══ */
 const seedConversations: Record<string, ChatMessage[]> = {
   '/dashboard': [
-    { role: 'assistant', content: "Good morning. I've completed my overnight analysis across all 3 ISOs. Portfolio volume hit $31.1M this month — up 3.5% MoM. Three items need your attention." },
-    { role: 'user', content: "What are the three items?" },
-    { role: 'assistant', content: "1. **Sunrise Deli** churn probability hit 87% — volume down 42% in 30 days. I've prepared a retention offer.\n\n2. **Liberty Processing** migration is at 92% — 59 merchants still need bank info updates. I've drafted follow-up emails.\n\n3. **Zenith** PCI compliance dropped to 88.5% — 3 healthcare merchants have expired SAQ-A forms. Auto-remediation initiated." },
-    { role: 'user', content: "How's the waterfall looking?" },
-    { role: 'assistant', content: "Portfolio value bridge: Starting at **$28.5M** → +$1.8M organic growth → +$1.2M from Zenith acquisition → +$0.8M product revenue → -$0.2M churn loss → **Current $32.1M**. Net gain of $3.6M this quarter. Churn loss is minimal at 0.6%." },
+    { role: 'assistant', content: "안녕하세요, 김영호 차장님. 오늘의 AI 분석 결과를 정리했습니다. 3가지 주요 사항이 있습니다." },
+    { role: 'user', content: "3가지가 뭐야?" },
+    { role: 'assistant', content: "1. **이탈 위험**: 한국밸류자산운용 참여도가 급감했습니다(위험점수 88). 3개월간 통화 빈도 60% 감소, 브로커 보트 리서치 점수 하락. 즉시 연락을 권장합니다.\n\n2. **니즈 급증**: 반도체 섹터 관련 고객 니즈가 전주 대비 35% 증가했습니다. SK하이닉스 HBM 관련 심층 리포트 배포를 추천합니다.\n\n3. **보트 시즌 준비**: 2026 H1 보트까지 D-45입니다. 상위 20개 고객 중 5곳의 서비스 기록이 부족합니다. 기업탐방 초대를 우선 검토하세요." },
+    { role: 'user', content: "오늘 우선 연락할 고객은?" },
+    { role: 'assistant', content: "**우선순위 3곳**:\n\n1. **미래에셋자산운용** 박정현 PM — 어제 블룸버그로 방산 섹터 리서치 요청. 한화에어로 목표가 업데이트 배포 필요 (URGENT)\n2. **국민연금** 이승재 CIO — 2분기 리밸런싱 관련 미팅 요청 건 회신 필요 (THIS WEEK)\n3. **한국밸류자산운용** 최동환 PM — 이탈 위험 CRITICAL. 반도체 섹터 뷰 공유 겸 관계 회복 통화 추천" },
   ],
-  '/crm': [
-    { role: 'assistant', content: "Pipeline overview: **200 active leads** across 8 stages. Pipeline value is approximately $209K/mo in estimated volume. Win rate trending at 67%." },
-    { role: 'user', content: "Which agents are performing best?" },
-    { role: 'assistant', content: "**Sarah Chen** leads with a 72% win rate across 28 deals ($118K). David Goldfarb has the most deals (34) but a lower 68% rate. I'd recommend having Sarah share her objection-handling approach with the team — her restaurant vertical close rate is 81%." },
-    { role: 'user', content: "Any deals at risk?" },
-    { role: 'assistant', content: "**King's Crown Jewelry** is in Underwriting with a risk score of 67 — flagged for high-risk MCC (5944). The $45K/mo volume makes it valuable but chargeback exposure is elevated. I'd recommend requesting additional processing statements before approval." },
+  '/clients': [
+    { role: 'assistant', content: "고객 관리 페이지입니다. 현재 **300개 기관** 고객 중 Platinum 5곳, Gold 8곳, Silver 10곳, Bronze 7곳입니다." },
+    { role: 'user', content: "미래에셋 최근 관심사가 뭐야?" },
+    { role: 'assistant', content: "미래에셋자산운용의 최근 30일 AI 분석 결과:\n\n- **반도체**: SK하이닉스 HBM 수요 전망, 삼성전자 파운드리 수주 현황 (5건)\n- **2차전지**: LG에너지솔루션 북미 공장 가동률, 양극재 가격 동향 (3건)\n- **방산**: 한화에어로스페이스 수주잔고 분석 요청 (2건)\n- **ESG**: KCGS 등급 변동 관련 의견 요청 (1건)\n\n가장 긴급한 니즈는 **한화에어로 목표가 업데이트**입니다. 박정현 PM이 오늘 오전 통화에서 직접 요청했습니다." },
   ],
-  '/voice': [
-    { role: 'assistant', content: "Voice Agent status: **47 active calls** right now, 847 completed today. Transfer rate is 15.1% — up 0.3% from yesterday. Cost today: $42.35." },
-    { role: 'user', content: "What's our best performing script?" },
-    { role: 'assistant', content: "**Restaurant Savings Hook** leads at 41.2% win rate across 3,420 calls. Key factor: the empathy phrase added in v12 boosted transfers by 3.2%. Second best is Rate Comparison Direct at 38.7%. The seasonal rate lock script is underperforming at 24.1% — I'd recommend retiring it." },
-    { role: 'user', content: "How much are we saving vs human callers?" },
-    { role: 'assistant', content: "**$498K/month** in savings. Human team cost: $500K/mo ($16.67/transfer). AI Voice Agent: $1,270/mo ($0.33/transfer). That's a **99.7% cost reduction**. Annual savings: $5.98M. The AI also operates 9am-6pm with 50 concurrent lines — equivalent to a 200-person call center." },
+  '/activity': [
+    { role: 'assistant', content: "오늘 활동 요약: 통화 **23건**, 블룸버그 **45건**, 이메일 **12건**, 미팅 **2건**. AI가 추출한 니즈 **18건** 중 8건이 팔로업 필요합니다." },
+    { role: 'user', content: "미완료 액션 중 긴급한 건은?" },
+    { role: 'assistant', content: "**URGENT 액션 3건**:\n\n1. 삼성자산운용 → 반도체 Q3 전망 리포트 배포 (기한: 오늘)\n2. 국민연금 → 2분기 리밸런싱 미팅 일정 확정 (기한: 내일)\n3. BlackRock Korea → 한국 시장 매크로 뷰 영문 자료 전달 (기한: 4/14)" },
   ],
-  '/iso': [
-    { role: 'assistant', content: "Portfolio companies overview: 3 ISOs managing 4,612 merchants with $32.1M combined monthly volume." },
-    { role: 'user', content: "How's Liberty integration going?" },
-    { role: 'assistant', content: "Liberty Processing integration is at **92%** — 59 merchants remaining. Key blocker: 12 merchants need bank info updates (legacy accounts from pre-acquisition). Migration target date is May 30, 2026. I've flagged the bank info issue to Lisa Nguyen on the Liberty team. Churn has improved from 5.8% to 3.4% since acquisition thanks to AI retention outreach." },
-    { role: 'user', content: "What did we pay for Zenith?" },
-    { role: 'assistant', content: "Zenith was acquired for **$12.5M** at a **4.2x revenue multiple**. Current monthly volume: $8.9M with 1,024 merchants. The 70/30 residual split generates ~$890K/mo. Integration is 96% complete — 28 merchants remaining. Post-acquisition churn dropped from 4.1% to 2.1%. ROI is tracking ahead of the 3-year payback projection." },
+  '/broker-vote': [
+    { role: 'assistant', content: "2025 H2 브로커 보트 결과: 평균 **7.2점** (전기 대비 +0.3). 리서치 카테고리가 가장 강하고(7.8), 기업탐방이 가장 약합니다(6.4)." },
+    { role: 'user', content: "보트 점수 개선 전략은?" },
+    { role: 'assistant', content: "**카테고리별 개선 전략**:\n\n1. **기업탐방 (6.4 → 목표 7.5)**: NDR 횟수 30% 확대, 고객 관심 섹터 맞춤 이벤트 기획. 특히 국민연금/사학연금은 대형주 경영진 미팅 선호\n2. **이벤트 (6.8 → 목표 7.3)**: 섹터별 소규모 딥다이브 세미나 신설. 기존 대형 컨퍼런스보다 소그룹 포맷이 만족도 높음\n3. **트레이딩 (7.0 → 목표 7.5)**: 알고 실행 품질 개선, 대형 블록딜 참여 확대\n\n**Quick Win**: 국민연금 보트 점수가 6.8로 낮은데, 기업탐방 카테고리가 5.2입니다. 삼성전자 IR 미팅 1회만 성사시켜도 0.5점 이상 개선 가능합니다." },
   ],
-  '/analytics': [
-    { role: 'assistant', content: "Portfolio health score: **87/100**. All dimensions are strong except Churn (78) — driven by Liberty's 3.4% rate pulling the average up." },
-    { role: 'user', content: "Where should we focus product cross-sell?" },
-    { role: 'assistant', content: "Product penetration is only **4.7%** average — huge upside. Top opportunity: **POS Upgrade** at 9.2% penetration generates $211K revenue. Biggest gap: **Insurance** at 2.1% with only 98 enrolled out of 4,612 eligible. I'd recommend a targeted campaign for Embedded Financing (currently 6.8%) — restaurants in the $30-50K volume range have the highest conversion rate at 14.2%." },
+  '/revenue': [
+    { role: 'assistant', content: "월간 수수료 **16.7억원** (전월 대비 +5.3%). High-touch 58.7%, DMA 25.1%, Algo 16.2%. Platinum 고객이 전체 수익의 42%를 차지합니다." },
+    { role: 'user', content: "수익성 낮은 고객은?" },
+    { role: 'assistant', content: "**Cost-to-serve 대비 수익이 낮은 고객 5곳**:\n\n1. 프랭클린템플턴 — 수수료 800만원/월 vs 서비스 비용 1,200만원 (적자)\n2. 이스트스프링 — 수수료 600만원/월 vs 서비스 비용 900만원\n3. 피델리티 — 수수료 1,100만원/월 vs 서비스 비용 1,300만원\n\n다만 외국인 기관은 **브랜드 레퍼런스 가치**가 있으므로, 서비스 수준을 낮추기보다 DMA/Algo 비중을 높여 비용 구조를 개선하는 것을 추천합니다." },
+  ],
+  '/research': [
+    { role: 'assistant', content: "리서치 배포 현황: 이번 달 **25건** 발행, 평균 오픈율 **64%**. 반도체 섹터 리포트가 가장 높은 오픈율(82%)을 기록했습니다." },
+    { role: 'user', content: "커버리지 갭이 있는 섹터는?" },
+    { role: 'assistant', content: "고객 니즈 대비 리서치 공급이 부족한 섹터:\n\n1. **방산/우주항공**: 니즈 12건 vs 리포트 2건 (갭 83%)\n2. **원전/에너지**: 니즈 8건 vs 리포트 1건 (갭 88%)\n3. **AI/로보틱스**: 니즈 15건 vs 리포트 4건 (갭 73%)\n\n리서치팀에 방산 섹터 커버리지 강화를 건의하는 것을 추천합니다. 특히 한화에어로, 현대로템, LIG넥스원에 대한 수요가 높습니다." },
+  ],
+  '/corporate-access': [
+    { role: 'assistant', content: "이번 달 기업탐방 **15건** 중 완료 10건, 예정 4건, 취소 1건. 평균 피드백 점수 **4.2/5.0**입니다." },
+    { role: 'user', content: "ROI가 가장 높은 이벤트 유형은?" },
+    { role: 'assistant', content: "이벤트 유형별 ROI:\n\n1. **1:1 미팅**: 수수료 기여 평균 1,200만원/건 (비용 대비 8.5x)\n2. **NDR**: 수수료 기여 평균 2,500만원/건 (비용 대비 5.2x)\n3. **Expert Call**: 수수료 기여 평균 500만원/건 (비용 대비 12x) — 가성비 최고\n4. **Conference**: 수수료 기여 평균 3,000만원/건 (비용 대비 2.1x) — 가성비 낮음\n\n**추천**: Expert Call 빈도를 늘리세요. 비용 대비 효과가 가장 높고, 고객 만족도(4.5/5.0)도 최상위입니다." },
   ],
   '/risk': [
-    { role: 'assistant', content: "Portfolio risk score: **72/100**, up 3 points from last month. Chargeback rate at 0.82% — well below Visa's 1.0% threshold. 7 high-risk merchants being monitored." },
-    { role: 'user', content: "Which merchants are highest risk?" },
-    { role: 'assistant', content: "Top concern: a jewelry store (MCC 5944) with risk score 34 — volume decline + chargeback spike. Also monitoring 2 car washes with scores in the low 50s. The OFAC scan flagged 3 matches last month — 2 auto-cleared as false positives, 1 pending manual review. PCI compliance is at 87% — the 47 non-compliant merchants are costing us $937/mo in non-compliance fees." },
+    { role: 'assistant', content: "이탈 위험 고객 **12곳**: CRITICAL 3곳, WARNING 4곳, WATCH 5곳. 위험 수수료 총 **2.5억원/월**입니다." },
+    { role: 'user', content: "CRITICAL 고객 상세 알려줘" },
+    { role: 'assistant', content: "**CRITICAL 3곳**:\n\n1. **한국밸류자산운용** (위험점수 88)\n   - 참여도 60% 감소, 보트 리서치 5.8점\n   - 원인: 경쟁사 반도체 커버리지 강화\n   - 추천: SK하이닉스 딥다이브 + 기업탐방 초대\n\n2. **교보생명** (위험점수 85)\n   - 수수료 3개월 연속 하락 (-22%)\n   - 원인: DMA 비중 급증, 인사이동\n   - 추천: 신임 PM 관계 구축 미팅\n\n3. **우리은행신탁** (위험점수 82)\n   - 6개월간 미팅 0건\n   - 원인: 커버리지 공백 (전임 담당자 퇴사)\n   - 추천: 즉시 인사 방문 + 서비스 재개" },
   ],
   '/compliance': [
-    { role: 'assistant', content: "All compliance systems are current. Next action item: **Employee Security Training** due May 1, 2026. OFAC screening runs monthly — last scan: April 1." },
-    { role: 'user', content: "Any TCPA concerns?" },
-    { role: 'assistant', content: "TCPA is fully compliant. DNC list syncs every 6 hours (last sync: April 6). Two-party consent enforced in all applicable states. Time-of-day restrictions auto-enforced across 47 states. Zero violations in the past 90 days. The Voice Agent's compliance module blocked 23 calls last week that would have violated state timing rules." },
-  ],
-  '/portal': [
-    { role: 'assistant', content: "Welcome back, Mario. Your restaurant processed **$47,230** this month — up 8.2% from February. Approval rate is excellent at 98.7%." },
-    { role: 'user', content: "I have an open chargeback, what should I do?" },
-    { role: 'assistant', content: "You have **1 open chargeback** for $487.50 (Visa ****4821, reason: Merchandise Not Received). Deadline is **March 26**. I'd recommend gathering your delivery confirmation or signed receipt. The industry win rate for this reason code is about 65%." },
-  ],
-  '/portal/transactions': [
-    { role: 'assistant', content: "You're viewing your transaction history. Today you've processed **134 transactions** totaling **$2,148.20**. Average ticket is $35.19." },
-    { role: 'user', content: "Any refunds today?" },
-    { role: 'assistant', content: "You had **1 refund** today for $38.79 on a Discover card. Your refund rate is 1.8% which is well below the industry average of 3.2%. No voids today." },
-  ],
-  '/portal/statements': [
-    { role: 'assistant', content: "Your latest statement for **March 2026** shows total volume of **$9,816** with fees of $264.05 (2.69% effective rate). Net deposit: $9,552." },
-    { role: 'user', content: "How do my fees compare to last month?" },
-    { role: 'assistant', content: "Your effective rate has been stable at **2.69%** for the past 3 months. February fees were $235.09 on $8,740 volume. Your rate is competitive — the average restaurant pays 2.85-3.10%. The biggest fee component is **Interchange at 68%** ($179.55)." },
-  ],
-  '/portal/pci': [
-    { role: 'assistant', content: "Your PCI compliance status is **Compliant** through December 2026. SAQ-A completed, DSS Level 1. All checks passing." },
-    { role: 'user', content: "When do I need to renew?" },
-    { role: 'assistant', content: "Your SAQ-A is valid until **December 31, 2026** — about 8 months away. I'll send you a reminder 60 days before expiration. Your quarterly ASV scan is current (last passed Feb 28). P2PE is validated through your PAX A920 terminal." },
-  ],
-  '/portal/equipment': [
-    { role: 'assistant', content: "Your **PAX A920** terminal is online and running firmware v4.2.1. Last transaction processed today. Battery at 87%." },
-    { role: 'user', content: "Do I need a firmware update?" },
-    { role: 'assistant', content: "Your firmware **v4.2.1** is the latest version — no update needed. Your terminal has been online for 342 consecutive days with 99.8% uptime. Connection: WiFi + 4G backup. If you're experiencing any issues, I can schedule a replacement through Harlow support." },
-  ],
-  '/portal/products': [
-    { role: 'assistant', content: "You have **3 active products**: Business Checking (1.5% APY), Gift Cards, and Payroll. You're also **pre-approved** for Business Funding up to $25,000." },
-    { role: 'user', content: "Which products should I add?" },
-    { role: 'assistant', content: "Based on your business profile, I'd recommend:\n\n1. **Business Funding** — You're pre-approved for $25K at 1.15 factor. Great for seasonal inventory.\n2. **Accounting** — QuickBooks integration would auto-sync your $47K monthly volume and save ~4 hours/week on bookkeeping.\n3. **Health Insurance** — You have 3 employees. Group plans start at $385/mo and qualify for small business tax credits." },
-  ],
-  '/portal/support': [
-    { role: 'assistant', content: "How can I help? You have **0 open support tickets**. Your last ticket (rate review) was resolved 12 days ago." },
-    { role: 'user', content: "I need to update my bank account" },
-    { role: 'assistant', content: "To update your settlement bank account, I'll need:\n\n1. **Voided check** or bank letter for the new account\n2. **Government-issued ID** (we have yours on file)\n\nThe change takes 2-3 business days to process. During transition, deposits continue to your current Chase ****8834 account. Want me to start the process?" },
-  ],
-  '/portal/sales': [
-    { role: 'assistant', content: "Your POS data shows **4,364 items sold** in the last 30 days generating **$51K+ revenue**. Pepperoni Pizza is your #1 seller at 568 units ($9.6K)." },
-    { role: 'user', content: "What should I focus on to increase revenue?" },
-    { role: 'assistant', content: "Three opportunities from your data:\n\n1. **Cross-sell beverages** — only 15% of orders include a drink. If staff suggests a drink on every order, that's an extra **$3,500/month**.\n\n2. **Promote Supreme Pizza** — it has a higher margin ($5.10 cost vs $18.99 price = 73% margin) compared to Pepperoni (75% margin but lower ticket). Moving 10% of Pepperoni orders to Supreme adds ~$600/month.\n\n3. **4-5pm happy hour** — your slowest window. A pizza + drink combo deal could lift that hour by 40%." },
-    { role: 'user', content: "What's my best day of the week?" },
-    { role: 'assistant', content: "**Friday and Saturday** are your strongest days — about 40% more orders than weekdays. Saturday peaks at 7-8pm. Consider launching a **weekend family deal** (large pizza + salad + 2L soda) to increase average ticket on your busiest days." },
-  ],
-  '/partner': [
-    { role: 'assistant', content: "Welcome back, Jake. Your portfolio is performing well — **34 active merchants** generating **$4,218/mo** in residuals. Pipeline has 15 leads across all stages." },
-    { role: 'user', content: "How's my conversion rate?" },
-    { role: 'assistant', content: "Your conversion rate is **28%** (lead to go-live), which is above the partner network average of 22%. Your strongest vertical is restaurants at 35% conversion. I'd suggest focusing on the 8 proposals currently pending — 3 of them have been idle for over a week." },
-  ],
-  '/partner/pipeline': [
-    { role: 'assistant', content: "Your pipeline has **15 active leads**: 4 in Lead stage, 4 in Proposal, 3 in Application, 1 Boarding, and 3 Live. Total estimated volume: **$285K/mo**." },
-    { role: 'user', content: "Which leads should I follow up on?" },
-    { role: 'assistant', content: "Priority follow-ups:\n\n1. **Redwood Dental** ($45K/mo est.) — Proposal sent 3 weeks ago, no response. High-value healthcare practice.\n2. **Bay Area HVAC** ($35K/mo) — Application submitted but missing bank statements.\n3. **Bayshore Auto Parts** ($15K/mo) — Proposal stage, expressed interest in rate comparison.\n\nI can generate a follow-up email template for any of these." },
-  ],
-  '/partner/merchants': [
-    { role: 'assistant', content: "You have **34 active merchants** with combined monthly volume of **$618K**. Your average payout per merchant is **$124/mo**." },
-    { role: 'user', content: "Any merchants at risk of churning?" },
-    { role: 'assistant', content: "2 merchants showing warning signs:\n\n1. **Valley Pet Care** — volume dropped 18% last month. May be seasonal but worth a check-in.\n2. **Tech Gadgets Plus** — hasn't processed in 5 days. Could be equipment issue.\n\nI'd recommend calling both this week. Retention saves are worth 10x the effort of new acquisition." },
-  ],
-  '/partner/residuals': [
-    { role: 'assistant', content: "Your March residuals are **$4,218** — up 5.8% from February ($3,985). YTD earnings: **$38,420**. Next payout: April 15." },
-    { role: 'user', content: "Which merchants generate the most?" },
-    { role: 'assistant', content: "Your top 3 earners:\n\n1. **Harbor Seafood** — $320/mo ($32K volume, 60% split)\n2. **Nob Hill Bistro** — $280/mo ($28K volume, 60% split)\n3. **Coastal Cafe** — $284/mo ($28.4K volume, 60% split)\n\nThese 3 restaurants account for 21% of your total residuals. Restaurant vertical is your strongest — consider focusing new leads there." },
-  ],
-  '/partner/marketing': [
-    { role: 'assistant', content: "Your shareable application link has received **142 clicks** this month with **18 form completions** (12.7% conversion). Top downloaded asset: Rate Comparison Sheet (34 downloads)." },
-    { role: 'user', content: "How can I get more leads?" },
-    { role: 'assistant', content: "Based on your profile, I'd recommend:\n\n1. **Share your link on LinkedIn** — partners who do this see 3x more form completions\n2. **Ask your top merchants for referrals** — Harbor Seafood and Nob Hill Bistro could introduce similar restaurants\n3. **Download the co-branded one-pager** — leave it with prospects after meetings\n4. **Complete the Sales Techniques training** — partners who finish it have 40% higher close rates" },
-  ],
-  '/partner/training': [
-    { role: 'assistant', content: "You've completed **2 of 5 courses** (Getting Started + Products Overview). Next recommended: **Compliance Essentials** — required for your Partner Certification." },
-    { role: 'user', content: "What's the certification benefit?" },
-    { role: 'assistant', content: "**Certified Partners** get:\n\n- **10% higher residual split** (60% → 70%)\n- **Priority lead routing** from Harlow's Voice Agent\n- **Co-marketing budget** ($500/quarter)\n- **Dedicated account manager**\n\nYou're 3 courses away. Compliance Essentials takes ~45 minutes. Want to start now?" },
+    { role: 'assistant', content: "컴플라이언스 현황: 정보교류차단 활성 알림 **3건**, 고객정보 접근 로그 정상, 감사 요청 없음." },
+    { role: 'user', content: "현재 제한 종목은?" },
+    { role: 'assistant', content: "**정보교류차단 제한 종목 3건**:\n\n1. **카카오뱅크** — IB 딜 관련 (2026-03-15~)\n   → 해당 종목 언급/추천 자동 차단 중\n2. **HD현대중공업** — 블록딜 관련 (2026-04-01~)\n   → 관련 리서치 배포 일시 중단\n3. **크래프톤** — M&A 자문 관련 (2026-04-10~)\n   → 신규 제한, 영업팀 알림 발송 완료\n\n모든 차단은 자동 적용되며, 관련 추천 액션에서 자동 필터링됩니다." },
   ],
 }
 
 /* ═══ Chat Tab with Claude API ═══ */
 function ChatTab() {
   const location = useLocation()
-  // Match exact path first, then fall back to portal/partner defaults
   const path = location.pathname
-  const currentPage = seedConversations[path] ? path : path.startsWith('/partner') ? '/partner' : path.startsWith('/portal') ? '/portal' : path
+  const currentPage = seedConversations[path] ? path : '/dashboard'
   const seed = seedConversations[currentPage] || seedConversations['/dashboard'] || []
 
   const [messages, setMessages] = useState<ChatMessage[]>(seed)
@@ -242,7 +184,6 @@ function ChatTab() {
   const inputRef = useRef<HTMLInputElement>(null)
   const prevPageRef = useRef(currentPage)
 
-  // Reset conversation when page changes
   useEffect(() => {
     if (prevPageRef.current !== currentPage) {
       prevPageRef.current = currentPage
@@ -275,15 +216,11 @@ function ChatTab() {
         }),
       })
 
-      if (!res.ok) {
-        throw new Error(`API error: ${res.status}`)
-      }
+      if (!res.ok) throw new Error(`API error: ${res.status}`)
 
-      // Stream the response
       const reader = res.body?.getReader()
       const decoder = new TextDecoder()
       let assistantText = ''
-
       setMessages(prev => [...prev, { role: 'assistant', content: '' }])
 
       if (reader) {
@@ -300,10 +237,10 @@ function ChatTab() {
         }
       }
     } catch (err: any) {
-      console.error('Lumina chat error:', err)
+      console.error('AI chat error:', err)
       setMessages(prev => [
         ...prev,
-        { role: 'assistant', content: `I'm having trouble connecting right now. Error: ${err.message}. Please try again.` },
+        { role: 'assistant', content: `연결 오류가 발생했습니다: ${err.message}. 다시 시도해주세요.` },
       ])
     } finally {
       setIsLoading(false)
@@ -318,50 +255,36 @@ function ChatTab() {
     }
   }
 
-  // Page context indicator
   const pageLabels: Record<string, string> = {
-    '/dashboard': 'Portfolio Command Center',
-    '/crm': 'Agentic CRM',
-    '/voice': 'Voice Agent',
-    '/iso': 'ISO Management',
-    '/analytics': 'Portfolio Intelligence',
-    '/risk': 'Risk & Underwriting',
-    '/compliance': 'Compliance',
-    '/portal': 'Merchant Portal — Home',
-    '/portal/transactions': 'Transactions',
-    '/portal/statements': 'Monthly Statements',
-    '/portal/pci': 'PCI Compliance',
-    '/portal/equipment': 'Equipment',
-    '/portal/products': 'Products & Services',
-    '/portal/support': 'Support',
-    '/portal/sales': 'POS Sales Analytics',
-    '/portal/funding': 'Business Funding',
-    '/partner': 'Partner Dashboard',
-    '/partner/pipeline': 'Partner Pipeline',
-    '/partner/merchants': 'My Merchants',
-    '/partner/residuals': 'Residuals & Payouts',
-    '/partner/marketing': 'Marketing Tools',
-    '/partner/training': 'Training & Certification',
+    '/dashboard': '영업 대시보드',
+    '/clients': '고객 관리',
+    '/activity': '활동 관리',
+    '/broker-vote': '브로커 보트 분석',
+    '/revenue': '수익 분석',
+    '/research': '리서치 배포',
+    '/corporate-access': '기업탐방 관리',
+    '/risk': '이탈 조기 경보',
+    '/compliance': '컴플라이언스 센터',
+    '/research-portal': '리서치 포탈',
+    '/exec': '경영진 대시보드',
   }
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, minHeight: 0 }}>
-      {/* Context indicator */}
       <div style={{
         padding: '8px 16px', background: '#F8FAFC', borderBottom: '1px solid #F1F5F9', flexShrink: 0,
         fontSize: 11, color: '#64748B', fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6,
       }}>
         <div style={{ width: 6, height: 6, borderRadius: '50%', background: '#10B981' }} />
-        Viewing: {pageLabels[currentPage] || currentPage}
+        현재: {pageLabels[currentPage] || currentPage}
       </div>
 
-      {/* Messages */}
       <div className="lumina-chat" style={{ flex: 1, overflowY: 'auto' }}>
         {messages.map((msg, i) => (
           <div key={i} className={`lumina-msg ${msg.role === 'user' ? 'user' : 'ai'}`}>
             {msg.role === 'assistant' && (
-              <div className="lumina-msg-avatar">
-                <LuminaIcon size={16} />
+              <div className="lumina-msg-avatar" style={{ background: 'linear-gradient(135deg, #034EA2, #2B7DE9)' }}>
+                <Sparkles size={14} color="white" />
               </div>
             )}
             <div>
@@ -372,7 +295,7 @@ function ChatTab() {
                   </div>
                 ) : (isLoading && i === messages.length - 1 ? (
                   <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: '#94A3B8' }}>
-                    <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> Thinking...
+                    <Loader2 size={14} style={{ animation: 'spin 1s linear infinite' }} /> 분석 중...
                   </span>
                 ) : null)}
               </div>
@@ -382,7 +305,6 @@ function ChatTab() {
         <div ref={chatEndRef} />
       </div>
 
-      {/* Input */}
       <div className="lumina-input-area" style={{ flexShrink: 0 }}>
         <div className="lumina-input-wrapper">
           <input
@@ -390,7 +312,7 @@ function ChatTab() {
             value={input}
             onChange={e => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="Ask Lumina anything..."
+            placeholder="루미나에게 물어보세요..."
             className="lumina-input"
             disabled={isLoading}
           />
@@ -408,41 +330,40 @@ function ChatTab() {
   )
 }
 
-/* ═══ Reports Tab ═══ */
-function DocumentsTab() {
+/* ═══ Documents Tab ═══ */
+function DocumentsTab({ onOpenPdf }: { onOpenPdf: (url: string, title: string) => void }) {
   const sections = [
     {
-      label: 'Reports',
+      label: '리서치 리포트',
       items: [
-        { title: 'Portfolio Intelligence Report', date: 'Mar 28, 2026', type: 'PDF', pages: '12 pages' },
-        { title: 'Monthly Residuals Summary', date: 'Mar 5, 2026', type: 'PDF', pages: '8 pages' },
-        { title: 'Risk Assessment — Q1 2026', date: 'Mar 1, 2026', type: 'PDF', pages: '15 pages' },
-        { title: 'Zenith Integration Status', date: 'Feb 28, 2026', type: 'PDF', pages: '6 pages' },
-        { title: 'Voice Agent ROI Analysis', date: 'Feb 15, 2026', type: 'PDF', pages: '10 pages' },
+        { title: '반도체 산업 2H26 전망', date: '2026-04-10', type: 'PDF', pages: '42p', url: '/reports/semiconductor-2h26.pdf' },
+        { title: 'SK하이닉스 — HBM4 수혜 분석', date: '2026-04-08', type: 'PDF', pages: '28p', url: '/reports/semiconductor-2h26.pdf' },
+        { title: '2차전지 밸류체인 심층분석', date: '2026-04-05', type: 'PDF', pages: '35p', url: '/reports/semiconductor-2h26.pdf' },
+        { title: '한화에어로스페이스 — 수주잔고 분석', date: '2026-04-03', type: 'PDF', pages: '18p', url: '/reports/semiconductor-2h26.pdf' },
+        { title: '삼성전자 1Q26 프리뷰', date: '2026-04-01', type: 'PDF', pages: '15p', url: '/reports/semiconductor-2h26.pdf' },
       ],
     },
     {
-      label: 'Statements',
+      label: '브로커 보트',
       items: [
-        { title: 'February 2026 Statement', date: 'Mar 5, 2026', type: 'PDF', pages: '4 pages' },
-        { title: 'January 2026 Statement', date: 'Feb 5, 2026', type: 'PDF', pages: '4 pages' },
-        { title: 'December 2025 Statement', date: 'Jan 5, 2026', type: 'PDF', pages: '4 pages' },
+        { title: '2025 H2 브로커 보트 결과 분석', date: '2026-01-15', type: 'PDF', pages: '24p', url: '/reports/broker-vote-2025h2.pdf' },
+        { title: '보트 시즌 준비 체크리스트', date: '2026-03-01', type: 'PDF', pages: '8p', url: '/reports/broker-vote-2025h2.pdf' },
+        { title: '고객별 서비스 기록 요약', date: '2026-04-01', type: 'PDF', pages: '120p', url: '/reports/broker-vote-2025h2.pdf' },
       ],
     },
     {
-      label: 'Compliance',
+      label: '수익 분석',
       items: [
-        { title: 'PCI DSS Certificate', date: 'Dec 15, 2025', type: 'PDF', pages: '2 pages' },
-        { title: 'SAQ-A Completion', date: 'Dec 15, 2025', type: 'PDF', pages: '8 pages' },
-        { title: 'TCPA Compliance Audit', date: 'Jan 10, 2026', type: 'PDF', pages: '5 pages' },
+        { title: '2026년 3월 수수료 실적 보고서', date: '2026-04-05', type: 'PDF', pages: '12p', url: '/reports/monthly-commission.pdf' },
+        { title: '이탈 조기 경보 리포트', date: '2026-04-01', type: 'PDF', pages: '18p', url: '/reports/attrition-warning.pdf' },
       ],
     },
     {
-      label: 'Contracts',
+      label: '컴플라이언스',
       items: [
-        { title: 'Harlow Direct ISO Agreement', date: 'Jan 1, 2019', type: 'PDF', pages: '24 pages' },
-        { title: 'Zenith Acquisition Agreement', date: 'Oct 1, 2025', type: 'PDF', pages: '48 pages' },
-        { title: 'Liberty Processing Agreement', date: 'Jan 15, 2026', type: 'PDF', pages: '36 pages' },
+        { title: '2026년 4월 컴플라이언스 월간 보고', date: '2026-04-01', type: 'PDF', pages: '6p', url: '/reports/compliance-monthly.pdf' },
+        { title: '고객정보관리 감사 보고서', date: '2026-03-15', type: 'PDF', pages: '12p', url: '/reports/compliance-monthly.pdf' },
+        { title: '금감원 검사 대응 자료', date: '2026-02-28', type: 'PDF', pages: '48p', url: '/reports/compliance-monthly.pdf' },
       ],
     },
   ]
@@ -455,15 +376,26 @@ function DocumentsTab() {
             {section.label}
           </div>
           {section.items.map((item, i) => (
-            <div key={i} className="lumina-report-item" style={{ cursor: 'pointer' }}>
+            <div
+              key={i}
+              className="lumina-report-item"
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if ((item as any).url) {
+                  onOpenPdf((item as any).url, item.title)
+                }
+              }}
+            >
               <div className="lumina-report-icon">
-                <FileText size={16} color="#3B82F6" strokeWidth={1.8} />
+                <FileText size={16} color="#034EA2" strokeWidth={1.8} />
               </div>
               <div className="lumina-report-info">
                 <div className="lumina-report-title">{item.title}</div>
-                <div className="lumina-report-meta">{item.date} &middot; {item.pages}</div>
+                <div className="lumina-report-meta">{item.date} · {item.pages}</div>
               </div>
-              <span className="lumina-report-status">{item.type}</span>
+              <span className="lumina-report-status" style={{ color: (item as any).url ? '#034EA2' : '#94A3B8', fontWeight: (item as any).url ? 600 : 400 }}>
+                {(item as any).url ? '보기' : item.type}
+              </span>
             </div>
           ))}
         </div>

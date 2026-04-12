@@ -3,142 +3,117 @@ import type { VercelRequest, VercelResponse } from '@vercel/node'
 
 const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY })
 
-// Context data per page — summarized from DuckDB exports
+// Context data per page — Samsung Securities Agentic CRM
 const pageContext: Record<string, string> = {
-  '/dashboard': `You are on the Portfolio Command Center dashboard.
-Key metrics: 4,612 merchants across 3 ISOs (Harlow Direct 2,847, Zenith 1,024, Liberty 741).
-Monthly volume: $31.1M (Mar 2026), up 3.5% MoM. Monthly residuals: $3.21M.
-Portfolio churn: 3.3%. Chargeback rate: 0.31%.
-ISOs: Harlow Direct (Primary, 100% split, $18.4M vol), Zenith (Acquired Q4 2025, 70% split, $8.9M), Liberty (Acquired Q1 2026, 60% split, $4.8M).
-At-risk merchants flagged for attrition. Health matrix shows Liberty has "Watch" on churn.
-Waterfall bridge: Starting $28.5M → +$1.8M Organic → +$1.2M Zenith → +$0.8M Products → -$0.2M Churn → $32.1M Current.`,
+  '/dashboard': `삼성증권 기관영업 대시보드.
+주요 지표: 300개 기관 고객 (자산운용사 12, 연기금 4, 보험사 5, 은행신탁 4, 외국인기관 5 등), 15명 세일즈.
+월간 수수료: 16.7억원 (전월 대비 +5.3%). 평균 브로커 보트 점수: 7.2/10 (전기 대비 +0.3).
+이탈 위험 고객: 12곳 (CRITICAL 3, WARNING 4, WATCH 5). 위험 수수료 약 2.5억원/월.
+AI 니즈 추출: 847건 (전월 대비 +12.5%). 액션 완료율: 82.3%.
+고객 등급: Platinum 5, Gold 8, Silver 10, Bronze 7.
+수수료 구성: High-touch 58.7%, DMA 25.1%, Algo 16.2%.
+주요 이슈: 한국밸류자산운용 이탈 위험 CRITICAL, 반도체 섹터 니즈 급증, 보트 시즌 D-45.`,
 
-  '/crm': `You are on the Agentic CRM page.
-Pipeline: 200 leads across 8 stages (Lead→Proposal→Application→Underwriting→Approval→Boarding→Equipment→Go-Live).
-Win rate: 67%. Avg deal velocity: 18 days. Pipeline value: ~$209K/mo estimated.
-Lead sources: Voice Agent 40%, Referral 25%, Website 15%, Walk-in 10%, Cold Call 10%.
-Agent leaderboard: David Goldfarb (34 deals, 68%), Sarah Chen (28, 72%), Mike Rodriguez (21, 61%), Kate Palmarini (18, 65%).
-Onboarding: 4 active applications. Auto-approve rate: 42%. Avg processing time: 3.2h.
-My Merchants: 4,612 total, 95% Active, 2% Boarding, 3% Inactive.
-Residuals: March projected $3,847, Feb paid $3,635, 12-month total $41,218.
-Support: 6 open tickets, avg resolution 4.2h, 38% AI auto-resolved.`,
+  '/clients': `고객 관리 (Client 360) 페이지.
+300개 기관 고객의 상세 프로필, 핵심 인물, 인터랙션 이력, AI 추출 니즈, 추천 액션을 관리.
+주요 고객: 미래에셋자산운용(Platinum, AUM 52조), 국민연금(Platinum, AUM 900조), 삼성자산운용(Platinum, AUM 38조).
+각 기관별 2-3명의 핵심 인물(CIO, PM, 트레이더)이 등록되어 있으며 의사결정 구조를 매핑.
+AI가 모든 인터랙션에서 고객 니즈를 자동 추출하고 카테고리(종목추천/리서치요청/기업탐방 등)별로 분류.`,
 
-  '/voice': `You are on the Voice Agent Command Center.
-Today: 847 calls, 47 active, 15.1% transfer rate, avg duration 2m34s, cost $42.35.
-Monthly: 24,812 calls, $498K savings vs human team ($500K/mo vs $1,270/mo AI).
-Best hour: 2-3 PM. Cost per transfer: $0.33 (vs $16.67 human).
-Top scripts: Restaurant Savings Hook (41.2% win), Rate Comparison Direct (38.7%), PCI Compliance Angle (35.4%).
-Outcomes: Not Interested 30.7%, Gatekeeper 22.4%, No Answer 18.7%, Transfer 14.8%, Callback 8.6%, Voicemail 4.8%.
-AI self-improving: latest optimizer deployed v12 opener with empathy phrase (+3.2% transfer rate).
-Settings: ElevenLabs Turbo v2.5, Sarah voice, 9am-6pm ET weekdays, max 50 concurrent, TCPA compliant.`,
+  '/activity': `활동 관리 페이지.
+일평균 인터랙션: 통화 23건, 블룸버그 45건, 이메일 12건, 미팅 2건 = 총 80건 이상.
+AI 니즈 추출: 인터랙션당 평균 2.5개 니즈 자동 추출 (기존 수동 0.5개 대비 5배).
+팔로업 큐: 미완료 액션 30건 중 URGENT 5건, THIS_WEEK 12건.
+최근 주요 인터랙션: 미래에셋 박정현 PM 방산 리서치 요청, 국민연금 리밸런싱 미팅 요청, BlackRock 한국 매크로 뷰 요청.`,
 
-  '/iso': `You are on the ISO Portfolio Management page.
-3 ISOs total. Combined volume: $32.1M/month, 4,612 merchants.
-Harlow Direct: Primary ISO, 2,847 merchants, $18.4M volume, 1.2% churn, 100% split, buy rate 1.95%.
-Zenith Payments: Acquired Q4 2025 for $12.5M (4.2x multiple), 1,024 merchants, $8.9M vol, 2.1% churn, 70% split, integration 96%.
-Liberty Processing: Acquired Q1 2026 for $4.8M (3.1x multiple), 741 merchants, $4.8M vol, 3.4% churn, 60% split, integration 92%.
-Bank partner: Esquire Bank. BIN sponsors vary by ISO.
-Top categories: Restaurants 34%, Retail 21%, Services 18%, Auto 12%, Health 8%, Other 6%.`,
+  '/broker-vote': `브로커 보트 분석 페이지.
+2025 H2 결과: 평균 7.2점 (전기 대비 +0.3). 30개 기관의 보트 결과 보유.
+카테고리별: 리서치 7.8, 세일즈 7.5, 트레이딩 7.0, 기업탐방 6.4, 이벤트 6.8.
+약점: 기업탐방(6.4)과 이벤트(6.8) — NDR 확대 및 소그룹 세미나 도입 필요.
+보트-수수료 상관관계: 보트 1점 상승 시 연간 수수료 약 3억원 증가 추정.
+보트 시즌 준비: 상위 20개 고객 중 5곳의 서비스 기록 부족.`,
 
-  '/analytics': `You are on Agentic Portfolio Intelligence.
-Portfolio health score: 87/100. Dimensions: Revenue Growth 92, Margin 88, Churn 78, Volume Stability 90, Compliance 87.
-Volume trend: $18.0M (Apr'25) → $31.1M (Mar'26), 72% YoY growth.
-Processor distribution: Harlow Payments 44%, Repay TSYS FEO 24%, EPSG 16%, EPSG Wells Fargo 10%, Card Point 6%.
-Product penetration avg 4.7%. Top: POS Upgrade 9.2%, Embedded Financing 6.8%, Gift Cards 5.1%.
-Chargeback rate trending down: 0.42% (Apr'25) → 0.31% (Mar'26). Well below Visa 1.0% threshold.
-Risk: 65% of merchants score 71-100 (Low/Very Low risk). 4.2% are High Risk (0-30).`,
+  '/revenue': `수익 분석 페이지.
+월간 수수료: 16.7억원. 분기 수수료: 50.1억원. 연간 수수료: 200억원 (전년 대비 +8.2%).
+High-touch 58.7%, DMA 25.1%, Algo 16.2%.
+Platinum 고객(5곳)이 전체 수익의 42%, Gold(8곳) 28%, Silver(10곳) 20%, Bronze(7곳) 10%.
+고객당 평균 수수료: Platinum 14억/년, Gold 7억/년, Silver 4억/년, Bronze 2.8억/년.
+딜 참여: 올해 IPO 3건, 블록딜 5건, 세컨더리 2건.`,
 
-  '/risk': `You are on Agentic Risk Intelligence.
-Portfolio risk score: 72/100, up 3 pts from last month.
-Chargeback rate: 0.82% portfolio average. Well below Visa 1.0% and MC 1.5% thresholds.
-PCI compliance: 87% compliant, 47 non-compliant, 68 pending, 41 expired.
-High risk merchants: 7 flagged. Auto-resolved: 88.1% of alerts. Avg response time: 14 min.
-Risk distribution: Very Low (86-100) 24%, Low (71-85) 41.3%, Medium (51-70) 22.4%, Medium-High (31-50) 8.1%, High (0-30) 4.2%.
-Risk by MCC: Jewelry avg 42, Car Wash 51, Recreation 58, Restaurants 71, Grocery 78.
-OFAC screening: 4,612 scanned monthly, 3 matches found, 2 auto-cleared, 1 pending.
-Underwriting queue: 5 pending applications.`,
+  '/research': `리서치 배포 페이지.
+이번 달 발행: 25건 (기업분석 12, 산업분석 5, 전략 3, 매크로 3, 퀀트 2).
+평균 오픈율: 64%. 반도체 섹터 최고(82%), 매크로 최저(45%).
+커버리지 갭: 방산(83%), 원전/에너지(88%), AI/로보틱스(73%) — 고객 니즈 대비 리서치 공급 부족.
+추천: 방산 섹터 커버리지 강화, 한화에어로/현대로템/LIG넥스원 수요 높음.`,
 
-  '/compliance': `You are on Compliance Intelligence.
-PCI DSS: SAQ-A annual renewal, quarterly ASV scans, P2PE validation, employee training.
-TCPA: DNC list synced every 6 hours, two-party consent enforced, time-of-day restrictions.
-KYB/KYC: Annual business verification, beneficial ownership updates, monthly OFAC screening, quarterly SAR review.
-All systems currently compliant. Employee security training due May 1, 2026.`,
+  '/corporate-access': `기업탐방 관리 페이지.
+이번 달 이벤트: 15건 (NDR 4, Conference 2, 1:1 Meeting 5, Site Visit 2, Expert Call 2).
+완료 10건, 예정 4건, 취소 1건. 평균 피드백: 4.2/5.0.
+ROI 최고: Expert Call (비용 대비 12x), 1:1 미팅 (8.5x). ROI 최저: Conference (2.1x).
+수수료 기여: 기업탐방 전체 월 1.2억원 기여.`,
 
-  '/portal/sales': `You are on the POS Sales Analytics page for Mario's Italian Kitchen (pizzeria).
-POS app installed on PAX A920. 25 menu items across 9 categories.
-Last 30 days: 4,364 items sold, $51K+ revenue, 56% from Pizza category.
-Top seller: Pepperoni Pizza (568 sold, $9,650). Avg basket: $11.68.
-Peak hours: 7-8pm. Busiest days: Friday & Saturday (+40% vs weekday).
-Profit margin: 56%. Card vs cash: 80/20%.
-Beverage attach rate: only 15% of orders. Cross-sell opportunity: +$3,500/mo.
-Categories: Pizza $30K, Pasta $4.5K, Entree $4.2K, Calzone $3K, Appetizer $2.9K, Beverages $2.6K.
-Highest margin items: Garlic Knots (83%), Soda Can (82%), Pizza Slice Cheese (77%).`,
+  '/risk': `이탈 조기 경보 페이지.
+12곳 이탈 위험: CRITICAL 3곳 (한국밸류, 교보생명, 우리은행신탁), WARNING 4곳, WATCH 5곳.
+위험 점수 산출: 참여도(25%) + 수익궤적(25%) + 보트신호(20%) + 경쟁압력(15%) + 커버리지갭(10%) + 인사변동(5%).
+위험 수수료: 월 2.5억원 (전체의 15%).
+조기 감지: 기존 3-6개월 후 → 현재 2-4주 전 감지. 85% 정확도.`,
 
-  '/portal': `You are on the Merchant Portal (Mario's Italian Kitchen).
-MID: 4400-1892-7731. Status: Active. Processor: Harlow Payments. Equipment: PAX A920.
-This month volume: $47,230 (+8.2% vs Feb). Last deposit: $2,013.90 today.
-1,342 transactions this month. Avg ticket: $35.19. Approval rate: 98.7%.
-Open chargebacks: 1 ($487.50 due Mar 26). Effective rate: 2.69%.
-Pre-approved for $25,000 business funding (1.15 factor rate).
-Active products: Business Checking (1.5% APY), Gift Cards, Payroll (3 employees).
-PCI compliant through Dec 2026.`,
+  '/compliance': `컴플라이언스 센터.
+정보교류차단(Chinese Wall): 제한 종목 3건 (카카오뱅크, HD현대중공업, 크래프톤).
+모든 추천 액션에서 제한 종목 자동 필터링. 차단 로그 실시간 기록.
+고객정보관리: RBAC 기반 접근 통제. 금감원 검사 대응 일괄 추출 기능.
+감사 추적: 2,847건 이벤트 로그. 암호화 해시 체인 무결성 보장.
+컴플라이언스 점수: 96% (업계 평균 88%).`,
 
-  '/partner': `You are on the Partner Portal for Jake Wilson of Acme Financial Partners.
-Partner since October 2024. 34 active merchants. Monthly residuals: $4,218. YTD earnings: $38,420.
-Pipeline: 15 active leads — 4 Lead, 4 Proposal, 3 Application, 1 Boarding, 3 Live.
-Conversion rate: 28% (above network avg 22%). Pipeline value: $285K/mo estimated.
-Top merchants: Harbor Seafood ($32K/mo), Nob Hill Bistro ($28K/mo), Coastal Cafe ($28.4K/mo).
-Residual split: 60/40 (standard). Next payout: Apr 15, est. $4,218.
-Completed 2/5 training courses. Not yet certified (need 3 more courses for 70% split upgrade).
-Strongest vertical: Restaurants (35% conversion). Marketing link: 142 clicks, 18 form completions this month.`,
+  '/research-portal': `리서치 포탈.
+리포트 발행 현황, 고객 반응 분석, 애널리스트 성과, 섹터별 분포.
+25건 발행, 평균 오픈율 64%. 반도체 섹터 리포트가 가장 높은 반응.`,
+
+  '/exec': `경영진 대시보드.
+영업팀 전체 KPI: 15명 세일즈, 월 16.7억원 수수료, 평균 보트 7.2점, 액션 완료율 82%.
+팀별 성과, 개인별 성과 랭킹, 수수료 트렌드, 브로커 보트 카테고리별 분석.`,
 }
 
 export default async function handler(req: VercelRequest, res: VercelResponse) {
-  if (req.method === 'OPTIONS') {
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS')
-    res.setHeader('Access-Control-Allow-Headers', 'Content-Type')
-    return res.status(200).end()
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' })
   }
 
-  if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' })
+  const { messages, currentPage } = req.body
 
-  const { messages, currentPage } = req.body as {
-    messages: { role: 'user' | 'assistant'; content: string }[]
-    currentPage: string
-  }
+  const context = pageContext[currentPage] || pageContext['/dashboard'] || ''
 
-  if (!messages?.length) return res.status(400).json({ error: 'No messages provided' })
+  const systemPrompt = `당신은 삼성증권 기관영업본부의 AI 어시스턴트 "Deep Agent"입니다.
+DeepAuto.ai의 Agentic Intelligence Platform 기반으로, 기관 고객 관리, 브로커 보트 분석, 수수료 최적화, 이탈 예방을 지원합니다.
 
-  // Build context from current page
-  const ctx = pageContext[currentPage] || pageContext['/dashboard'] || ''
+역할:
+- 기관영업 세일즈에게 실시간 인사이트와 액션 추천 제공
+- 고객 니즈를 분석하고 최적의 서비스 전략 제안
+- 브로커 보트 점수 개선 전략 조언
+- 이탈 위험 고객에 대한 조기 경보 및 개입 방안 추천
+- 한국 자본시장 규제(자본시장법, 정보교류차단 등) 준수
 
-  const systemPrompt = `You are Lumina, the AI superagent for Harlow Payments — a PE-backed payment processing platform managing 3 ISOs and 4,612 merchants.
+응답 규칙:
+- 한국어로 응답 (영어 고유명사는 그대로)
+- 간결하고 실행 가능한 조언 위주
+- 숫자와 데이터 기반 분석
+- 마크다운 포맷 사용 (볼드, 리스트 등)
 
-You have access to the following real-time data context based on the user's current view:
-
-${ctx}
-
-Guidelines:
-- Be concise and data-driven. Lead with numbers and insights.
-- Reference specific merchants, ISOs, and metrics from the context.
-- Suggest actionable next steps when appropriate.
-- Use dollar amounts, percentages, and trends from the data.
-- If asked about something outside your context, say you'd need to check that data.
-- Format important numbers in bold when relevant.
-- Keep responses under 150 words unless the user asks for detail.
-- You speak in a professional but friendly tone, like a senior analyst briefing an executive.`
+현재 페이지 컨텍스트:
+${context}`
 
   try {
     res.setHeader('Content-Type', 'text/plain; charset=utf-8')
     res.setHeader('Transfer-Encoding', 'chunked')
-    res.setHeader('Access-Control-Allow-Origin', '*')
 
     const stream = await client.messages.stream({
       model: 'claude-sonnet-4-20250514',
       max_tokens: 1024,
       system: systemPrompt,
-      messages: messages.map(m => ({ role: m.role, content: m.content })),
+      messages: messages.map((m: any) => ({
+        role: m.role === 'assistant' ? 'assistant' : 'user',
+        content: m.content,
+      })),
     })
 
     for await (const event of stream) {
@@ -150,6 +125,10 @@ Guidelines:
     res.end()
   } catch (error: any) {
     console.error('Claude API error:', error)
-    res.status(500).json({ error: error.message || 'API error' })
+    if (!res.headersSent) {
+      res.status(500).json({ error: error.message })
+    } else {
+      res.end()
+    }
   }
 }

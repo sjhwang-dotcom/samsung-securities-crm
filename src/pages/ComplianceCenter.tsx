@@ -1,124 +1,185 @@
-import { Users, AlertTriangle, ShieldCheck, TrendingDown } from 'lucide-react'
+import { ShieldCheck, Eye, FileText, Award, AlertTriangle, Lock } from 'lucide-react'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
+import { complianceAlerts } from '../data/mockData'
+import type { ComplianceAlert } from '../types'
 
-export default function ComplianceCenter() {
-  /* ── PCI Table ── */
-  type PciRow = { name: string; iso: string; last: string; days: number; reminder: string }
-  const pciData: PciRow[] = [
-    { name: 'Sunrise Deli', iso: 'Harlow Direct', last: 'Dec 2025', days: 127, reminder: '3 reminders sent, no response' },
-    { name: 'Lucky Nail Salon', iso: 'Harlow Direct', last: 'Jan 2026', days: 96, reminder: 'Renewal in progress' },
-    { name: 'Metro Tobacco', iso: 'Harlow Direct', last: 'Nov 2025', days: 157, reminder: 'Escalated to agent' },
-  ]
-  const pciColumns: Column<PciRow>[] = [
-    { key: 'name', header: 'Merchant', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.name}</span> },
-    { key: 'iso', header: 'ISO' },
-    { key: 'last', header: 'Last Compliant' },
-    { key: 'days', header: 'Days Overdue', render: (r) => <StatusBadge variant="rose">{r.days} days</StatusBadge> },
-    { key: 'reminder', header: 'Auto-Reminder', render: (r) => <span style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{r.reminder}</span> },
-  ]
+const alertColumns: Column<ComplianceAlert>[] = [
+  { key: 'type', header: '유형', render: (r) => (
+    <StatusBadge variant={
+      r.type === '정보교류차단' ? 'rose' : r.type === '고객정보접근' ? 'amber' :
+      r.type === '거래제한' ? 'purple' : 'blue'
+    }>
+      {r.type}
+    </StatusBadge>
+  )},
+  { key: 'severity', header: '심각도', width: '80px', render: (r) => (
+    <StatusBadge variant={r.severity === 'HIGH' ? 'critical' : r.severity === 'MEDIUM' ? 'high' : 'moderate'}>
+      {r.severity}
+    </StatusBadge>
+  )},
+  { key: 'description', header: '설명', render: (r) => (
+    <span style={{ fontSize: 12, color: '#334155' }}>
+      {r.description.length > 60 ? r.description.slice(0, 60) + '...' : r.description}
+    </span>
+  )},
+  { key: 'date', header: '날짜', width: '100px' },
+  { key: 'status', header: '상태', width: '90px', render: (r) => (
+    <StatusBadge variant={r.status === 'Active' ? 'rose' : r.status === 'Resolved' ? 'emerald' : 'amber'} dot>
+      {r.status === 'Active' ? '활성' : r.status === 'Resolved' ? '해결' : '확인'}
+    </StatusBadge>
+  )},
+  { key: 'restrictedStock', header: '제한종목', width: '100px', render: (r) => r.restrictedStock ? (
+    <span style={{ fontWeight: 600, color: '#E11D48', fontSize: 12 }}>{r.restrictedStock}</span>
+  ) : <span style={{ color: '#94A3B8' }}>-</span> },
+  { key: 'salesperson', header: '담당자', width: '80px', render: (r) => r.salesperson ? (
+    <span style={{ fontSize: 12 }}>{r.salesperson}</span>
+  ) : <span style={{ color: '#94A3B8' }}>-</span> },
+]
 
-  /* ── KYB/KYC Table ── */
-  type KybRow = { name: string; last: string; due: string; status: string }
-  const kybData: KybRow[] = [
-    { name: "Mario's Pizzeria", last: 'Jan 2026', due: 'Jul 2026', status: 'Current' },
-    { name: 'Jade Garden', last: 'Dec 2025', due: 'Jun 2026', status: 'Current' },
-    { name: 'Brooklyn Dry Cleaners', last: 'Nov 2025', due: 'May 2026', status: 'Due Soon' },
-  ]
-  const kybColumns: Column<KybRow>[] = [
-    { key: 'name', header: 'Merchant', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.name}</span> },
-    { key: 'last', header: 'Last Screening' },
-    { key: 'due', header: 'Next Due' },
-    { key: 'status', header: 'Status', render: (r) => <StatusBadge variant={r.status === 'Current' ? 'emerald' : 'amber'}>{r.status}</StatusBadge> },
-  ]
+// Audit trail (hardcoded 10 entries)
+type AuditEntry = { time: string; action: string; user: string; detail: string; severity: 'info' | 'warning' | 'critical' }
+const auditTrail: AuditEntry[] = [
+  { time: '2026-04-12 09:34', action: '고객정보 조회', user: '김영호', detail: '미래에셋자산운용 핵심인물 정보 열람', severity: 'info' },
+  { time: '2026-04-12 09:12', action: '정보교류차단 설정', user: '시스템', detail: 'SK바이오팜 IPO 관련 차단벽 생성', severity: 'critical' },
+  { time: '2026-04-12 08:55', action: '리서치 배포', user: '박성진', detail: '반도체 섹터 리포트 287개 기관 배포', severity: 'info' },
+  { time: '2026-04-11 17:30', action: '거래 모니터링', user: '시스템', detail: '이상거래 패턴 감지 - 자동 검토 완료', severity: 'warning' },
+  { time: '2026-04-11 16:45', action: '고객정보 수정', user: '이지현', detail: '한국투자밸류자산운용 담당자 정보 업데이트', severity: 'info' },
+  { time: '2026-04-11 15:20', action: '차단벽 해제', user: '컴플라이언스팀', detail: '카카오게임즈 블록딜 완료 - 차단 해제', severity: 'critical' },
+  { time: '2026-04-11 14:10', action: '접근 권한 변경', user: '관리자', detail: '신규 세일즈 담당자 권한 부여', severity: 'warning' },
+  { time: '2026-04-11 11:30', action: '감사 로그 내보내기', user: '감사팀', detail: '3월 월간 감사 로그 PDF 생성', severity: 'info' },
+  { time: '2026-04-11 10:05', action: '컴플라이언스 교육', user: '시스템', detail: '분기 교육 이수 현황 자동 확인', severity: 'info' },
+  { time: '2026-04-10 17:00', action: '정보교류차단 알림', user: '시스템', detail: 'LG에너지솔루션 유상증자 관련 차단 알림 발송', severity: 'critical' },
+]
+
+export default function ComplianceCenterSS() {
+  const chineseWallAlerts = complianceAlerts.filter(a => a.type === '정보교류차단')
+  const activeChineseWall = chineseWallAlerts.filter(a => a.status === 'Active')
+
+  const sortedAlerts = [...complianceAlerts].sort((a, b) =>
+    new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
 
   return (
     <div className="dashboard-grid">
-      {/* Filters */}
-      <div style={{ display: 'flex', justifyContent: 'flex-end', gap: 12 }}>
-        <select style={{ fontSize: 13, background: 'white', border: '1px solid #E5E7EB', borderRadius: 8, padding: '8px 12px', outline: 'none', fontWeight: 500 }}>
-          <option>All ISOs</option><option>Harlow Direct</option><option>Zenith</option><option>Liberty</option>
-        </select>
-        <button style={{
-          fontSize: 13, background: 'linear-gradient(to right, #609FFF, #1578F7)',
-          color: 'white', borderRadius: 8, padding: '8px 16px', fontWeight: 600, border: 'none', cursor: 'pointer',
-        }}>Export Report</button>
-      </div>
-
       {/* KPI Row */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12 }}>
-        <KpiCard icon={AlertTriangle} label="PCI Compliant" value="91.9%" color="amber" trend="Below 95% target" trendDirection="down" trendPositive={false} />
-        <KpiCard icon={ShieldCheck} label="TCPA Verified" value="100%" color="emerald" trend="847/847" trendDirection="up" trendPositive sub="" />
-        <KpiCard icon={Users} label="KYB/KYC Current" value="99.5%" color="emerald" trend="4,588/4,612" trendDirection="up" trendPositive />
-        <KpiCard icon={TrendingDown} label="CB Threshold" value="0" color="emerald" trend="No merchants above 1.0%" trendDirection="down" trendPositive />
+      <div className="kpi-row">
+        <KpiCard icon={Lock} label="정보교류차단 활성" value={`${activeChineseWall.length}건`} color="rose" trend="자동 차단 처리" trendDirection="up" trendPositive={false} />
+        <KpiCard icon={Eye} label="고객정보 접근" value="정상" color="emerald" trend="이상 없음" trendDirection="up" trendPositive />
+        <KpiCard icon={FileText} label="감사 추적 로그" value="2,847건" color="blue" trend="이번달 누적" trendDirection="up" trendPositive />
+        <KpiCard icon={Award} label="컴플라이언스 점수" value="96%" color="emerald" trend="+2% 전월대비" trendDirection="up" trendPositive />
       </div>
 
-      {/* PCI Compliance */}
-      <Card noPadding>
+      {/* Chinese Wall Section */}
+      <Card style={{ gridColumn: 'span 3' }}>
         <CardHeader
-          title="PCI Compliance Status"
-          subtitle="142 auto-reminders sent this month, 67 renewals completed"
+          title="정보교류차단 (Chinese Wall)"
+          subtitle={`활성 ${activeChineseWall.length}건`}
+          badge={activeChineseWall.length > 0 ? (
+            <StatusBadge variant="rose" dot pulse>차단 활성</StatusBadge>
+          ) : undefined}
         />
-        <div style={{ padding: '0 18px 12px' }}>
-          <div className="grid-3" style={{ marginBottom: 16 }}>
-            {[
-              { label: 'Compliant', count: '4,241', color: '#10B981' },
-              { label: 'Expiring (30 days)', count: '184', color: '#F59E0B' },
-              { label: 'Non-Compliant', count: '187', color: '#F43F5E' },
-            ].map(s => (
-              <div key={s.label} style={{ display: 'flex', alignItems: 'center', gap: 12, padding: 12, borderRadius: 12, background: '#FAFBFC' }}>
-                <div style={{ width: 12, height: 12, borderRadius: '50%', background: s.color }} />
-                <div>
-                  <div style={{ fontSize: 18, fontWeight: 800, color: '#0F172A' }}>{s.count}</div>
-                  <div style={{ fontSize: 12, color: '#64748B', fontWeight: 500 }}>{s.label}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-        <DataTable columns={pciColumns} data={pciData} hoverable />
-      </Card>
-
-      {/* TCPA */}
-      <Card noPadding>
-        <CardHeader title="TCPA / DNC Compliance" />
         <div style={{ padding: '0 18px 18px' }}>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16 }}>
-            {[
-              { label: 'Outbound Calls Today', value: '847' },
-              { label: 'DNC Checks', value: '847 (100%)' },
-              { label: 'Calls Blocked', value: '23' },
-              { label: 'Timezone Violations', value: '0' },
-            ].map(s => (
-              <div key={s.label} style={{ textAlign: 'center', padding: 16, background: '#FAFBFC', borderRadius: 12 }}>
-                <div style={{ fontSize: 20, fontWeight: 800, color: '#0F172A' }}>{s.value}</div>
-                <div style={{ fontSize: 12, color: '#64748B', marginTop: 4, fontWeight: 500 }}>{s.label}</div>
+          {activeChineseWall.length > 0 ? (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              {activeChineseWall.map(alert => (
+                <div key={alert.id} style={{
+                  display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                  padding: '12px 16px', background: '#FEF2F2', border: '1px solid #FECACA',
+                  borderRadius: 10,
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                    <AlertTriangle size={16} color="#DC2626" />
+                    <div>
+                      <div style={{ fontWeight: 600, color: '#0F172A', fontSize: 13 }}>
+                        {alert.restrictedStock || '미지정'}
+                      </div>
+                      <div style={{ fontSize: 11, color: '#991B1B', marginTop: 2 }}>
+                        {alert.description}
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <StatusBadge variant={alert.severity === 'HIGH' ? 'critical' : 'high'}>
+                      {alert.severity}
+                    </StatusBadge>
+                    <span style={{ fontSize: 11, color: '#64748B' }}>{alert.date}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div style={{ padding: 24, textAlign: 'center', color: '#059669', fontSize: 13, background: '#ECFDF5', borderRadius: 10 }}>
+              현재 활성화된 정보교류차단 항목이 없습니다.
+            </div>
+          )}
+
+          {/* All Chinese Wall alerts including resolved */}
+          {chineseWallAlerts.filter(a => a.status !== 'Active').length > 0 && (
+            <div style={{ marginTop: 12 }}>
+              <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', marginBottom: 8 }}>해제된 차단 이력</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                {chineseWallAlerts.filter(a => a.status !== 'Active').map(alert => (
+                  <div key={alert.id} style={{
+                    padding: '6px 10px', background: '#F8FAFC', borderRadius: 8, fontSize: 11,
+                    display: 'flex', alignItems: 'center', gap: 6,
+                  }}>
+                    <ShieldCheck size={12} color="#059669" />
+                    <span style={{ color: '#334155' }}>{alert.restrictedStock || alert.description.slice(0, 20)}</span>
+                    <StatusBadge variant="emerald" size="sm">해제</StatusBadge>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      </Card>
+
+      {/* Compliance Alerts Table */}
+      <Card noPadding style={{ gridColumn: 'span 3' }}>
+        <CardHeader
+          title="컴플라이언스 알림"
+          subtitle={`총 ${complianceAlerts.length}건`}
+        />
+        <DataTable columns={alertColumns} data={sortedAlerts} hoverable />
+      </Card>
+
+      {/* Audit Trail */}
+      <Card style={{ gridColumn: 'span 3' }}>
+        <CardHeader title="감사 추적 로그" subtitle="최근 10건" />
+        <div style={{ padding: '0 18px 18px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 0 }}>
+            {auditTrail.map((entry, i) => (
+              <div key={i} style={{
+                display: 'flex', alignItems: 'flex-start', gap: 12,
+                padding: '10px 0',
+                borderBottom: i < auditTrail.length - 1 ? '1px solid #F1F5F9' : 'none',
+              }}>
+                {/* Timeline dot */}
+                <div style={{
+                  width: 8, height: 8, borderRadius: '50%', marginTop: 5, flexShrink: 0,
+                  background: entry.severity === 'critical' ? '#DC2626'
+                    : entry.severity === 'warning' ? '#F59E0B' : '#10B981',
+                }} />
+                {/* Content */}
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                    <span style={{ fontSize: 12, fontWeight: 600, color: '#0F172A' }}>{entry.action}</span>
+                    <StatusBadge variant={
+                      entry.severity === 'critical' ? 'rose'
+                        : entry.severity === 'warning' ? 'amber' : 'gray'
+                    } size="sm">
+                      {entry.user}
+                    </StatusBadge>
+                  </div>
+                  <div style={{ fontSize: 11, color: '#64748B', marginTop: 2 }}>{entry.detail}</div>
+                </div>
+                {/* Time */}
+                <span style={{ fontSize: 11, color: '#94A3B8', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                  {entry.time}
+                </span>
               </div>
             ))}
-          </div>
-          <div style={{ fontSize: 12, color: '#059669', marginTop: 12, background: '#ECFDF5', borderRadius: 12, padding: 12, fontWeight: 500 }}>
-            All outbound calls verified before dial. Full audit trail maintained.
-          </div>
-        </div>
-      </Card>
-
-      {/* KYB/KYC */}
-      <Card noPadding>
-        <CardHeader title="KYB/KYC Monitoring" />
-        <div style={{ padding: '0 18px 0' }}>
-          <div style={{ background: '#FFFBEB', border: '1px solid #FDE68A', borderRadius: 12, padding: 12, fontSize: 13, color: '#92400E', fontWeight: 500, marginBottom: 12 }}>
-            AI flag: 2 merchants with ownership structure changes detected -- awaiting human review
-          </div>
-        </div>
-        <DataTable columns={kybColumns} data={kybData} hoverable />
-      </Card>
-
-      {/* Chargeback Threshold */}
-      <Card>
-        <div style={{ padding: 18 }}>
-          <div style={{ fontSize: 14, fontWeight: 700, color: '#0F172A', marginBottom: 12 }}>Chargeback Threshold Monitor</div>
-          <div style={{ background: '#EFF6FF', border: '1px solid #BFDBFE', borderRadius: 12, padding: 12, fontSize: 13, color: '#1E40AF', fontWeight: 500 }}>
-            AI prediction: 3 merchants projected to exceed Visa 1.0% threshold within 60 days if current trend continues
           </div>
         </div>
       </Card>

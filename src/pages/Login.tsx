@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom'
-import harlowLogo from '../assets/harlow-logo.svg'
 
 export default function Login() {
   const navigate = useNavigate()
@@ -9,69 +8,69 @@ export default function Login() {
       {/* Left — Branding */}
       <div style={s.left}>
         <div style={s.brandTop}>
-          <img src={harlowLogo} alt="Harlow" style={{ width: 40, height: 40, borderRadius: 10 }} />
-          <span style={s.brandName}>Harlow Payments</span>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #034EA2, #2B7DE9)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 800, color: 'white' }}>SS</div>
+          <span style={s.brandName}>삼성증권</span>
         </div>
         <div style={s.hero}>
-          <h1 style={s.heroTitle}>Agentic<br />Merchant<br />Platform</h1>
-          <p style={s.heroSub}>AI-powered payment processing,<br />merchant management, and portfolio intelligence.</p>
+          <h1 style={s.heroTitle}>Agentic<br />Capital Markets<br />CRM</h1>
+          <p style={s.heroSub}>AI 기반 기관영업 인텔리전스 플랫폼<br />고객 니즈 추출 · 액션 추천 · 브로커 보트 분석</p>
         </div>
-        <p style={s.copyright}>© 2026 Harlow Payments × DeepAuto. All rights reserved.</p>
+        <p style={s.copyright}>© 2026 Samsung Securities × DeepAuto.ai — Powered by Agentic Intelligence</p>
       </div>
 
       {/* Right — Portal Selector */}
       <div style={s.right}>
         <div style={s.formWrap}>
-          <h2 style={s.formTitle}>Welcome</h2>
-          <p style={s.formSub}>Select your portal to continue</p>
+          <h2 style={s.formTitle}>포탈 선택</h2>
+          <p style={s.formSub}>접속할 포탈을 선택하세요</p>
 
-          {/* Harlow Platform */}
+          {/* Sales Platform */}
           <button style={s.portalCard} onClick={() => navigate('/dashboard')}
-            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#1578F7'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(21,120,247,0.12)' }}
+            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#034EA2'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(3,78,162,0.12)' }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
           >
-            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #121212, #1578F7)' }}>
+            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #0A1628, #034EA2)' }}>
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z" /></svg>
             </div>
             <div style={{ flex: 1, textAlign: 'left' }}>
-              <div style={s.portalTitle}>Harlow Platform</div>
-              <div style={s.portalDesc}>ISO management, portfolio analytics, risk & compliance</div>
+              <div style={s.portalTitle}>세일즈 플랫폼</div>
+              <div style={s.portalDesc}>대시보드, 고객 관리, 활동 관리, 브로커 보트, 수익 분석, 컴플라이언스</div>
             </div>
             <span style={{ fontSize: 18, color: '#CBD5E1' }}>→</span>
           </button>
 
-          {/* Merchant Portal */}
-          <button style={s.portalCard} onClick={() => navigate('/portal')}
-            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#3B82F6'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(59,130,246,0.12)' }}
+          {/* Research Portal */}
+          <button style={s.portalCard} onClick={() => navigate('/research-portal')}
+            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#2B7DE9'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(43,125,233,0.12)' }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
           >
-            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #1E3A5F, #3B82F6)' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" /><polyline points="9 22 9 12 15 12 15 22" /></svg>
+            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #1E3A5F, #2B7DE9)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
             </div>
             <div style={{ flex: 1, textAlign: 'left' }}>
-              <div style={s.portalTitle}>Merchant Portal</div>
-              <div style={s.portalDesc}>Transaction reports, deposits, products & services, PCI compliance</div>
+              <div style={s.portalTitle}>리서치 포탈</div>
+              <div style={s.portalDesc}>리포트 발행 현황, 고객 반응 분석, 리서치 영향력</div>
             </div>
             <span style={{ fontSize: 18, color: '#CBD5E1' }}>→</span>
           </button>
 
-          {/* Partner Portal */}
-          <button style={s.portalCard} onClick={() => navigate('/partner')}
-            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#3B82F6'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(59,130,246,0.12)' }}
+          {/* Executive Dashboard */}
+          <button style={s.portalCard} onClick={() => navigate('/exec')}
+            onMouseOver={e => { (e.currentTarget as HTMLElement).style.borderColor = '#2B7DE9'; (e.currentTarget as HTMLElement).style.boxShadow = '0 8px 24px rgba(43,125,233,0.12)' }}
             onMouseOut={e => { (e.currentTarget as HTMLElement).style.borderColor = '#E5E7EB'; (e.currentTarget as HTMLElement).style.boxShadow = 'none' }}
           >
-            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #1E3A5F, #3B82F6)' }}>
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4-4v2" /><circle cx="9" cy="7" r="4" /><path strokeLinecap="round" strokeLinejoin="round" d="M23 21v-2a4 4 0 00-3-3.87" /><path strokeLinecap="round" strokeLinejoin="round" d="M16 3.13a4 4 0 010 7.75" /></svg>
+            <div style={{ ...s.portalIcon, background: 'linear-gradient(135deg, #1E3A5F, #2B7DE9)' }}>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
             </div>
             <div style={{ flex: 1, textAlign: 'left' }}>
-              <div style={s.portalTitle}>Partner Portal</div>
-              <div style={s.portalDesc}>Pipeline tracking, residual earnings, marketing tools</div>
+              <div style={s.portalTitle}>경영진 대시보드</div>
+              <div style={s.portalDesc}>영업팀 전체 KPI, 세일즈 코칭, 수수료 전사 뷰</div>
             </div>
             <span style={{ fontSize: 18, color: '#CBD5E1' }}>→</span>
           </button>
 
           <div style={{ marginTop: 24, textAlign: 'center', fontSize: 12, color: '#94A3B8' }}>
-            Need help? <a href="mailto:support@harlowpayments.com" style={{ color: '#0F172A', fontWeight: 500, textDecoration: 'none' }}>support@harlowpayments.com</a>
+            문의: <a href="mailto:info@deepauto.ai" style={{ color: '#0F172A', fontWeight: 500, textDecoration: 'none' }}>info@deepauto.ai</a>
           </div>
         </div>
       </div>
@@ -80,14 +79,13 @@ export default function Login() {
 }
 
 const s: Record<string, React.CSSProperties> = {
-  page: { display: 'flex', minHeight: '100vh', fontFamily: "'Inter', system-ui, sans-serif" },
-  left: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '45%', padding: 48, background: '#0F172A', color: 'white' },
+  page: { display: 'flex', minHeight: '100vh', fontFamily: "'Noto Sans KR', 'IBM Plex Sans', system-ui, sans-serif" },
+  left: { display: 'flex', flexDirection: 'column', justifyContent: 'space-between', width: '45%', padding: 48, background: '#0A1628', color: 'white' },
   brandTop: { display: 'flex', alignItems: 'center', gap: 12 },
-  logoMark: { width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg, #1578F7, #609FFF)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 16, fontWeight: 900, color: 'white' },
-  brandName: { fontSize: 15, fontWeight: 500, color: 'rgba(255,255,255,0.6)' },
+  brandName: { fontSize: 15, fontWeight: 600, color: 'rgba(255,255,255,0.7)' },
   hero: { flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center' },
   heroTitle: { fontSize: 48, fontWeight: 800, lineHeight: 1.08, margin: 0, letterSpacing: '-2px' },
-  heroSub: { marginTop: 24, fontSize: 16, lineHeight: 1.6, color: 'rgba(255,255,255,0.4)' },
+  heroSub: { marginTop: 24, fontSize: 16, lineHeight: 1.8, color: 'rgba(255,255,255,0.4)' },
   copyright: { fontSize: 12, color: 'rgba(255,255,255,0.2)', margin: 0 },
   right: { flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 48, background: '#FAFBFC' },
   formWrap: { width: '100%', maxWidth: 420 },

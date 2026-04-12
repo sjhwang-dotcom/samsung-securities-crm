@@ -1,62 +1,14 @@
 [
-  {
-    "month": "2025-04-01",
-    "volume_m": 18.05,
-    "residuals_m": 1.87
-  },
-  {
-    "month": "2025-05-01",
-    "volume_m": 19.25,
-    "residuals_m": 1.99
-  },
-  {
-    "month": "2025-06-01",
-    "volume_m": 19.92,
-    "residuals_m": 2.07
-  },
-  {
-    "month": "2025-07-01",
-    "volume_m": 20.98,
-    "residuals_m": 2.18
-  },
-  {
-    "month": "2025-08-01",
-    "volume_m": 22.71,
-    "residuals_m": 2.35
-  },
-  {
-    "month": "2025-09-01",
-    "volume_m": 23.14,
-    "residuals_m": 2.4
-  },
-  {
-    "month": "2025-10-01",
-    "volume_m": 24.95,
-    "residuals_m": 2.59
-  },
-  {
-    "month": "2025-11-01",
-    "volume_m": 25.89,
-    "residuals_m": 2.68
-  },
-  {
-    "month": "2025-12-01",
-    "volume_m": 27.26,
-    "residuals_m": 2.82
-  },
-  {
-    "month": "2026-01-01",
-    "volume_m": 29.26,
-    "residuals_m": 3.03
-  },
-  {
-    "month": "2026-02-01",
-    "volume_m": 30.05,
-    "residuals_m": 3.1
-  },
-  {
-    "month": "2026-03-01",
-    "volume_m": 31.11,
-    "residuals_m": 3.21
-  }
+  { "month": "2025-05-01", "commission": 14.2, "interactions": 385 },
+  { "month": "2025-06-01", "commission": 15.1, "interactions": 412 },
+  { "month": "2025-07-01", "commission": 13.8, "interactions": 358 },
+  { "month": "2025-08-01", "commission": 14.5, "interactions": 375 },
+  { "month": "2025-09-01", "commission": 15.8, "interactions": 428 },
+  { "month": "2025-10-01", "commission": 14.9, "interactions": 402 },
+  { "month": "2025-11-01", "commission": 15.3, "interactions": 418 },
+  { "month": "2025-12-01", "commission": 16.8, "interactions": 445 },
+  { "month": "2026-01-01", "commission": 15.5, "interactions": 395 },
+  { "month": "2026-02-01", "commission": 14.8, "interactions": 372 },
+  { "month": "2026-03-01", "commission": 15.9, "interactions": 432 },
+  { "month": "2026-04-01", "commission": 16.7, "interactions": 448 }
 ]

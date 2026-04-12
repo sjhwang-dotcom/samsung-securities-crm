@@ -1,34 +1,22 @@
 [
-  {
-    "text": "Migration 96% complete",
-    "time": "25d ago"
-  },
-  {
-    "text": "23 new merchants onboarded",
-    "time": "26d ago"
-  },
-  {
-    "text": "Migration 92% complete",
-    "time": "26d ago"
-  },
-  {
-    "text": "PCI compliance rate improved to 94.2%",
-    "time": "33d ago"
-  },
-  {
-    "text": "AI retention reduced churn from 5.8% to 3.4%",
-    "time": "33d ago"
-  },
-  {
-    "text": "12 merchants flagged for bank info update",
-    "time": "37d ago"
-  },
-  {
-    "text": "Churn reduced from 4.1% to 2.1%",
-    "time": "38d ago"
-  },
-  {
-    "text": "Voice Agent restaurant MCC campaign launched",
-    "time": "46d ago"
-  }
+  { "text": "미래에셋자산운용 이재민 CIO와 삼성전자 HBM4 관련 통화 완료 (25분)", "time": "5분 전", "type": "call" },
+  { "text": "국민연금공단 2Q26 분기 리뷰 미팅 종료. 브로커 보트 일정 확인 완료", "time": "30분 전", "type": "meeting" },
+  { "text": "삼성자산운용 김혜원 PM에게 POSCO홀딩스 분할 의견 블룸버그 전달", "time": "1시간 전", "type": "bloomberg" },
+  { "text": "KB자산운용에 LG에너지솔루션 목표가 상향 리포트 이메일 배포", "time": "2시간 전", "type": "email" },
+  { "text": "SK하이닉스 이천 캠퍼스 기업탐방 완료. 미래에셋 장수현 PM 참석", "time": "3시간 전", "type": "meeting" },
+  { "text": "한국투자신탁운용에 현대차 전기차 전략 분석 리서치 배포 완료", "time": "5시간 전", "type": "research" },
+  { "text": "신한자산운용 임현우 CIO와 바이오 섹터 리밸런싱 미팅 (45분)", "time": "6시간 전", "type": "meeting" },
+  { "text": "삼성생명 황지연 CIO와 금리 인하 시나리오 관련 통화 완료", "time": "8시간 전", "type": "call" },
+  { "text": "BlackRock Korea David Kim에게 MSCI 리밸런싱 예상 종목 블룸버그 전달", "time": "1일 전", "type": "bloomberg" },
+  { "text": "사학연금공단 ESG 투자 가이드라인 업데이트 미팅 완료", "time": "1일 전", "type": "meeting" },
+  { "text": "한화자산운용 조현석 CIO와 방산 섹터 투자 비중 확대 논의", "time": "1일 전", "type": "call" },
+  { "text": "반도체 산업 2H26 전망 리서치 리포트 전체 고객 배포 완료 (287건)", "time": "2일 전", "type": "research" },
+  { "text": "Fidelity James Lee에게 AI 반도체 밸류체인 자료 이메일 발송", "time": "2일 전", "type": "email" },
+  { "text": "교보악사자산운용 중소형 가치주 스크리닝 결과 미팅 (40분)", "time": "3일 전", "type": "meeting" },
+  { "text": "키움투자자산운용 서지훈 CIO와 코스닥 바이오 모멘텀 통화", "time": "3일 전", "type": "call" },
+  { "text": "KB국민은행신탁 전소연 PM에게 고배당 ETF 수급 블룸버그 전달", "time": "3일 전", "type": "bloomberg" },
+  { "text": "네이버 AI 사업부 기업탐방 완료. KB자산운용 박준서 PM 참석 (150분)", "time": "4일 전", "type": "meeting" },
+  { "text": "교보생명 허승범 CIO와 IFRS17 관련 포트폴리오 재편 미팅", "time": "4일 전", "type": "meeting" },
+  { "text": "Capital Group Michael Cho와 밸류업 프로그램 통화 (30분)", "time": "4일 전", "type": "call" },
+  { "text": "공무원연금공단에 2026년 하반기 주식시장 전망 리서치 배포", "time": "5일 전", "type": "research" }
 ]

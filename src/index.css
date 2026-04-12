@@ -1,12 +1,12 @@
 @import "tailwindcss";
 
 @theme {
-  /* Harlow brand — from harlowpayments.com */
-  --color-brand: #1578F7;
-  --color-brand-light: #609FFF;
+  /* Samsung Securities brand */
+  --color-brand: #034EA2;
+  --color-brand-light: #2B7DE9;
   --color-brand-bg: #E8F0FE;
-  --color-dark: #121212;
-  --color-dark-secondary: #2a2a2a;
+  --color-dark: #0A1628;
+  --color-dark-secondary: #1A2744;
   --color-success: #04B745;
 
   /* Neutrals */
@@ -15,15 +15,15 @@
   --color-navy-800: #1E293B;
   --color-navy-700: #334155;
   --color-navy-600: #475569;
-  --color-indigo-500: #4F46E5;
-  --color-indigo-400: #818CF8;
+  --color-indigo-500: #034EA2;
+  --color-indigo-400: #2B7DE9;
   --color-emerald-500: #10B981;
   --color-emerald-400: #34D399;
   --color-amber-500: #F59E0B;
   --color-amber-400: #FBBF24;
   --color-rose-500: #F43F5E;
   --color-rose-400: #FB7185;
-  --font-sans: 'Inter', system-ui, -apple-system, sans-serif;
+  --font-sans: 'Noto Sans KR', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -34,7 +34,7 @@
 html, body, #root { height: 100%; width: 100%; }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Noto Sans KR', 'IBM Plex Sans', system-ui, -apple-system, sans-serif;
   background: #F0F2F5;
   color: #1E293B;
   -webkit-font-smoothing: antialiased;
@@ -345,45 +345,45 @@ body {
 
 .kpi-card {
   background: white;
-  border-radius: 10px;
-  padding: 14px 16px;
+  border-radius: 8px;
+  padding: 10px 14px;
   border: 1px solid #E5E7EB;
   box-shadow: 0 1px 2px rgba(0,0,0,0.04);
   transition: all 0.2s ease;
   display: flex;
-  flex-direction: column;
-  gap: 1px;
+  align-items: center;
+  gap: 10px;
 }
 
 .kpi-card:hover {
-  box-shadow: 0 4px 16px rgba(0,0,0,0.07);
-  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.07);
   border-color: #D1D5DB;
 }
 
 .kpi-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: 10px;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 10px;
+  margin-bottom: 0;
 }
 
 .kpi-value {
-  font-size: 26px;
+  font-size: 18px;
   font-weight: 800;
   color: #0F172A;
   letter-spacing: -0.03em;
-  line-height: 1.1;
+  line-height: 1.2;
 }
 
 .kpi-label {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 600;
   color: #64748B;
-  margin-top: 2px;
+  margin-top: 0;
 }
 
 .kpi-footer {
@@ -627,15 +627,16 @@ body {
    ═══════════════════════════════════════════════════════════ */
 
 .dashboard-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
 }
 
 .kpi-row {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 8px;
+  grid-column: span 3;
 }
 
 .grid-2-1 {
