@@ -114,7 +114,13 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
       {activeTab === 'chat' && <ChatTab />}
       {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
       {activeTab === 'pdf-preview' && pdfUrl && (
-        <iframe src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=1&view=FitH`} style={{ flex: 1, border: 'none', width: '100%', background: 'white' }} title={pdfTitle} />
+        <div style={{ flex: 1, minHeight: 0, position: 'relative', background: '#525659' }}>
+          <embed
+            src={`${pdfUrl}#navpanes=0&scrollbar=0&view=FitH`}
+            type="application/pdf"
+            style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%' }}
+          />
+        </div>
       )}
     </aside>
   )
