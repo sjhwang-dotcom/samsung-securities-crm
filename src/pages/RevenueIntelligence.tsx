@@ -118,8 +118,8 @@ export default function RevenueIntelligence() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.04)" />
               <XAxis dataKey="month" tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} />
-              <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${(v / 100000000).toFixed(0)}억`} />
-              <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${(v / 100000000).toFixed(2)}억원`]} />
+              <YAxis tick={{ fontSize: 10, fill: '#94A3B8' }} axisLine={false} tickLine={false} tickFormatter={v => `${v}억`} />
+              <Tooltip contentStyle={tooltipStyle} formatter={(v: any) => [`${Number(v).toFixed(1)}억원`]} />
               <Area type="monotone" dataKey="highTouch" stackId="1" stroke="#034EA2" strokeWidth={2} fill="url(#gradHT)" name="High-touch" />
               <Area type="monotone" dataKey="dma" stackId="1" stroke="#2B7DE9" strokeWidth={2} fill="url(#gradDMA)" name="DMA" />
               <Area type="monotone" dataKey="algo" stackId="1" stroke="#60A5FA" strokeWidth={2} fill="url(#gradAlgo)" name="Algo" />

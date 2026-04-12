@@ -29,7 +29,7 @@ const tabs: { id: Tab; label: string; icon: typeof Building2 }[] = [
 const typeVariant = (type: string) =>
   type === '통화' ? 'blue' : type === '미팅' ? 'emerald' :
   type === '블룸버그' ? 'amber' : type === '이메일' ? 'purple' :
-  type === '기업탐방' ? 'rose' : type === '리서치배포' ? 'indigo' as any : 'gray'
+  type === '기업탐방' ? 'rose' : type === '리서치배포' ? 'indigo' : 'gray'
 
 // needColumns removed — needs are rendered inline in 니즈/액션 tab
 
@@ -44,7 +44,7 @@ const actionColumns: Column<ActionItem>[] = [
   )},
   { key: 'status', header: '상태', render: (r) => (
     <StatusBadge variant={r.status === 'Completed' ? 'emerald' : r.status === 'In Progress' ? 'amber' : r.status === 'Overdue' ? 'rose' : 'gray'}>
-      {r.status}
+      {r.status === 'Completed' ? '완료' : r.status === 'In Progress' ? '진행중' : r.status === 'Overdue' ? '기한초과' : '대기'}
     </StatusBadge>
   )},
   { key: 'deadline', header: '기한' },
@@ -148,7 +148,7 @@ export default function ClientManagement() {
   })
 
   return (
-    <div className="dashboard-grid" style={{ display: 'flex', gap: 16, height: 'calc(100vh - 120px)' }}>
+    <div style={{ display: 'flex', gap: 16, height: 'calc(100vh - 120px)' }}>
       {/* Left Sidebar */}
       <div style={{ width: 320, flexShrink: 0, display: 'flex', flexDirection: 'column', gap: 12 }}>
         {/* Search */}
@@ -238,7 +238,7 @@ export default function ClientManagement() {
             dot
             pulse={selectedInstitution.status === 'At Risk'}
           >
-            {selectedInstitution.status}
+            {selectedInstitution.status === 'Active' ? '활성' : selectedInstitution.status === 'At Risk' ? '위험' : '관찰'}
           </StatusBadge>
         </div>
 
@@ -326,7 +326,7 @@ export default function ClientManagement() {
                           <div style={{ fontSize: 11, color: '#64748B' }}>{person.role} | {person.department}</div>
                         </div>
                         <StatusBadge variant={person.decisionAuthority === 'High' ? 'rose' : person.decisionAuthority === 'Medium' ? 'amber' : 'gray'} size="sm">
-                          의사결정: {person.decisionAuthority}
+                          의사결정: {person.decisionAuthority === 'High' ? '높음' : person.decisionAuthority === 'Medium' ? '보통' : '낮음'}
                         </StatusBadge>
                         <span style={{ fontSize: 12, fontWeight: 700, color: '#034EA2' }}>영향력 {person.influenceScore}</span>
                       </div>
@@ -451,7 +451,7 @@ export default function ClientManagement() {
                             {need.urgency === 'HIGH' ? '긴급' : need.urgency === 'MEDIUM' ? '보통' : '낮음'}
                           </StatusBadge>
                           <StatusBadge variant={need.status === 'New' ? 'blue' : need.status === 'In Progress' ? 'amber' : need.status === 'Resolved' ? 'emerald' : 'gray'} size="sm">
-                            {need.status}
+                            {need.status === 'New' ? '신규' : need.status === 'In Progress' ? '진행중' : need.status === 'Resolved' ? '해결' : '만료'}
                           </StatusBadge>
                           <span style={{ fontSize: 10, fontWeight: 600, color: need.confidence >= 0.8 ? '#059669' : '#64748B', marginLeft: 'auto' }}>
                             신뢰도 {(need.confidence * 100).toFixed(0)}%
@@ -484,7 +484,7 @@ export default function ClientManagement() {
                                   {action.priority === 'URGENT' ? '긴급' : action.priority === 'THIS_WEEK' ? '이번주' : action.priority === 'THIS_MONTH' ? '이번달' : '모니터링'}
                                 </StatusBadge>
                                 <StatusBadge variant={action.status === 'Completed' ? 'emerald' : action.status === 'In Progress' ? 'amber' : action.status === 'Overdue' ? 'rose' : 'gray'} size="sm">
-                                  {action.status}
+                                  {action.status === 'Completed' ? '완료' : action.status === 'In Progress' ? '진행중' : action.status === 'Overdue' ? '기한초과' : '대기'}
                                 </StatusBadge>
                                 <span style={{ fontSize: 10, color: '#94A3B8' }}>{action.deadline}</span>
                               </div>

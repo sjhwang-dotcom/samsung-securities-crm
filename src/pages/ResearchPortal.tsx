@@ -115,9 +115,9 @@ export default function ResearchPortal() {
       </Card>
 
       {/* Full Report Table */}
-      <Card style={{ gridColumn: 'span 3' }}>
+      <Card noPadding style={{ gridColumn: 'span 3' }}>
         <CardHeader title="전체 리서치 리포트" subtitle="최근 발행순" />
-        <DataTable columns={reportColumns} data={researchReports} />
+        <DataTable columns={reportColumns} data={[...researchReports].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())} hoverable />
       </Card>
     </div>
   )

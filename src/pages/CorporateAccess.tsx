@@ -41,7 +41,7 @@ const eventColumns: Column<CorporateAccessEvent>[] = [
     </span>
   ) : <span style={{ color: '#94A3B8' }}>-</span> },
   { key: 'cost', header: '비용', width: '80px', align: 'right', render: (r) => (
-    <span style={{ fontWeight: 600, color: '#334155' }}>{(r.cost / 10000).toFixed(0)}만원</span>
+    <span style={{ fontWeight: 600, color: '#334155' }}>{r.cost.toLocaleString()}만원</span>
   )},
 ]
 
@@ -75,7 +75,7 @@ export default function CorporateAccess() {
   const totalCommContrib = corporateAccessEvents
     .filter(e => e.commissionContribution != null)
     .reduce((s, e) => s + (e.commissionContribution || 0), 0)
-  const commContribStr = (totalCommContrib / 100000000).toFixed(1)
+  const commContribStr = (totalCommContrib / 10000).toFixed(1)
 
   const sortedEvents = [...corporateAccessEvents].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -85,7 +85,7 @@ export default function CorporateAccess() {
     <div className="dashboard-grid">
       {/* KPI Row */}
       <div className="kpi-row">
-        <KpiCard icon={Calendar} label="이번달 이벤트" value={`${totalEvents}건`} color="indigo" trend="NDR 5건 포함" trendDirection="up" trendPositive />
+        <KpiCard icon={Calendar} label="이번달 이벤트" value={`${totalEvents}건`} color="indigo" trend={`NDR ${corporateAccessEvents.filter(e => e.type === 'NDR').length}건 포함`} trendDirection="up" trendPositive />
         <KpiCard icon={Users} label="참석률" value={`${attendanceRate}%`} color="emerald" trend={`${totalAttended}/${totalInvited}명`} trendDirection="up" trendPositive />
         <KpiCard icon={Star} label="평균 피드백" value={`${avgFeedback}/5.0`} color="amber" trend="+0.3 전월대비" trendDirection="up" trendPositive />
         <KpiCard icon={DollarSign} label="수수료 기여" value={`${commContribStr}억`} color="blue" trend="기업탐방 효과" trendDirection="up" trendPositive />

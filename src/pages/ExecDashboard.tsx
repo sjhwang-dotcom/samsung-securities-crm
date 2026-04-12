@@ -133,15 +133,15 @@ export default function ExecDashboard() {
       </Card>
 
       {/* Team Performance */}
-      <Card style={{ gridColumn: 'span 2' }}>
+      <Card noPadding style={{ gridColumn: 'span 2' }}>
         <CardHeader title="팀별 성과" />
-        <DataTable columns={teamColumns} data={teamPerf} />
+        <DataTable columns={teamColumns} data={teamPerf} hoverable />
       </Card>
 
       {/* Salesperson Ranking */}
-      <Card style={{ gridColumn: 'span 3' }}>
+      <Card noPadding style={{ gridColumn: 'span 3' }}>
         <CardHeader title="세일즈 개인별 성과" subtitle="월 수수료 기준 정렬" />
-        <DataTable columns={salesColumns} data={salesRanking} />
+        <DataTable columns={salesColumns} data={salesRanking} hoverable />
       </Card>
     </div>
   )

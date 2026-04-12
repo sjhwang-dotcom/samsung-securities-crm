@@ -55,8 +55,8 @@ const followUpColumns: Column<ActionItem>[] = [
     </StatusBadge>
   )},
   { key: 'status', header: '상태', width: '80px', render: (r) => (
-    <StatusBadge variant={r.status === 'In Progress' ? 'amber' : r.status === 'Overdue' ? 'rose' : 'gray'}>
-      {r.status}
+    <StatusBadge variant={r.status === 'In Progress' ? 'amber' : r.status === 'Overdue' ? 'rose' : r.status === 'Completed' ? 'emerald' : 'gray'}>
+      {r.status === 'In Progress' ? '진행중' : r.status === 'Overdue' ? '기한초과' : r.status === 'Completed' ? '완료' : '대기'}
     </StatusBadge>
   )},
   { key: 'deadline', header: '기한', width: '90px' },
