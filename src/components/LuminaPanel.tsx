@@ -72,8 +72,8 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         onMouseLeave={e => { if (!isResizing) (e.target as HTMLElement).style.background = 'transparent' }}
       />
 
-      {/* Header */}
-      <div className="lumina-header">
+      {/* Header — hidden during PDF preview */}
+      <div className="lumina-header" style={activeTab === 'pdf-preview' ? { display: 'none' } : {}}>
         <div className="lumina-title-row">
           <div className="lumina-logo" style={{ background: 'linear-gradient(135deg, #034EA2, #2B7DE9)' }}>
             <Sparkles size={16} color="white" />
@@ -104,16 +104,16 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
         </div>
       </div>
 
-      {activeTab === 'chat' && <ChatTab />}
-      {activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
+      {activeTab !== 'pdf-preview' && activeTab === 'chat' && <ChatTab />}
+      {activeTab !== 'pdf-preview' && activeTab === 'documents' && <div className="lumina-content"><DocumentsTab onOpenPdf={openPdf} /></div>}
       {activeTab === 'pdf-preview' && pdfUrl && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-          <div style={{ padding: '8px 12px', background: '#F8FAFC', borderBottom: '1px solid #E5E7EB', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
-            <button onClick={() => setActiveTab('documents')} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#034EA2', fontWeight: 600, padding: '2px 6px' }}>← 목록</button>
-            <span style={{ fontSize: 11, color: '#475569', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfTitle}</span>
+        <>
+          <div style={{ padding: '4px 8px', background: '#0A1628', display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0 }}>
+            <button onClick={() => setActiveTab('documents')} style={{ background: 'rgba(255,255,255,0.1)', border: 'none', cursor: 'pointer', fontSize: 11, color: 'white', fontWeight: 600, padding: '4px 10px', borderRadius: 4 }}>← 목록</button>
+            <span style={{ fontSize: 11, color: 'rgba(255,255,255,0.7)', fontWeight: 500, flex: 1, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{pdfTitle}</span>
           </div>
-          <iframe src={pdfUrl} style={{ flex: 1, border: 'none', width: '100%' }} title={pdfTitle} />
-        </div>
+          <iframe src={pdfUrl} style={{ flex: 1, border: 'none', width: '100%', background: 'white' }} title={pdfTitle} />
+        </>
       )}
     </aside>
   )
