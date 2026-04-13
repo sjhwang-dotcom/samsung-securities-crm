@@ -1,0 +1,8 @@
+[
+  { "id": "IC001", "channelName": "Bloomberg Terminal", "protocol": "B-PIPE API", "status": "연결됨", "lastSyncAt": "2026-04-13T09:00:00+09:00", "totalRecords": 15842 },
+  { "id": "IC002", "channelName": "이메일 시스템 (Exchange)", "protocol": "Microsoft Graph API", "status": "연결됨", "lastSyncAt": "2026-04-13T08:55:00+09:00", "totalRecords": 28456 },
+  { "id": "IC003", "channelName": "KRX 매매 시스템", "protocol": "FIX 4.4", "status": "연결됨", "lastSyncAt": "2026-04-13T09:01:00+09:00", "totalRecords": 124580 },
+  { "id": "IC004", "channelName": "리서치 배포 시스템", "protocol": "REST API", "status": "연결됨", "lastSyncAt": "2026-04-13T08:50:00+09:00", "totalRecords": 8925 },
+  { "id": "IC005", "channelName": "컴플라이언스 모니터링", "protocol": "Internal gRPC", "status": "동기화중", "lastSyncAt": "2026-04-13T08:45:00+09:00", "totalRecords": 3210 },
+  { "id": "IC006", "channelName": "CRM 전화 통합 (CTI)", "protocol": "SIP/WebRTC", "status": "연결됨", "lastSyncAt": "2026-04-13T08:58:00+09:00", "totalRecords": 42130 }
+]

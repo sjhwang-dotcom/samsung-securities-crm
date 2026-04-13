@@ -1,7 +1,7 @@
 import { ShieldCheck, Eye, FileText, Award, AlertTriangle, Lock } from 'lucide-react'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
-import { complianceAlerts } from '../data/mockData'
+import { complianceAlerts, auditTrailEntries, chineseWallRestrictions } from '../data/mockData'
 import type { ComplianceAlert } from '../types'
 
 const alertColumns: Column<ComplianceAlert>[] = [
@@ -37,24 +37,36 @@ const alertColumns: Column<ComplianceAlert>[] = [
   ) : <span style={{ color: '#94A3B8' }}>-</span> },
 ]
 
-// Audit trail (hardcoded 10 entries)
-type AuditEntry = { time: string; action: string; user: string; detail: string; severity: 'info' | 'warning' | 'critical' }
-const auditTrail: AuditEntry[] = [
-  { time: '2026-04-12 09:34', action: '고객정보 조회', user: '김영호', detail: '미래에셋자산운용 핵심인물 정보 열람', severity: 'info' },
-  { time: '2026-04-12 09:12', action: '정보교류차단 설정', user: '시스템', detail: 'SK바이오팜 IPO 관련 차단벽 생성', severity: 'critical' },
-  { time: '2026-04-12 08:55', action: '리서치 배포', user: '박성진', detail: '반도체 섹터 리포트 287개 기관 배포', severity: 'info' },
-  { time: '2026-04-11 17:30', action: '거래 모니터링', user: '시스템', detail: '이상거래 패턴 감지 - 자동 검토 완료', severity: 'warning' },
-  { time: '2026-04-11 16:45', action: '고객정보 수정', user: '이지현', detail: '한국투자밸류자산운용 담당자 정보 업데이트', severity: 'info' },
-  { time: '2026-04-11 15:20', action: '차단벽 해제', user: '컴플라이언스팀', detail: '카카오게임즈 블록딜 완료 - 차단 해제', severity: 'critical' },
-  { time: '2026-04-11 14:10', action: '접근 권한 변경', user: '관리자', detail: '신규 세일즈 담당자 권한 부여', severity: 'warning' },
-  { time: '2026-04-11 11:30', action: '감사 로그 내보내기', user: '감사팀', detail: '3월 월간 감사 로그 PDF 생성', severity: 'info' },
-  { time: '2026-04-11 10:05', action: '컴플라이언스 교육', user: '시스템', detail: '분기 교육 이수 현황 자동 확인', severity: 'info' },
-  { time: '2026-04-10 17:00', action: '정보교류차단 알림', user: '시스템', detail: 'LG에너지솔루션 유상증자 관련 차단 알림 발송', severity: 'critical' },
-]
+// Audit trail from JSON
+const severityMap: Record<string, 'info' | 'warning' | 'critical'> = {
+  'chinese_wall_triggered': 'critical',
+  'compliance_alert': 'critical',
+  'action_completed': 'info',
+  'need_extracted': 'info',
+  'interaction_created': 'info',
+  'research_distributed': 'info',
+}
+const auditTrail = auditTrailEntries
+  .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+  .slice(0, 10)
+  .map(entry => {
+    const d = new Date(entry.timestamp)
+    const time = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`
+    return {
+      time,
+      action: entry.eventType.replace(/_/g, ' '),
+      user: entry.actorType === 'system' ? '시스템' : entry.actorType === 'agent' ? 'AI 에이전트' : entry.actorId,
+      detail: entry.description,
+      severity: severityMap[entry.eventType] || 'info' as 'info' | 'warning' | 'critical',
+    }
+  })
+
+// Chinese Wall restrictions from JSON
+const activeChineseWallRestrictions = chineseWallRestrictions.filter(r => r.isActive)
 
 export default function ComplianceCenterSS() {
-  const chineseWallAlerts = complianceAlerts.filter(a => a.type === '정보교류차단')
-  const activeChineseWall = chineseWallAlerts.filter(a => a.status === 'Active')
+
+  const activeChineseWall = activeChineseWallRestrictions
 
   const sortedAlerts = [...complianceAlerts].sort((a, b) =>
     new Date(b.date).getTime() - new Date(a.date).getTime()
@@ -82,8 +94,8 @@ export default function ComplianceCenterSS() {
         <div style={{ padding: '0 18px 18px' }}>
           {activeChineseWall.length > 0 ? (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {activeChineseWall.map(alert => (
-                <div key={alert.id} style={{
+              {activeChineseWall.map(restriction => (
+                <div key={restriction.id} style={{
                   display: 'flex', alignItems: 'center', justifyContent: 'space-between',
                   padding: '12px 16px', background: '#FEF2F2', border: '1px solid #FECACA',
                   borderRadius: 10,
@@ -92,18 +104,18 @@ export default function ComplianceCenterSS() {
                     <AlertTriangle size={16} color="#DC2626" />
                     <div>
                       <div style={{ fontWeight: 600, color: '#0F172A', fontSize: 13 }}>
-                        {alert.restrictedStock || '미지정'}
+                        {restriction.stockName} ({restriction.stockCode})
                       </div>
                       <div style={{ fontSize: 11, color: '#991B1B', marginTop: 2 }}>
-                        {alert.description}
+                        {restriction.reason}
                       </div>
                     </div>
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                    <StatusBadge variant={alert.severity === 'HIGH' ? 'critical' : 'high'}>
-                      {alert.severity}
+                    <StatusBadge variant="critical">
+                      활성
                     </StatusBadge>
-                    <span style={{ fontSize: 11, color: '#64748B' }}>{alert.date}</span>
+                    <span style={{ fontSize: 11, color: '#64748B' }}>{restriction.restrictedFrom} ~ {restriction.restrictedUntil || '미정'}</span>
                   </div>
                 </div>
               ))}
@@ -114,18 +126,18 @@ export default function ComplianceCenterSS() {
             </div>
           )}
 
-          {/* All Chinese Wall alerts including resolved */}
-          {chineseWallAlerts.filter(a => a.status !== 'Active').length > 0 && (
+          {/* Resolved Chinese Wall restrictions */}
+          {chineseWallRestrictions.filter(r => !r.isActive).length > 0 && (
             <div style={{ marginTop: 12 }}>
               <div style={{ fontSize: 12, fontWeight: 600, color: '#64748B', marginBottom: 8 }}>해제된 차단 이력</div>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-                {chineseWallAlerts.filter(a => a.status !== 'Active').map(alert => (
-                  <div key={alert.id} style={{
+                {chineseWallRestrictions.filter(r => !r.isActive).map(restriction => (
+                  <div key={restriction.id} style={{
                     padding: '6px 10px', background: '#F8FAFC', borderRadius: 8, fontSize: 11,
                     display: 'flex', alignItems: 'center', gap: 6,
                   }}>
                     <ShieldCheck size={12} color="#059669" />
-                    <span style={{ color: '#334155' }}>{alert.restrictedStock || alert.description.slice(0, 20)}</span>
+                    <span style={{ color: '#334155' }}>{restriction.stockName}</span>
                     <StatusBadge variant="emerald" size="sm">해제</StatusBadge>
                   </div>
                 ))}

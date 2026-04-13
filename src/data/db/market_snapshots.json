@@ -1,0 +1,10 @@
+[
+  { "id": "MS001", "snapshotDate": "2026-04-13", "indexName": "KOSPI", "value": 2785.32, "changePct": 0.45, "changeValue": 12.48 },
+  { "id": "MS002", "snapshotDate": "2026-04-13", "indexName": "KOSDAQ", "value": 925.18, "changePct": 0.72, "changeValue": 6.62 },
+  { "id": "MS003", "snapshotDate": "2026-04-13", "indexName": "S&P500", "value": 5892.45, "changePct": -0.18, "changeValue": -10.65 },
+  { "id": "MS004", "snapshotDate": "2026-04-13", "indexName": "NASDAQ", "value": 19245.80, "changePct": -0.32, "changeValue": -61.89 },
+  { "id": "MS005", "snapshotDate": "2026-04-13", "indexName": "USD_KRW", "value": 1328.50, "changePct": -0.25, "changeValue": -3.35 },
+  { "id": "MS006", "snapshotDate": "2026-04-13", "indexName": "EUR_KRW", "value": 1452.20, "changePct": 0.12, "changeValue": 1.74 },
+  { "id": "MS007", "snapshotDate": "2026-04-13", "indexName": "국고채3년", "value": 2.85, "changePct": -0.35, "changeValue": -0.01 },
+  { "id": "MS008", "snapshotDate": "2026-04-13", "indexName": "국고채10년", "value": 3.12, "changePct": -0.16, "changeValue": -0.005 }
+]

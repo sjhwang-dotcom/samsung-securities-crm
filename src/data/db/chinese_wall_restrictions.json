@@ -1,0 +1,7 @@
+[
+  { "id": "CW001", "stockCode": "035720", "stockName": "카카오", "reason": "카카오뱅크 유상증자 공동주관 참여로 인한 내부정보 차단", "restrictedFrom": "2026-03-25", "restrictedUntil": "2026-05-05", "isActive": true },
+  { "id": "CW002", "stockCode": "009540", "stockName": "HD한국조선해양", "reason": "한화오션 유상증자 관련 내부정보 차단벽 설정", "restrictedFrom": "2026-02-28", "restrictedUntil": "2026-04-15", "isActive": true },
+  { "id": "CW003", "stockCode": "298050", "stockName": "에코프로비엠", "reason": "에코프로머티리얼즈 IPO 공동주관 관련 내부정보 차단", "restrictedFrom": "2026-04-01", "restrictedUntil": "2026-05-10", "isActive": true },
+  { "id": "CW004", "stockCode": "454910", "stockName": "두산로보틱스", "reason": "두산로보틱스 IPO 공동주관으로 인한 거래 제한", "restrictedFrom": "2026-03-20", "restrictedUntil": "2026-04-30", "isActive": true },
+  { "id": "CW005", "stockCode": "096770", "stockName": "SK이노베이션", "reason": "SK이노베이션 블록딜 단독주선 관련 정보차단 (해제 예정)", "restrictedFrom": "2026-03-28", "restrictedUntil": "2026-04-12", "isActive": false }
+]

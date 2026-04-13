@@ -198,3 +198,75 @@ export interface ChatMessage {
   role: 'ai' | 'user'
   text: string
 }
+
+export interface Trade {
+  id: string; tradeDate: string; tradeTime: string; institutionId: string; institutionName: string
+  stockCode: string; stockName: string; orderType: '매수' | '매도' | '공매도'
+  quantity: number; price: number; amount: number; commission: number; commissionRate: number
+  executionType: 'High-touch' | 'DMA' | 'Algo'; algoStrategy?: string
+}
+
+export interface Deal {
+  id: string; company: string; dealType: string; dealSize: string; dealSizeAmount: number
+  role: string; commission: number; commissionRate?: number
+  participatingInstitutions: string[]; launchDate: string; closeDate?: string; status: string
+}
+
+export interface Schedule {
+  id: string; salespersonId: string; date: string; startTime: string; endTime?: string
+  type: string; title: string; institutionId?: string; keyPersonId?: string; location?: string; description?: string
+}
+
+export interface MarketSnapshot {
+  id: string; snapshotDate: string; indexName: string; value: number; changePct: number; changeValue: number
+}
+
+export interface PortfolioEstimate {
+  id: string; institutionId: string; institutionName: string; estimateDate: string
+  sectorWeights: Record<string, number>; topHoldings: { stock: string; weight: number }[]
+  benchmarkDeviation: number; source: string
+}
+
+export interface ClientInterest {
+  id: string; institutionId: string; institutionName: string
+  interestType: string; interestValue: string; intensity: number
+  firstDetected: string; lastDetected: string; mentionCount: number; isActive: boolean
+}
+
+export interface CompetitorMention {
+  id: string; interactionId: string; institutionId: string; institutionName: string
+  competitorName: string; mentionType: string; context: string; threatLevel: string; detectedDate: string
+}
+
+export interface ChineseWallRestriction {
+  id: string; stockCode: string; stockName: string; reason: string
+  restrictedFrom: string; restrictedUntil?: string; isActive: boolean
+}
+
+export interface AuditTrailEntry {
+  id: string; timestamp: string; eventType: string; actorType: string; actorId: string
+  entityType: string; entityId: string; description: string
+}
+
+export interface ResearchDistribution {
+  id: string; reportId: string; institutionId: string; institutionName: string; keyPersonName: string
+  distributedAt: string; channel: string; opened: boolean; openedAt?: string
+  downloaded: boolean; timeSpentSecs?: number; feedback?: string
+}
+
+export interface CorporateAccessAttendee {
+  id: string; eventId: string; institutionId: string; institutionName: string; keyPersonName: string
+  rsvpStatus: string; attended: boolean; feedback?: string; feedbackScore?: number
+}
+
+export interface SalespersonMetric {
+  id: string; salespersonId: string; salespersonName: string; metricDate: string
+  callsMade: number; meetingsHeld: number; emailsSent: number; bloombergMsgs: number
+  needsExtracted: number; actionCompletionRate: number; avgResponseTimeHours: number
+  monthlyCommission: number; avgBrokerVoteScore: number; clientSatisfaction: number
+}
+
+export interface IntegrationChannel {
+  id: string; channelName: string; protocol: string; status: string
+  lastSyncAt: string; totalRecords: number
+}

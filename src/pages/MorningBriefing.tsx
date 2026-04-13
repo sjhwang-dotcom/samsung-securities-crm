@@ -1,27 +1,34 @@
 import { useState } from 'react'
 import { StatusBadge } from '../components/ui'
-import { actionItems, atRiskClients, researchReports, interactions } from '../data/mockData'
+import { actionItems, atRiskClients, researchReports, interactions, schedules, marketSnapshots, integrationChannels } from '../data/mockData'
 import {
   Sun, CheckCircle, Clock, Calendar, TrendingUp, AlertTriangle,
   FileText, Radio, Mail, Phone, MessageSquare, Database, BarChart3,
 } from 'lucide-react'
 
-// ═══ Hardcoded schedule data ═══
-const todaySchedule = [
-  { time: '08:00', title: '모닝 미팅', detail: '리서치센터 합동', type: 'meeting' },
-  { time: '09:00', title: '미래에셋 박정현 PM 통화', detail: '방산 섹터 업데이트', type: 'call' },
-  { time: '10:30', title: '국민연금공단 이승재 CIO 방문', detail: '2분기 리밸런싱 논의', type: 'visit' },
-  { time: '12:00', title: '삼성자산운용 점심 미팅', detail: '반도체 뷰 공유', type: 'meeting' },
-  { time: '14:00', title: 'SK하이닉스 기업탐방', detail: 'IR팀', type: 'visit' },
-  { time: '16:00', title: '한국밸류자산운용 관계 회복 통화', detail: '', type: 'call' },
-]
+// ═══ Schedule data from JSON ═══
+const typeToCategory: Record<string, string> = { '통화': 'call', '미팅': 'meeting', '내부회의': 'meeting', '기업탐방': 'visit', '컨퍼런스': 'meeting' }
+const todaySchedule = schedules
+  .filter(s => s.salespersonId === 'SP001' && s.date === '2026-04-13')
+  .sort((a, b) => a.startTime.localeCompare(b.startTime))
+  .map(s => ({
+    time: s.startTime,
+    title: s.title,
+    detail: s.description || '',
+    type: typeToCategory[s.type] || 'meeting',
+  }))
 
-const marketData = [
-  { label: 'KOSPI', value: '2,845.32', change: '+0.8%', positive: true },
-  { label: 'KOSDAQ', value: '892.15', change: '+1.2%', positive: true },
-  { label: 'USD/KRW', value: '1,342.50', change: '-0.3%', positive: true },
-  { label: '국고채 3년', value: '3.25%', change: '+2bp', positive: false },
-]
+// ═══ Market data from JSON ═══
+const indexLabelMap: Record<string, string> = { 'KOSPI': 'KOSPI', 'KOSDAQ': 'KOSDAQ', 'USD_KRW': 'USD/KRW', '국고채3년': '국고채 3년' }
+const displayIndices = ['KOSPI', 'KOSDAQ', 'USD_KRW', '국고채3년']
+const marketData = marketSnapshots
+  .filter(m => displayIndices.includes(m.indexName))
+  .map(m => ({
+    label: indexLabelMap[m.indexName] || m.indexName,
+    value: m.indexName.includes('국고채') ? `${m.value}%` : m.value.toLocaleString(),
+    change: `${m.changePct >= 0 ? '+' : ''}${m.changePct}%`,
+    positive: m.indexName === 'USD_KRW' ? m.changePct <= 0 : m.changePct >= 0,
+  }))
 
 // Channel stats derived from actual interaction data
 const channelStats = (() => {
@@ -34,14 +41,26 @@ const channelStats = (() => {
   return counts
 })()
 
-const channels = [
-  { icon: Mail, name: '이메일', protocol: 'Exchange API', status: '연결됨', lastSync: '08:00', count: channelStats['이메일'] || 0 },
-  { icon: Phone, name: '전화', protocol: 'STT 자동기록', status: '연결됨', lastSync: '실시간', count: channelStats['전화'] || 0 },
-  { icon: MessageSquare, name: '블룸버그', protocol: 'B-PIPE / IB Chat', status: '연결됨', lastSync: '실시간', count: channelStats['블룸버그'] || 0 },
-  { icon: Calendar, name: '캘린더', protocol: 'MS Graph API', status: '동기화중', lastSync: '07:55', count: channelStats['미팅'] || 0 },
-  { icon: Database, name: 'OMS', protocol: '실시간 체결 연동', status: '연결됨', lastSync: '실시간', count: 0 },
-  { icon: FileText, name: '리서치 포탈', protocol: 'REST API', status: '연결됨', lastSync: '07:50', count: channelStats['리서치 포탈'] || 0 },
-]
+// ═══ Channels from JSON ═══
+const channelIconMap: Record<string, typeof Mail> = {
+  'Bloomberg Terminal': MessageSquare,
+  '이메일 시스템 (Exchange)': Mail,
+  'KRX 매매 시스템': Database,
+  '리서치 배포 시스템': FileText,
+  '컴플라이언스 모니터링': Database,
+  'CRM 전화 통합 (CTI)': Phone,
+}
+const channels = integrationChannels.map(ch => {
+  const syncTime = ch.lastSyncAt ? new Date(ch.lastSyncAt).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit', hour12: false }) : '-'
+  return {
+    icon: channelIconMap[ch.channelName] || Database,
+    name: ch.channelName.replace(/ \(.*\)/, ''),
+    protocol: ch.protocol,
+    status: ch.status,
+    lastSync: syncTime,
+    count: ch.totalRecords,
+  }
+})
 
 // ═══ Helper: priority sort order ═══
 const priorityOrder: Record<string, number> = { URGENT: 0, THIS_WEEK: 1, THIS_MONTH: 2, MONITOR: 3 }

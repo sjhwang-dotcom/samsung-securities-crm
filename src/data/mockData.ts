@@ -6,6 +6,10 @@ import type {
   Institution, KeyPerson, Salesperson, Interaction, ClientNeed,
   ActionItem, BrokerVote, ResearchReport, CorporateAccessEvent,
   CommissionData, AtRiskClient, ComplianceAlert, ActivityItem,
+  Trade, Deal, Schedule, MarketSnapshot, PortfolioEstimate,
+  ClientInterest, CompetitorMention, ChineseWallRestriction,
+  AuditTrailEntry, ResearchDistribution, CorporateAccessAttendee,
+  SalespersonMetric, IntegrationChannel,
 } from '../types'
 
 // ═══ Raw DB imports ═══
@@ -24,6 +28,19 @@ import _volumeTrend from './db/volume_trend.json'
 import _atRisk from './db/at_risk_clients.json'
 import _activity from './db/recent_activity.json'
 import _compliance from './db/compliance_alerts.json'
+import _trades from './db/trades.json'
+import _deals from './db/deals.json'
+import _schedules from './db/schedules.json'
+import _marketSnapshots from './db/market_snapshots.json'
+import _portfolioEstimates from './db/portfolio_estimates.json'
+import _clientInterests from './db/client_interests.json'
+import _competitorMentions from './db/competitor_mentions.json'
+import _chineseWallRestrictions from './db/chinese_wall_restrictions.json'
+import _auditTrail from './db/audit_trail.json'
+import _researchDistributions from './db/research_distributions.json'
+import _corporateAccessAttendees from './db/corporate_access_attendees.json'
+import _salespersonMetrics from './db/salesperson_metrics.json'
+import _integrationChannels from './db/integration_channels.json'
 
 // ═══ Helper ═══
 const fmtPct = (n: number) => `${n.toFixed(1)}%`
@@ -167,3 +184,46 @@ export const brokerVoteCategoryAvg = (() => {
     { category: '이벤트', score: +(cats.events / count).toFixed(1) },
   ]
 })()
+
+// ═══ Trades ═══
+export const trades: Trade[] = _trades as Trade[]
+
+// ═══ Deals ═══
+export const deals: Deal[] = (_deals as any[]).map((d: any) => ({
+  ...d,
+  commissionRate: typeof d.commissionRate === 'string' ? parseFloat(d.commissionRate) || 0 : d.commissionRate ?? 0,
+  closeDate: d.closeDate ?? undefined,
+})) as Deal[]
+
+// ═══ Schedules ═══
+export const schedules: Schedule[] = _schedules as Schedule[]
+
+// ═══ Market Snapshots ═══
+export const marketSnapshots: MarketSnapshot[] = _marketSnapshots as MarketSnapshot[]
+
+// ═══ Portfolio Estimates ═══
+export const portfolioEstimates: PortfolioEstimate[] = _portfolioEstimates as PortfolioEstimate[]
+
+// ═══ Client Interests ═══
+export const clientInterests: ClientInterest[] = _clientInterests as ClientInterest[]
+
+// ═══ Competitor Mentions ═══
+export const competitorMentions: CompetitorMention[] = _competitorMentions as CompetitorMention[]
+
+// ═══ Chinese Wall Restrictions ═══
+export const chineseWallRestrictions: ChineseWallRestriction[] = _chineseWallRestrictions as ChineseWallRestriction[]
+
+// ═══ Audit Trail ═══
+export const auditTrailEntries: AuditTrailEntry[] = _auditTrail as AuditTrailEntry[]
+
+// ═══ Research Distributions ═══
+export const researchDistributions: ResearchDistribution[] = _researchDistributions as ResearchDistribution[]
+
+// ═══ Corporate Access Attendees ═══
+export const corporateAccessAttendees: CorporateAccessAttendee[] = _corporateAccessAttendees as CorporateAccessAttendee[]
+
+// ═══ Salesperson Metrics ═══
+export const salespersonMetrics: SalespersonMetric[] = _salespersonMetrics as SalespersonMetric[]
+
+// ═══ Integration Channels ═══
+export const integrationChannels: IntegrationChannel[] = _integrationChannels as IntegrationChannel[]

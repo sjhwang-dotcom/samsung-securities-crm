@@ -5,7 +5,8 @@ import {
 } from 'recharts'
 import { KpiCard, Card, CardHeader, StatusBadge, DataTable } from '../components/ui'
 import type { Column } from '../components/ui'
-import { commissions, institutions, brokerVotes } from '../data/mockData'
+import { commissions, institutions, brokerVotes, deals } from '../data/mockData'
+import type { Deal } from '../types'
 
 const tooltipStyle = {
   borderRadius: 10, fontSize: 11,
@@ -43,33 +44,31 @@ const commissionByTier = (() => {
   }))
 })()
 
-// Deal participation (hardcoded)
-type DealRow = { company: string; type: string; size: string; role: string; commission: string; date: string }
-const dealData: DealRow[] = [
-  { company: 'SK바이오팜', type: 'IPO', size: '3,200억', role: '공동주관', commission: '4.8억', date: '2026-03-15' },
-  { company: '카카오게임즈', type: '블록딜', size: '1,500억', role: '단독주선', commission: '2.3억', date: '2026-03-08' },
-  { company: '에코프로비엠', type: '세컨더리', size: '800억', role: '참여', commission: '0.8억', date: '2026-02-28' },
-  { company: '셀트리온', type: 'IPO', size: '5,000억', role: '공동주관', commission: '7.5억', date: '2026-02-15' },
-  { company: 'LG에너지솔루션', type: '블록딜', size: '2,000억', role: '공동주선', commission: '3.0억', date: '2026-01-20' },
-]
+// Deal participation from JSON
+const dealData = [...deals].sort((a, b) => new Date(b.launchDate).getTime() - new Date(a.launchDate).getTime())
 
-const dealColumns: Column<DealRow>[] = [
+const dealColumns: Column<Deal>[] = [
   { key: 'company', header: '기업', render: (r) => <span style={{ fontWeight: 600, color: '#0F172A' }}>{r.company}</span> },
-  { key: 'type', header: '유형', render: (r) => (
-    <StatusBadge variant={r.type === 'IPO' ? 'blue' : r.type === '블록딜' ? 'purple' : 'emerald'}>
-      {r.type}
+  { key: 'dealType', header: '유형', render: (r) => (
+    <StatusBadge variant={r.dealType === 'IPO' ? 'blue' : r.dealType === '블록딜' ? 'purple' : 'emerald'}>
+      {r.dealType}
     </StatusBadge>
   )},
-  { key: 'size', header: '규모', align: 'right' },
+  { key: 'dealSize', header: '규모', align: 'right' },
   { key: 'role', header: '역할', render: (r) => (
     <StatusBadge variant={r.role === '단독주선' ? 'rose' : r.role === '공동주관' ? 'amber' : 'gray'}>
       {r.role}
     </StatusBadge>
   )},
   { key: 'commission', header: '수수료', align: 'right', render: (r) => (
-    <span style={{ fontWeight: 700, color: '#034EA2' }}>{r.commission}</span>
+    <span style={{ fontWeight: 700, color: '#034EA2' }}>{r.commission}억</span>
   )},
-  { key: 'date', header: '날짜' },
+  { key: 'launchDate', header: '날짜' },
+  { key: 'status', header: '상태', render: (r) => (
+    <StatusBadge variant={r.status === '진행중' ? 'amber' : r.status === '완료' ? 'emerald' : 'gray'}>
+      {r.status}
+    </StatusBadge>
+  )},
 ]
 
 export default function RevenueIntelligence() {
