@@ -4,11 +4,12 @@ import {
   Search, Bell, Settings, RefreshCw, LogOut,
   LayoutDashboard, Building2, MessageSquare, Award,
   TrendingUp, FileText, Calendar, AlertTriangle, Shield,
-  Sparkles,
+  Sparkles, Sun,
 } from 'lucide-react'
 import LuminaPanel from './LuminaPanel'
 
 const navItems = [
+  { to: '/briefing', icon: Sun, title: '모닝 브리핑' },
   { to: '/dashboard', icon: LayoutDashboard, title: '대시보드' },
   { to: '/clients', icon: Building2, title: '고객 관리' },
   { to: '/activity', icon: MessageSquare, title: '활동 관리' },
@@ -21,6 +22,7 @@ const navItems = [
 ]
 
 const pageTitles: Record<string, { title: string; sub: string }> = {
+  '/briefing': { title: '모닝 브리핑', sub: 'AI가 준비한 오늘의 영업 브리핑' },
   '/dashboard': { title: '영업 대시보드', sub: '기관영업 실시간 현황 — 수수료, 고객, 브로커 보트, AI 인사이트' },
   '/clients': { title: '고객 관리 (Client 360)', sub: '기관 고객 프로필, 니즈 추출, 액션 추천' },
   '/activity': { title: '활동 관리', sub: '인터랙션 로그, 니즈 추출 파이프라인, 팔로업 큐' },

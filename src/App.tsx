@@ -12,6 +12,7 @@ import ResearchDistribution from './pages/ResearchDistribution'
 import CorporateAccess from './pages/CorporateAccess'
 import AttritionWarning from './pages/AttritionWarning'
 import ComplianceCenter from './pages/ComplianceCenter'
+import MorningBriefing from './pages/MorningBriefing'
 import ResearchPortal from './pages/ResearchPortal'
 import ExecDashboard from './pages/ExecDashboard'
 
@@ -25,6 +26,7 @@ export default function App() {
 
         {/* 세일즈 플랫폼 (메인) */}
         <Route element={<Layout />}>
+          <Route path="/briefing" element={<MorningBriefing />} />
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/clients" element={<ClientManagement />} />
           <Route path="/activity" element={<ActivityManagement />} />

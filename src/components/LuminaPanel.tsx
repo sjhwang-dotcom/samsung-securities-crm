@@ -128,6 +128,11 @@ export default function LuminaPanel({ onClose }: LuminaPanelProps) {
 
 /* ═══ Pre-seeded conversations per page (Korean) ═══ */
 const seedConversations: Record<string, ChatMessage[]> = {
+  '/briefing': [
+    { role: 'assistant', content: "좋은 아침입니다, 김영호 차장님. 오늘의 브리핑을 준비했습니다. 3가지 핵심 사항이 있습니다." },
+    { role: 'user', content: "핵심 사항이 뭐야?" },
+    { role: 'assistant', content: "1. **미래에셋 박정현 PM** — 어제 블룸버그로 방산 섹터 업데이트 요청. 한화에어로 목표가 리포트 준비 완료, 오전 통화 시 전달 추천\n\n2. **국민연금 이승재 CIO 방문** — 10:30 예정. 2분기 리밸런싱 관련 자료 3건 준비됨. 핵심 토픽: 반도체 비중 확대 여부\n\n3. **한국밸류 관계 회복** — 이탈 위험 CRITICAL(88점). 오후 4시 통화 예정. SK하이닉스 딥다이브 자료 + 기업탐방 초대장 준비 완료" },
+  ],
   '/dashboard': [
     { role: 'assistant', content: "안녕하세요, 김영호 차장님. 오늘의 AI 분석 결과를 정리했습니다. 3가지 주요 사항이 있습니다." },
     { role: 'user', content: "3가지가 뭐야?" },
@@ -263,6 +268,7 @@ function ChatTab() {
   }
 
   const pageLabels: Record<string, string> = {
+    '/briefing': '모닝 브리핑',
     '/dashboard': '영업 대시보드',
     '/clients': '고객 관리',
     '/activity': '활동 관리',
