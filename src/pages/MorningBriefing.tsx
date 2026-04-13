@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { StatusBadge } from '../components/ui'
-import { actionItems, atRiskClients, researchReports } from '../data/mockData'
+import { actionItems, atRiskClients, researchReports, interactions } from '../data/mockData'
 import {
   Sun, CheckCircle, Clock, Calendar, TrendingUp, AlertTriangle,
   FileText, Radio, Mail, Phone, MessageSquare, Database, BarChart3,
@@ -23,13 +23,24 @@ const marketData = [
   { label: '국고채 3년', value: '3.25%', change: '+2bp', positive: false },
 ]
 
+// Channel stats derived from actual interaction data
+const channelStats = (() => {
+  const typeMap: Record<string, string> = { '통화': '전화', '미팅': '미팅', '블룸버그': '블룸버그', '이메일': '이메일', '기업탐방': '기업탐방', '리서치배포': '리서치 포탈' }
+  const counts: Record<string, number> = {}
+  interactions.forEach(i => {
+    const ch = typeMap[i.type] || i.type
+    counts[ch] = (counts[ch] || 0) + 1
+  })
+  return counts
+})()
+
 const channels = [
-  { icon: Mail, name: '이메일', protocol: 'Exchange', status: '연결됨', lastSync: '08:00' },
-  { icon: Phone, name: '전화', protocol: 'Bloomberg SAPI', status: '연결됨', lastSync: '실시간' },
-  { icon: MessageSquare, name: '블룸버그', protocol: 'B-PIPE', status: '연결됨', lastSync: '실시간' },
-  { icon: Calendar, name: '캘린더', protocol: 'CalDAV', status: '동기화중', lastSync: '07:55' },
-  { icon: Database, name: 'OMS', protocol: '실시간 API', status: '연결됨', lastSync: '실시간' },
-  { icon: FileText, name: '리서치 포탈', protocol: '', status: '연결됨', lastSync: '07:50' },
+  { icon: Mail, name: '이메일', protocol: 'Exchange API', status: '연결됨', lastSync: '08:00', count: channelStats['이메일'] || 0 },
+  { icon: Phone, name: '전화', protocol: 'STT 자동기록', status: '연결됨', lastSync: '실시간', count: channelStats['전화'] || 0 },
+  { icon: MessageSquare, name: '블룸버그', protocol: 'B-PIPE / IB Chat', status: '연결됨', lastSync: '실시간', count: channelStats['블룸버그'] || 0 },
+  { icon: Calendar, name: '캘린더', protocol: 'MS Graph API', status: '동기화중', lastSync: '07:55', count: channelStats['미팅'] || 0 },
+  { icon: Database, name: 'OMS', protocol: '실시간 체결 연동', status: '연결됨', lastSync: '실시간', count: 0 },
+  { icon: FileText, name: '리서치 포탈', protocol: 'REST API', status: '연결됨', lastSync: '07:50', count: channelStats['리서치 포탈'] || 0 },
 ]
 
 // ═══ Helper: priority sort order ═══
@@ -252,8 +263,9 @@ export default function MorningBriefing() {
                   background: '#fff', borderRadius: 10, padding: '12px 10px',
                   boxShadow: '0 1px 3px rgba(0,0,0,0.06)', textAlign: 'center',
                 }}>
-                  <Icon size={18} style={{ color: '#034EA2', marginBottom: 6 }} />
-                  <div style={{ fontSize: 12, fontWeight: 600, color: '#0F172A', marginBottom: 4 }}>{ch.name}</div>
+                  <Icon size={18} style={{ color: '#034EA2', marginBottom: 4 }} />
+                  <div style={{ fontSize: 11, fontWeight: 600, color: '#0F172A', marginBottom: 2 }}>{ch.name}</div>
+                  <div style={{ fontSize: 9, color: '#94A3B8', marginBottom: 4 }}>{ch.protocol}</div>
                   <StatusBadge
                     variant={ch.status === '연결됨' ? 'emerald' : 'amber'}
                     size="sm"
@@ -262,7 +274,10 @@ export default function MorningBriefing() {
                   >
                     {ch.status}
                   </StatusBadge>
-                  <div style={{ fontSize: 11, color: '#94A3B8', marginTop: 4 }}>{ch.lastSync}</div>
+                  {ch.count > 0 && (
+                    <div style={{ fontSize: 12, fontWeight: 700, color: '#034EA2', marginTop: 4 }}>{ch.count}건</div>
+                  )}
+                  <div style={{ fontSize: 9, color: '#94A3B8', marginTop: 2 }}>최근: {ch.lastSync}</div>
                 </div>
               )
             })}
@@ -279,10 +294,10 @@ export default function MorningBriefing() {
             {/* Activity stats row */}
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 16, marginBottom: 16 }}>
               {[
-                { label: '통화', value: '23건', icon: Phone, color: '#10B981' },
-                { label: '미팅', value: '2건', icon: Calendar, color: '#034EA2' },
-                { label: '이메일', value: '12건', icon: Mail, color: '#F59E0B' },
-                { label: '블룸버그', value: '45건', icon: MessageSquare, color: '#8B5CF6' },
+                { label: '통화', value: `${channelStats['전화'] || 0}건`, icon: Phone, color: '#10B981' },
+                { label: '미팅', value: `${channelStats['미팅'] || 0}건`, icon: Calendar, color: '#034EA2' },
+                { label: '이메일', value: `${channelStats['이메일'] || 0}건`, icon: Mail, color: '#F59E0B' },
+                { label: '블룸버그', value: `${channelStats['블룸버그'] || 0}건`, icon: MessageSquare, color: '#8B5CF6' },
               ].map(s => {
                 const SIcon = s.icon
                 return (
